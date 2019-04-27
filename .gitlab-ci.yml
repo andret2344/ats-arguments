@@ -20,5 +20,4 @@ build:
     - ./jfrog rt bp gitlabci-gradle-artifactory $CI_JOB_ID
   only:
     - master
-  when:
-    - manual
+  when: manual
