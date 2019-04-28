@@ -13,7 +13,7 @@ before_script:
 build:
   script:
     # Run the Gradle command
-    - ./jfrog rt gradle "clean artifactoryPublish -b build.gradle" configuration.yaml --build-name=gitlabci-gradle-artifactory --build-number=$CI_JOB_ID
+    - ./jfrog rt gradle "clean artifactoryPublish -Puser=$ARTIFACTORY_USER -Ppass=$ARTIFACTORY_PASS -b build.gradle" configuration.yaml --build-name=gitlabci-gradle-artifactory --build-number=$CI_JOB_ID
     # Collect the environment variables
     - ./jfrog rt bce gitlabci-gradle-artifactory $CI_JOB_ID
     # Pass the build information to Artifactory
