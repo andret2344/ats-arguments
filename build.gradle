@@ -6,7 +6,10 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'java'
+	id 'com.jfrog.artifactory' version "4.9.6"
 }
+
+apply plugin: 'maven'
 
 group 'eu.andret'
 version '1.0-SNAPSHOT'
@@ -15,9 +18,7 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven {
-		url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-	}
+	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 dependencies {
@@ -29,23 +30,26 @@ dependencies {
 
 compileJava.options.compilerArgs << '-parameters' << '-g'
 
+artifactory {
+	contextUrl = 'https://repo.andret.eu/'
+	publish {
+		repository {
+			repoKey = 'andret-tools-system'
+			username = user
+			password = pass
+			maven = true
+		}
+	}
+}
+
+artifactoryPublish {
+	dependsOn jar
+}
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			from components.java
-		}
-	}
-
-	repositories {
-		maven {
-			name = 'andret-tools-system'
-			url = "https://repo.andret.eu/"
-
-			credentials {
-				username user
-				password pass
-			}
 		}
 	}
 }
