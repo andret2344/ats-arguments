@@ -5,6 +5,12 @@
 buildscript {
 	repositories {
 		jcenter()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.9.6"
 	}
 }
 
@@ -77,8 +83,8 @@ artifactory {
 			}
 		}
 		defaults {
-			publishArtifacts = true   //Publish artifacts to Artifactory (true by default)
-			publishPom = true   //Publish generated POM files to Artifactory (true by default).
+			publishArtifacts = true
+			publishPom = true
 		}
 	}
 }
