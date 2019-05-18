@@ -5,6 +5,7 @@ package eu.andret.argument;
 
 class Util {
 	private static Util instance;
+
 	private Util() {
 	}
 
@@ -42,34 +43,32 @@ class Util {
 		throw new UnsupportedOperationException("Use primitive type or String!");
 	}
 
+	/**
+	 * Method that will determine the actual class by the content of String.
+	 *
+	 * @param value The value that need to be parsed. Accepts only int, double,
+	 * boolean and String. Not matching any of them will rśesult as String.
+	 *
+	 * @return the class, which value inside the string argument matches
+	 */
 	Class<?> getRealClass(String value) {
-		try {
-			Integer.parseInt(value);
+		if (value.matches("\\d+")) {
 			return int.class;
-		} catch (Exception ex) {
-			// empty
 		}
-		try {
-			Double.parseDouble(value);
+		if (value.matches("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)")) {
 			return double.class;
-		} catch (Exception ex) {
-			// empty
 		}
-		try {
-			Float.parseFloat(value);
-			return float.class;
-		} catch (Exception ex) {
-			// empty
-		}
-		try {
-			Long.parseLong(value);
-			return int.class;
-		} catch (Exception ex) {
-			// empty
+		if (value.equals("false") || value.equals("true")) {
+			return boolean.class;
 		}
 		return String.class;
 	}
 
+	/**
+	 * The singleton accessor method
+	 *
+	 * @return The instance of this singleton class
+	 */
 	public static Util getInstance() {
 		if (instance == null) {
 			instance = new Util();
