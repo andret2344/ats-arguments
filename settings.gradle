@@ -4,3 +4,4 @@
 
 rootProject.name = 'ats-argument'
 
+enableFeaturePreview('STABLE_PUBLISHING')

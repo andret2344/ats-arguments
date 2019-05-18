@@ -20,7 +20,6 @@ plugins {
 	id 'java'
 }
 
-apply plugin: 'maven'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
@@ -50,9 +49,9 @@ publishing {
 		lib(MavenPublication) {
 			groupId = project.group
 			version = project.version
-			artifactId = 'ats-arguments'
+			artifactId = 'ats-argument'
 
-			artifact "${project.buildDir}/libs/argument-${project.version}.jar"
+			artifact "${project.buildDir}/libs/${artifactId}-${project.version}.jar"
 
 			pom.withXml {
 				def dependenciesNode = asNode().appendNode("dependencies")
