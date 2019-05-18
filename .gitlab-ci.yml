@@ -13,9 +13,8 @@ compile:
 test:
   stage: build
   script:
+    - gradle clean
     - gradle test
-  dependencies:
-    - compile
   when: on_success
 
 artifactory:
