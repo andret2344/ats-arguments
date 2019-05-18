@@ -27,6 +27,7 @@ import java.util.stream.Stream;
  */
 public class LocalCommandExecutor implements CommandExecutor {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
+	private final Util util = Util.getInstance();
 	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
 	private final JavaPlugin plugin;
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -86,7 +87,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 			}
 			return true;
 		}
-		List<Class<?>> list = Stream.of(args).skip(1).map(Util::getRealClass).collect(Collectors.toList());
+		List<Class<?>> list = Stream.of(args).skip(1).map(util::getRealClass).collect(Collectors.toList());
 		Method method = inferMethod(methods, list);
 		if (method == null) {
 			methods.stream()
@@ -161,12 +162,12 @@ public class LocalCommandExecutor implements CommandExecutor {
 				int length = args.length - i + skip - 2;
 				Object array = Array.newInstance(type, length);
 				for (int j = 0; j < length; j++) {
-					Array.set(array, j, Util.convert(type, args[j + i + skip]));
+					Array.set(array, j, util.convert(type, args[j + i + skip]));
 				}
 				data[i] = array;
 				break;
 			} else {
-				data[i] = Util.convert(method.getParameters()[i].getType(), args[i + skip]);
+				data[i] = util.convert(method.getParameters()[i].getType(), args[i + skip]);
 			}
 		}
 		return data;

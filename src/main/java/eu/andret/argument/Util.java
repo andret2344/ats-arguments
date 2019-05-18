@@ -4,10 +4,11 @@
 package eu.andret.argument;
 
 class Util {
+	private static Util instance;
 	private Util() {
 	}
 
-	static Object convert(Class<?> c, String value) {
+	Object convert(Class<?> c, String value) {
 		if (c.isArray()) {
 			return value;
 		}
@@ -41,7 +42,7 @@ class Util {
 		throw new UnsupportedOperationException("Use primitive type or String!");
 	}
 
-	static Class<?> getRealClass(String value) {
+	Class<?> getRealClass(String value) {
 		try {
 			Integer.parseInt(value);
 			return int.class;
@@ -67,5 +68,12 @@ class Util {
 			// empty
 		}
 		return String.class;
+	}
+
+	public static Util getInstance() {
+		if (instance == null) {
+			instance = new Util();
+		}
+		return instance;
 	}
 }
