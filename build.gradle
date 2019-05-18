@@ -1,5 +1,6 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ *
  */
 
 buildscript {
@@ -30,7 +31,9 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+	maven {
+		url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+	}
 	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
@@ -49,7 +52,7 @@ publishing {
 		lib(MavenPublication) {
 			groupId = project.group
 			version = project.version
-			artifactId = 'ats-argument'
+			artifactId = 'ats-arguments'
 
 			artifact "${project.buildDir}/libs/${artifactId}-${project.version}.jar"
 

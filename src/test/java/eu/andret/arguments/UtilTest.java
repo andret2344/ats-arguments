@@ -1,8 +1,9 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ *
  */
 
-package eu.andret.argument;
+package eu.andret.arguments;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +24,13 @@ public class UtilTest {
 
 	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][]{
+		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
 				{"12.34", double.class, 12.34},
 				{"other", String.class, "other"}
-		});
+		};
+		return Arrays.asList(objects);
 	}
 
 	public UtilTest(String input, Class<?> targetClass, Object realValue) {

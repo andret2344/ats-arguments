@@ -1,8 +1,9 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ *
  */
 
-package eu.andret.argument;
+package eu.andret.arguments;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -224,11 +225,11 @@ public class LocalCommandExecutor implements CommandExecutor {
 		for (int i = 0; i < size; i++) {
 			Parameter parameter = parameters.get(i);
 			if (parameter.getType().isArray() && !parameter.isVarArgs()) {
-				throw new IllegalArgumentException("Cannot be classical array! Use varargs instead. "
-						+ "Method " + method);
+				throw new IllegalArgumentException("Cannot be the classical " +
+						"array! Use varargs instead. Method " + method);
 			}
 			if (parameter.isVarArgs()) {
-				if (!isTypeMatchungVarArgParameter(parameter, classes, i)) {
+				if (!isTypeMatchingVarArgParameter(parameter, classes, i)) {
 					return false;
 				}
 			} else if (!classes.get(i).isAssignableFrom(parameter.getType())) {
@@ -238,7 +239,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 		return true;
 	}
 
-	private boolean isTypeMatchungVarArgParameter(Parameter parameter, List<Class<?>> classes, int i) {
+	private boolean isTypeMatchingVarArgParameter(Parameter parameter, List<Class<?>> classes, int i) {
 		Class<?> varArgType = parameter.getType().getComponentType();
 		for (int j = i; j < classes.size(); j++) {
 			if (!classes.get(j).isAssignableFrom(varArgType)) {

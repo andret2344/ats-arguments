@@ -1,8 +1,9 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ *
  */
 
-package eu.andret.argument;
+package eu.andret.arguments;
 
 import org.junit.Test;
 

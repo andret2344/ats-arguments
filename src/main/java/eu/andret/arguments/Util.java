@@ -1,7 +1,8 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ *
  */
-package eu.andret.argument;
+package eu.andret.arguments;
 
 class Util {
 	private static Util instance;
@@ -47,9 +48,9 @@ class Util {
 	 * Method that will determine the actual class by the content of String.
 	 *
 	 * @param value The value that need to be parsed. Accepts only int, double,
-	 * boolean and String. Not matching any of them will rśesult as String.
+	 * boolean and String. Not matching any of them will result as String.
 	 *
-	 * @return the class, which value inside the string argument matches
+	 * @return the class, which value inside the string arguments matches
 	 */
 	Class<?> getRealClass(String value) {
 		if (value.matches("\\d+")) {
