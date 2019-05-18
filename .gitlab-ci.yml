@@ -1,12 +1,30 @@
 image: frekele/gradle
 
-before_script:
-  - curl -fL https://getcli.jfrog.io | sh
-  - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
-  - ./jfrog rt c show
-  - sed -i 's,GRADLE_REPO_KEY,'"$GRADLE_REPO_KEY"',g' configuration.yaml
+stages:
+  - build
+  - publish
 
-build:
+compile:
+  stage: build
+  script:
+    - gradle clean
+    - gradle jar
+
+test:
+  stage: build
+  script:
+    - gradle test
+  dependencies:
+    - compile
+  when: on_success
+
+artifactory:
+  stage: publish
+  before_script:
+    - curl -fL https://getcli.jfrog.io | sh
+    - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
+    - ./jfrog rt c show
+    - sed -i 's,GRADLE_REPO_KEY,'"$GRADLE_REPO_KEY"',g' configuration.yaml
   script:
     - gradle clean
     - gradle artifactoryPublish -Pusername=$ARTIFACTORY_USER -Ppassword=$ARTIFACTORY_PASS
