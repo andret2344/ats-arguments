@@ -256,16 +256,20 @@ public class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	private Object invoke(Method method, CommandSender sender, Object... data) {
-		plugin.getLogger().log(Level.FINER, "Trying to invoke {0} with {1}",
-				new Object[]{method, Arrays.deepToString(data)});
+		debugger.debug(Level.FINER, "Trying to invoke {0} with {1}",
+				method, Arrays.deepToString(data));
 		try {
+			debugger.debug(Level.FINER, "try {...");
 			if (!executors.containsKey(sender)) {
+				debugger.debug(Level.FINER, "if (map not contains sender)");
 				executors.put(sender, commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class).newInstance(sender, plugin));
 			}
+			debugger.debug(Level.FINER, "invoke method");
 			return method.invoke(executors.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			Bukkit.getLogger().throwing(getClass().getName(), "onCommand", e);
+			debugger.debug(Level.SEVERE, e.toString());
 		}
+		debugger.debug(Level.FINER, "NULL?!");
 		return null;
 	}
 

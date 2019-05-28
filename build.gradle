@@ -23,7 +23,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 group 'eu.andret'
-version '0.0.2-alpha-internal-2'
+version '0.0.2-alpha-internal-3'
 
 sourceCompatibility = 1.8
 
