@@ -40,6 +40,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	private OnUsageExampleListener onUsageExampleListener = (sender, desc) -> true;
+	private Debugger debugger =
+			(level, message, args) -> System.out.println(message + Arrays.deepToString(args));
 
 	/**
 	 * Listener to define action when sender performs unknown sub-command.
@@ -81,6 +83,10 @@ public class LocalCommandExecutor implements CommandExecutor {
 		boolean usageExample(CommandSender sender, String description);
 	}
 
+	public interface Debugger {
+		void debug(Level level, String message, Object... args);
+	}
+
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
@@ -97,15 +103,16 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		System.out.println(String.format("Got command %s with args %s",
-				cmd, Arrays.deepToString(args)));
+		debugger.debug(Level.FINE, "Got command %s with args %s",
+				cmd, Arrays.deepToString(args));
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> m.getAnnotation(Argument.class).value().equalsIgnoreCase(cmd.getName()))
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
-			System.out.println("No args provided, performing default action");
+			debugger.debug(Level.FINE, "No args provided, performing default " +
+					"action");
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
 					.map(m -> getDescription(cmd.getName(), m))
@@ -123,7 +130,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 				})
 				.collect(Collectors.toList());
 		if (methods.isEmpty()) {
-			System.out.println("No matching method by name found");
+			debugger.debug(Level.FINE, "No matching method by name found");
 			if (onUnknownSubCommandExecutionListener != null) {
 				onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
 			}
@@ -132,25 +139,26 @@ public class LocalCommandExecutor implements CommandExecutor {
 		List<Class<?>> list = Stream.of(args).skip(1).map(util::getRealClass).collect(Collectors.toList());
 		Method method = inferMethod(methods, list);
 		if (method == null) {
-			System.out.println("No matching method by parameters found");
+			debugger.debug(Level.FINE, "No matching method by parameters " +
+					"found");
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
 					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
 					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
 			return true;
 		}
-		System.out.println("Found method " + method);
+		debugger.debug(Level.FINE, "Found method " + method);
 		if (!hasPermission(sender, method)) {
 			if (onInsufficientPermissionsListener != null) {
 				onInsufficientPermissionsListener.insufficientPermissions(sender);
 			}
 			return true;
 		}
-		System.out.println("Permissions ok");
+		debugger.debug(Level.FINE, "Permissions ok");
 		Object[] data = recalculateArguments(method, args);
 		Object result = invoke(method, sender, data);
 		if (result == null) {
-			System.out.println("No method result");
+			debugger.debug(Level.FINE, "No method result");
 			return true;
 		}
 		sendProperResponse(sender, result, method);
@@ -182,6 +190,12 @@ public class LocalCommandExecutor implements CommandExecutor {
 	 */
 	public void setOnUsageExampleListener(OnUsageExampleListener listener) {
 		onUsageExampleListener = listener;
+	}
+
+	public void setDebugger(Debugger debugger) {
+		if (debugger != null) {
+			this.debugger = debugger;
+		}
 	}
 
 	private boolean hasPermission(CommandSender sender, Method method) {
