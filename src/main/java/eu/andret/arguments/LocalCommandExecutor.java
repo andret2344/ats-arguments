@@ -1,8 +1,6 @@
 /*
  * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
- *
  */
-
 package eu.andret.arguments;
 
 import org.bukkit.Bukkit;
@@ -24,7 +22,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * The type Local command executorType.
+ * The command executor to use instead of {@link org.bukkit.command.CommandExecutor}.
+ * Should be registered as default command executor.
+ *
+ * @author Andret
+ * @see org.bukkit.command.CommandExecutor
+ * @see eu.andret.arguments.LocalCommandExecutor
+ * @since May 18, 2019
  */
 public class LocalCommandExecutor implements CommandExecutor {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
@@ -35,22 +39,54 @@ public class LocalCommandExecutor implements CommandExecutor {
 	private OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	private OnUsageExampleListener onUsageExampleListener = (sender, desc) -> true;
 
+	/**
+	 * Listener to define action when sender performs unknown sub-command.
+	 */
 	public interface OnUnknownSubCommandExecutionListener {
+		/**
+		 * Unknown sub-command executed.
+		 *
+		 * @param sender The sender that executed the unknown sub-command
+		 */
 		void unknownSubCommandExecuted(CommandSender sender);
 	}
 
+	/**
+	 * Listener to define action when sender has insufficient permissions.
+	 */
 	public interface OnInsufficientPermissionsListener {
+		/**
+		 * Insufficient permissions.
+		 *
+		 * @param sender The sender that executed the command with no
+		 * permissions.
+		 */
 		void insufficientPermissions(CommandSender sender);
 	}
 
+	/**
+	 * The interface On usage example listener.
+	 */
 	public interface OnUsageExampleListener {
+		/**
+		 * Usage example boolean.
+		 *
+		 * @param sender the sender
+		 * @param description the description
+		 *
+		 * @return the boolean
+		 */
 		boolean usageExample(CommandSender sender, String description);
 	}
 
 	/**
-	 * Instantiates a new Local command executorType.
+	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandExecutor the command executorType
+	 * @param commandExecutor The {@link eu.andret.arguments.AnnotatedCommandExecutor}
+	 * that will be analized in search of methods annotated with {@link
+	 * eu.andret.arguments.Argument}
+	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of
+	 * main plugin class.
 	 */
 	public LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandExecutor, JavaPlugin plugin) {
 		this.commandExecutor = commandExecutor;
@@ -112,14 +148,29 @@ public class LocalCommandExecutor implements CommandExecutor {
 		return true;
 	}
 
+	/**
+	 * Sets on unknown sub command execution listener.
+	 *
+	 * @param listener The {@link OnUnknownSubCommandExecutionListener}
+	 */
 	public void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
+	/**
+	 * Sets on insufficient permissions' listener.
+	 *
+	 * @param listener The {@link OnInsufficientPermissionsListener}
+	 */
 	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 
+	/**
+	 * Sets on usage example listener.
+	 *
+	 * @param listener The {@link OnUsageExampleListener}
+	 */
 	public void setOnUsageExampleListener(OnUsageExampleListener listener) {
 		onUsageExampleListener = listener;
 	}
