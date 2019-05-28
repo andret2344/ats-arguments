@@ -15,9 +15,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,12 +97,16 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		plugin.getLogger().log(Level.FINE, "Got command {0} with args {1}",
+				new Object[]{cmd, Arrays.deepToString(args)});
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> m.getAnnotation(Argument.class).value().equalsIgnoreCase(cmd.getName()))
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
+			plugin.getLogger().log(Level.FINEST, "No args provided, " +
+					"performing default action");
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
 					.map(m -> getDescription(cmd.getName(), m))
@@ -119,6 +125,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 				})
 				.collect(Collectors.toList());
 		if (methods.isEmpty()) {
+			plugin.getLogger().log(Level.FINE, "No matching method by name " +
+					"found");
 			if (onUnknownSubCommandExecutionListener != null) {
 				onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
 			}
@@ -127,21 +135,26 @@ public class LocalCommandExecutor implements CommandExecutor {
 		List<Class<?>> list = Stream.of(args).skip(1).map(util::getRealClass).collect(Collectors.toList());
 		Method method = inferMethod(methods, list);
 		if (method == null) {
+			plugin.getLogger().log(Level.FINE, "No matching method by " +
+					"parameters found");
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
 					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
 					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
 			return true;
 		}
+		plugin.getLogger().log(Level.FINE, "Found method {0}", method);
 		if (!hasPermission(sender, method)) {
 			if (onInsufficientPermissionsListener != null) {
 				onInsufficientPermissionsListener.insufficientPermissions(sender);
 			}
 			return true;
 		}
+		plugin.getLogger().log(Level.FINE, "Permissions ok");
 		Object[] data = recalculateArguments(method, args);
 		Object result = invoke(method, sender, data);
 		if (result == null) {
+			plugin.getLogger().log(Level.FINE, "No method result");
 			return true;
 		}
 		sendProperResponse(sender, result, method);
@@ -185,6 +198,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	private void sendProperResponse(CommandSender sender, Object obj, Method method) {
 		String message = String.valueOf(obj);
+		plugin.getLogger().log(Level.FINE, "Sending response {0}", message);
 		switch (method.getAnnotation(Argument.class).responseType()) {
 			case SENDER:
 				sender.sendMessage(message);
@@ -197,11 +211,15 @@ public class LocalCommandExecutor implements CommandExecutor {
 				break;
 			case NONE:
 			default:
+				plugin.getLogger().log(Level.FINE, "No response sent");
 				break;
 		}
 	}
 
 	private Object[] recalculateArguments(Method method, String... args) {
+		plugin.getLogger().log(Level.FINER, "Recalculating arguments for " +
+						"method {0} with args {1}",
+				new Object[]{method, Arrays.deepToString(args)});
 		Argument argument = method.getAnnotation(Argument.class);
 		Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
@@ -222,10 +240,14 @@ public class LocalCommandExecutor implements CommandExecutor {
 				data[i] = util.convert(method.getParameters()[i].getType(), args[i + skip]);
 			}
 		}
+		plugin.getLogger().log(Level.FINER, "Recalculated: {0}",
+				Arrays.deepToString(data));
 		return data;
 	}
 
 	private Object invoke(Method method, CommandSender sender, Object... data) {
+		plugin.getLogger().log(Level.FINER, "Trying to invoke {0} with {1}",
+				new Object[]{method, Arrays.deepToString(data)});
 		try {
 			if (!executors.containsKey(sender)) {
 				executors.put(sender, commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class).newInstance(sender, plugin));
@@ -237,16 +259,18 @@ public class LocalCommandExecutor implements CommandExecutor {
 		return null;
 	}
 
-	private String getCommandPattern(Method m) {
-		Parameter[] params = m.getParameters();
-		Argument a = m.getAnnotation(Argument.class);
+	private String getCommandPattern(Method method) {
+		plugin.getLogger().log(Level.FINER, "Generating help pattern for {0}",
+				method);
+		Parameter[] params = method.getParameters();
+		Argument a = method.getAnnotation(Argument.class);
 		StringBuilder message = new StringBuilder();
 		if (params.length == 0) {
-			return message.append(" ").append(m.getName()).toString();
+			return message.append(" ").append(method.getName()).toString();
 		}
 		for (int i = 0; i < params.length; i++) {
 			if (i == a.position()) {
-				message.append(" ").append(m.getName());
+				message.append(" ").append(method.getName());
 			}
 			message.append(" <").append(params[i].getName());
 			if (params[i].getType().isArray()) {
@@ -255,12 +279,15 @@ public class LocalCommandExecutor implements CommandExecutor {
 			message.append((">"));
 		}
 		if (params.length == a.position()) {
-			message.append(" ").append(m.getName());
+			message.append(" ").append(method.getName());
 		}
+		plugin.getLogger().log(Level.FINER, "Generated {0}", message);
 		return message.toString();
 	}
 
 	private Method inferMethod(List<Method> methods, List<Class<?>> classes) {
+		plugin.getLogger().log(Level.FINER, "Trying to infer methods from {0}" +
+				" using {1}", new Object[]{methods, classes});
 		return methods.stream()
 				.filter(m -> checkParameters(m, classes))
 				.findFirst()
@@ -268,6 +295,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean checkParameters(Method method, List<Class<?>> classes) {
+		plugin.getLogger().log(Level.FINER, "Checking params for {0} with {1}" +
+				" with {1}", new Object[]{method, classes});
 		List<Parameter> parameters = Stream.of(method.getParameters()).collect(Collectors.toList());
 		int size = Math.min(classes.size(), method.getParameterCount());
 		if (size == 0 && classes.size() + method.getParameterCount() != 0) {
@@ -291,6 +320,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean isTypeMatchingVarArgParameter(Parameter parameter, List<Class<?>> classes, int i) {
+		plugin.getLogger().log(Level.FINER, "Trying to match vararg for {0} " +
+				" with {1}", new Object[]{parameter, classes});
 		Class<?> varArgType = parameter.getType().getComponentType();
 		for (int j = i; j < classes.size(); j++) {
 			if (!classes.get(j).isAssignableFrom(varArgType)) {
