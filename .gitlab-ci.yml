@@ -16,6 +16,9 @@ test:
     - gradle clean
     - gradle test
   when: on_success
+  artifacts:
+    reports:
+      junit: build/test-results/test/**.xml
 
 artifactory:
   stage: publish
