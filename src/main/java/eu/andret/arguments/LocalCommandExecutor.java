@@ -41,8 +41,6 @@ public class LocalCommandExecutor implements CommandExecutor {
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	private OnUsageExampleListener onUsageExampleListener = (sender, desc) -> true;
-	private Debugger debugger =
-			(level, message, args) -> System.out.println(message + Arrays.deepToString(args));
 
 	/**
 	 * Listener to define action when sender performs unknown sub-command.
@@ -104,16 +102,12 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		debugger.debug(Level.FINE, "Got command %s with args %s",
-				cmd, Arrays.deepToString(args));
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> m.getAnnotation(Argument.class).value().equalsIgnoreCase(cmd.getName()))
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
-			debugger.debug(Level.FINE, "No args provided, performing default " +
-					"action");
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
 					.map(m -> getDescription(cmd.getName(), m))
@@ -131,7 +125,6 @@ public class LocalCommandExecutor implements CommandExecutor {
 				})
 				.collect(Collectors.toList());
 		if (methods.isEmpty()) {
-			debugger.debug(Level.FINE, "No matching method by name found");
 			if (onUnknownSubCommandExecutionListener != null) {
 				onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
 			}
@@ -140,26 +133,21 @@ public class LocalCommandExecutor implements CommandExecutor {
 		List<Class<?>> list = Stream.of(args).skip(1).map(util::getRealClass).collect(Collectors.toList());
 		Method method = inferMethod(methods, list);
 		if (method == null) {
-			debugger.debug(Level.FINE, "No matching method by parameters " +
-					"found");
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
 					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
 					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
 			return true;
 		}
-		debugger.debug(Level.FINE, "Found method " + method);
 		if (!hasPermission(sender, method)) {
 			if (onInsufficientPermissionsListener != null) {
 				onInsufficientPermissionsListener.insufficientPermissions(sender);
 			}
 			return true;
 		}
-		debugger.debug(Level.FINE, "Permissions ok");
 		Object[] data = recalculateArguments(method, args);
 		Object result = invoke(method, sender, data);
 		if (result == null) {
-			debugger.debug(Level.FINE, "No method result");
 			return true;
 		}
 		sendProperResponse(sender, result, method);
@@ -191,12 +179,6 @@ public class LocalCommandExecutor implements CommandExecutor {
 	 */
 	public void setOnUsageExampleListener(OnUsageExampleListener listener) {
 		onUsageExampleListener = listener;
-	}
-
-	public void setDebugger(Debugger debugger) {
-		if (debugger != null) {
-			this.debugger = debugger;
-		}
 	}
 
 	private boolean hasPermission(CommandSender sender, Method method) {
@@ -257,12 +239,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	private Object invoke(Method method, CommandSender sender, Object... data) {
-		debugger.debug(Level.FINER, "Trying to invoke {0} with {1}",
-				method, Arrays.deepToString(data));
 		try {
-			debugger.debug(Level.FINER, "try {...");
 			if (!executors.containsKey(sender)) {
-				debugger.debug(Level.FINER, "if (map not contains sender)");
 				Stream.of(commandExecutor.getDeclaredConstructors())
 						.map(c -> (Constructor<AnnotatedCommandExecutor>) c)
 						.filter(c -> c.getParameterCount() == 2)
@@ -274,16 +252,14 @@ public class LocalCommandExecutor implements CommandExecutor {
 								executors.put(sender, c.newInstance(sender,
 										plugin));
 							} catch (ReflectiveOperationException e) {
-								debugger.debug(Level.SEVERE, e.toString());
+								e.printStackTrace();
 							}
 						});
 			}
-			debugger.debug(Level.FINER, "invoke method");
 			return method.invoke(executors.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			debugger.debug(Level.SEVERE, e.toString());
+			e.printStackTrace();
 		}
-		debugger.debug(Level.FINER, "NULL?!");
 		return null;
 	}
 
