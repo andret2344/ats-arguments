@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -262,7 +263,20 @@ public class LocalCommandExecutor implements CommandExecutor {
 			debugger.debug(Level.FINER, "try {...");
 			if (!executors.containsKey(sender)) {
 				debugger.debug(Level.FINER, "if (map not contains sender)");
-				executors.put(sender, commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class).newInstance(sender, plugin));
+				Stream.of(commandExecutor.getDeclaredConstructors())
+						.map(c -> (Constructor<AnnotatedCommandExecutor>) c)
+						.filter(c -> c.getParameterCount() == 2)
+						.filter(c -> CommandSender.class.equals(c.getParameterTypes()[0]))
+						.filter(c -> JavaPlugin.class.isAssignableFrom(c.getParameterTypes()[1]))
+						.findFirst()
+						.ifPresent(c -> {
+							try {
+								executors.put(sender, c.newInstance(sender,
+										plugin));
+							} catch (ReflectiveOperationException e) {
+								debugger.debug(Level.SEVERE, e.toString());
+							}
+						});
 			}
 			debugger.debug(Level.FINER, "invoke method");
 			return method.invoke(executors.get(sender), data);
