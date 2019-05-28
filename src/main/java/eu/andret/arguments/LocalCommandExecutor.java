@@ -97,16 +97,15 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		plugin.getLogger().log(Level.FINE, "Got command {0} with args {1}",
-				new Object[]{cmd, Arrays.deepToString(args)});
+		System.out.println(String.format("Got command %s with args %s",
+				cmd, Arrays.deepToString(args)));
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> m.getAnnotation(Argument.class).value().equalsIgnoreCase(cmd.getName()))
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
-			plugin.getLogger().log(Level.FINEST, "No args provided, " +
-					"performing default action");
+			System.out.println("No args provided, performing default action");
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
 					.map(m -> getDescription(cmd.getName(), m))
@@ -121,12 +120,10 @@ public class LocalCommandExecutor implements CommandExecutor {
 					return executorType.equals(ExecutorType.ALL)
 							|| executorType.equals(ExecutorType.CONSOLE) && sender instanceof ConsoleCommandSender
 							|| executorType.equals(ExecutorType.PLAYER) && sender instanceof Player;
-
 				})
 				.collect(Collectors.toList());
 		if (methods.isEmpty()) {
-			plugin.getLogger().log(Level.FINE, "No matching method by name " +
-					"found");
+			System.out.println("No matching method by name found");
 			if (onUnknownSubCommandExecutionListener != null) {
 				onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
 			}
@@ -135,26 +132,25 @@ public class LocalCommandExecutor implements CommandExecutor {
 		List<Class<?>> list = Stream.of(args).skip(1).map(util::getRealClass).collect(Collectors.toList());
 		Method method = inferMethod(methods, list);
 		if (method == null) {
-			plugin.getLogger().log(Level.FINE, "No matching method by " +
-					"parameters found");
+			System.out.println("No matching method by parameters found");
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
 					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
 					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
 			return true;
 		}
-		plugin.getLogger().log(Level.FINE, "Found method {0}", method);
+		System.out.println("Found method " + method);
 		if (!hasPermission(sender, method)) {
 			if (onInsufficientPermissionsListener != null) {
 				onInsufficientPermissionsListener.insufficientPermissions(sender);
 			}
 			return true;
 		}
-		plugin.getLogger().log(Level.FINE, "Permissions ok");
+		System.out.println("Permissions ok");
 		Object[] data = recalculateArguments(method, args);
 		Object result = invoke(method, sender, data);
 		if (result == null) {
-			plugin.getLogger().log(Level.FINE, "No method result");
+			System.out.println("No method result");
 			return true;
 		}
 		sendProperResponse(sender, result, method);
