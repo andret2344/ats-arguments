@@ -16,6 +16,11 @@ test:
     - gradle clean
     - gradle test
   when: on_success
+  after_script:
+  - ls -la
+  - cd build
+  - ls -la
+  - tree
   artifacts:
     reports:
       junit: build/test-results/test/**/TEST-*.xml
