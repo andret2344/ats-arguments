@@ -266,8 +266,8 @@ public class LocalCommandExecutor implements CommandExecutor {
 				Stream.of(commandExecutor.getDeclaredConstructors())
 						.map(c -> (Constructor<AnnotatedCommandExecutor>) c)
 						.filter(c -> c.getParameterCount() == 2)
-						.filter(c -> c.getParameterTypes()[0].equals(CommandSender.class))
-						.filter(c -> c.getParameterTypes()[1].isAssignableFrom(JavaPlugin.class))
+						.filter(c -> CommandSender.class.equals(c.getParameterTypes()[0]))
+						.filter(c -> JavaPlugin.class.isAssignableFrom(c.getParameterTypes()[1]))
 						.findFirst()
 						.ifPresent(c -> {
 							try {
