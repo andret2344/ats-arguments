@@ -1,5 +1,5 @@
 /*
- * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
  */
 buildscript {
 	repositories {
