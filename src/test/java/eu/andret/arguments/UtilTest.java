@@ -1,8 +1,6 @@
 /*
  * Copyright Andret © 2019. Copying and modifying allowed only keeping git link reference.
- *
  */
-
 package eu.andret.arguments;
 
 import org.junit.Test;
@@ -17,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class UtilTest {
-
 	private final String input;
 	private final Class<?> targetClass;
 	private final Object realValue;
