@@ -23,7 +23,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 group 'eu.andret'
-version '0.0.2-alpha'
+version '0.0.2-alpha1'
 
 sourceCompatibility = 1.8
 
@@ -67,7 +67,6 @@ publishing {
 		}
 	}
 }
-
 
 artifactory {
 	contextUrl = 'https://repo.andret.eu/'
