@@ -5,3 +5,5 @@ build/
 gradlew
 gradlew.bat
 ats-arguments.iml
+src/main/java/eu/andret/test
+src/main/resources/plugin.yml

@@ -23,7 +23,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 group 'eu.andret'
-version '0.0.3-alpha'
+version '0.0.4-alpha'
 
 sourceCompatibility = 1.8
 
@@ -42,7 +42,7 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-compileJava.options.compilerArgs << '-parameters' << '-g'
+compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
 
 javadoc {
 	source = sourceSets.main.allJava

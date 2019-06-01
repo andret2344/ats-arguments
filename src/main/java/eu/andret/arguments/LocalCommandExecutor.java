@@ -3,6 +3,8 @@
  */
 package eu.andret.arguments;
 
+import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,8 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * The command executor to use instead of {@link org.bukkit.command.CommandExecutor}.
- * Should be registered as default command executor.
+ * The command executor to use instead of {@link org.bukkit.command.CommandExecutor}. Should be
+ * registered as default command executor.
  *
  * @author Andret
  * @see org.bukkit.command.CommandExecutor
@@ -61,8 +63,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 		/**
 		 * Insufficient permissions.
 		 *
-		 * @param sender The sender that executed the command with no
-		 * permissions.
+		 * @param sender The sender that executed the command with no permissions.
 		 */
 		void insufficientPermissions(CommandSender sender);
 	}
@@ -89,11 +90,9 @@ public class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandExecutor The {@link eu.andret.arguments.AnnotatedCommandExecutor}
-	 * that will be analized in search of methods annotated with {@link
-	 * eu.andret.arguments.Argument}
-	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of
-	 * main plugin class.
+	 * @param commandExecutor The {@link eu.andret.arguments.AnnotatedCommandExecutor} that will be
+	 * analized in search of methods annotated with {@link eu.andret.arguments.annotation.Argument}
+	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
 	public LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandExecutor, JavaPlugin plugin) {
 		this.commandExecutor = commandExecutor;
@@ -102,9 +101,15 @@ public class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		BaseCommand baseCommand = commandExecutor.getDeclaredAnnotation(BaseCommand.class);
+		if (baseCommand == null) {
+			return true;
+		}
+		if (!cmd.getName().equalsIgnoreCase(baseCommand.value())) {
+			return true;
+		}
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
-				.filter(m -> m.getAnnotation(Argument.class).value().equalsIgnoreCase(cmd.getName()))
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
@@ -147,9 +152,6 @@ public class LocalCommandExecutor implements CommandExecutor {
 		}
 		Object[] data = recalculateArguments(method, args);
 		Object result = invoke(method, sender, data);
-		if (result == null) {
-			return true;
-		}
 		sendProperResponse(sender, result, method);
 		return true;
 	}
@@ -186,10 +188,20 @@ public class LocalCommandExecutor implements CommandExecutor {
 		if (argument == null) {
 			return false;
 		}
-		return !(sender instanceof Player) || sender.hasPermission(argument.permission()) && !argument.permission().equals("");
+		if (sender instanceof Player) {
+			return true;
+		}
+		String permission = argument.permission();
+		if (permission.equals("")) {
+			return true;
+		}
+		return sender.hasPermission(permission);
 	}
 
 	private void sendProperResponse(CommandSender sender, Object obj, Method method) {
+		if (obj == null) {
+			return;
+		}
 		String message = String.valueOf(obj);
 		plugin.getLogger().log(Level.FINE, "Sending response {0}", message);
 		switch (method.getAnnotation(Argument.class).responseType()) {
@@ -241,24 +253,12 @@ public class LocalCommandExecutor implements CommandExecutor {
 	private Object invoke(Method method, CommandSender sender, Object... data) {
 		try {
 			if (!executors.containsKey(sender)) {
-				Stream.of(commandExecutor.getDeclaredConstructors())
-						.map(c -> (Constructor<AnnotatedCommandExecutor>) c)
-						.filter(c -> c.getParameterCount() == 2)
-						.filter(c -> CommandSender.class.equals(c.getParameterTypes()[0]))
-						.filter(c -> JavaPlugin.class.isAssignableFrom(c.getParameterTypes()[1]))
-						.findFirst()
-						.ifPresent(c -> {
-							try {
-								executors.put(sender, c.newInstance(sender,
-										plugin));
-							} catch (ReflectiveOperationException e) {
-								e.printStackTrace();
-							}
-						});
+				Constructor<? extends AnnotatedCommandExecutor> constructor = commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class);
+				executors.put(sender, constructor.newInstance(sender, plugin));
 			}
 			return method.invoke(executors.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
+			Bukkit.getLogger().throwing(getClass().getName(), "invoke", e);
 		}
 		return null;
 	}

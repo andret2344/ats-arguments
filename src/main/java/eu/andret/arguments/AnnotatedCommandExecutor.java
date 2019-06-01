@@ -11,14 +11,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * The command executor that is superclass for command class instead of {@link
- * org.bukkit.command.CommandExecutor}. It requires all methods annotated with
- * {@link eu.andret.arguments.Argument} to be non-static. Subclass should be
- * passed as first argument of {@link eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
+ * org.bukkit.command.CommandExecutor}. It requires all methods annotated with {@link
+ * eu.andret.arguments.annotation.Argument} to be non-static. Subclass should be passed as first
+ * argument of {@link eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
  * org.bukkit.plugin.java.JavaPlugin)}
  *
  * @author Andret
  * @see org.bukkit.command.CommandExecutor
- * @see eu.andret.arguments.Argument
+ * @see eu.andret.arguments.annotation.Argument
  * @see eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
  * org.bukkit.plugin.java.JavaPlugin)
  * @since May 18, 2019

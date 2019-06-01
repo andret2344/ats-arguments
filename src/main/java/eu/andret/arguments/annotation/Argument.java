@@ -1,15 +1,18 @@
 /*
  * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
  */
-package eu.andret.arguments;
+package eu.andret.arguments.annotation;
+
+import eu.andret.arguments.ExecutorType;
+import eu.andret.arguments.ResponseType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation used for {@link eu.andret.arguments.AnnotatedCommandExecutor}'s
- * method to analyze them in search for matching sub-commands of main command.
+ * The annotation used for {@link eu.andret.arguments.AnnotatedCommandExecutor}'s method to analyze
+ * them in search for matching sub-commands of main command.
  *
  * @author Andret
  * @see eu.andret.arguments.AnnotatedCommandExecutor
@@ -18,13 +21,6 @@ import java.lang.annotation.Target;
 @Target(java.lang.annotation.ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
-	/**
-	 * The command to bind the method.
-	 *
-	 * @return The command.
-	 */
-	String value();
-
 	/**
 	 * The position of argument that's  matches the method's n.ame
 	 *
@@ -65,8 +61,7 @@ public @interface Argument {
 	String description() default "";
 
 	/**
-	 * Should sender see annotated method as available command if has no perms
-	 * to perform it.
+	 * Should sender see annotated method as available command if has no perms to perform it.
 	 *
 	 * @return <code>true</code> if should be shown in help with lack of
 	 * perms, <code>false</code> otherwise.

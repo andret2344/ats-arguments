@@ -5,10 +5,10 @@ package eu.andret.arguments;
 
 /**
  * Describes who will get the result from executed method. Used in {@link
- * eu.andret.arguments.Argument} to decide what will happen to method result.
+ * eu.andret.arguments.annotation.Argument} to decide what will happen to method result.
  *
  * @author Andret
- * @see eu.andret.arguments.Argument
+ * @see eu.andret.arguments.annotation.Argument
  * @since May 18, 2019
  */
 public enum ResponseType {
