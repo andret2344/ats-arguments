@@ -4,12 +4,11 @@
 package eu.andret.arguments;
 
 /**
- * Describes who can execute the command. It's used in {@link
- * eu.andret.arguments.Argument} to define who can execute command bound to
- * method.
+ * Describes who can execute the command. It's used in {@link eu.andret.arguments.annotation.Argument}
+ * to define who can execute command bound to method.
  *
  * @author Andret
- * @see eu.andret.arguments.Argument
+ * @see eu.andret.arguments.annotation.Argument
  * @since May 18, 2019
  */
 public enum ExecutorType {
