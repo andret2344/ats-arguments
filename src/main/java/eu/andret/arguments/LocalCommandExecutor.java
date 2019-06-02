@@ -43,7 +43,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Listener to define action when sender performs unknown sub-command.
 	 */
-	interface OnUnknownSubCommandExecutionListener {
+	public interface OnUnknownSubCommandExecutionListener {
 		/**
 		 * Unknown sub-command executed.
 		 *
@@ -55,7 +55,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Listener to define action when sender has insufficient permissions.
 	 */
-	interface OnInsufficientPermissionsListener {
+	public interface OnInsufficientPermissionsListener {
 		/**
 		 * Insufficient permissions.
 		 *
@@ -67,7 +67,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * The interface On usage example listener.
 	 */
-	interface OnUsageExampleListener {
+	public interface OnUsageExampleListener {
 		/**
 		 * Usage example boolean.
 		 *
