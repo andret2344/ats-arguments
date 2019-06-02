@@ -1,6 +1,8 @@
 /*
  * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
  */
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
 buildscript {
 	repositories {
 		jcenter()
@@ -9,6 +11,7 @@ buildscript {
 		}
 	}
 	dependencies {
+		classpath 'io.franzbecker:gradle-lombok:2.0'
 		classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.9.6"
 	}
 }
@@ -21,6 +24,7 @@ plugins {
 
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
+apply plugin: 'io.franzbecker.gradle-lombok'
 
 group 'eu.andret'
 version '0.0.5-alpha'
@@ -112,4 +116,16 @@ artifactory {
 
 artifactoryPublish {
 	publications(publishing.publications.lib)
+}
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+	ext.outputDir = file("$buildDir/delombok")
+	outputs.dir(outputDir)
+	sourceSets.main.java.srcDirs.each {
+		inputs.dir(it)
+		args(it, "-d", outputDir)
+	}
+	doFirst {
+		outputDir.deleteDir()
+	}
 }
