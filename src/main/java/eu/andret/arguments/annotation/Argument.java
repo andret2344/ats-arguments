@@ -61,6 +61,13 @@ public @interface Argument {
 	String description() default "";
 
 	/**
+	 * Aliases for argument, eg. "cmd" as alias for "command", and so on.
+	 *
+	 * @return The list of aliases
+	 */
+	String[] aliases() default {};
+
+	/**
 	 * Should sender see annotated method as available command if has no perms to perform it.
 	 *
 	 * @return <code>true</code> if should be shown in help with lack of
