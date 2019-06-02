@@ -23,15 +23,13 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 group 'eu.andret'
-version '0.0.4-alpha'
+version '0.0.5-alpha'
 
 sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
-	maven {
-		url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-	}
+	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 	maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
