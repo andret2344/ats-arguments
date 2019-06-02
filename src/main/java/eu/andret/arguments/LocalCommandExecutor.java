@@ -83,10 +83,6 @@ public class LocalCommandExecutor implements CommandExecutor {
 		boolean usageExample(CommandSender sender, String description);
 	}
 
-	public interface Debugger {
-		void debug(Level level, String message, Object... args);
-	}
-
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
@@ -121,7 +117,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 		}
 		List<Method> methods = methodList.stream()
 				.filter(m -> args.length >= m.getAnnotation(Argument.class).position())
-				.filter(m -> m.getName().equalsIgnoreCase(args[m.getAnnotation(Argument.class).position()]))
+				.filter(m -> isNameMatchingArg(m, args))
 				.filter(m -> {
 					ExecutorType executorType = m.getAnnotation(Argument.class).executorType();
 					return executorType.equals(ExecutorType.ALL)
@@ -154,6 +150,12 @@ public class LocalCommandExecutor implements CommandExecutor {
 		Object result = invoke(method, sender, data);
 		sendProperResponse(sender, result, method);
 		return true;
+	}
+
+	private boolean isNameMatchingArg(Method m, String[] args) {
+		Argument annotation = m.getAnnotation(Argument.class);
+		return Stream.concat(Stream.of(annotation.aliases()), Stream.of(m.getName()))
+				.anyMatch(args[annotation.position()]::equalsIgnoreCase);
 	}
 
 	/**
@@ -269,12 +271,13 @@ public class LocalCommandExecutor implements CommandExecutor {
 		Parameter[] params = method.getParameters();
 		Argument a = method.getAnnotation(Argument.class);
 		StringBuilder message = new StringBuilder();
+		String argumentWithAliases = getArgumentWithAliases(method);
 		if (params.length == 0) {
-			return message.append(" ").append(method.getName()).toString();
+			return message.append(" ").append(argumentWithAliases).toString();
 		}
 		for (int i = 0; i < params.length; i++) {
 			if (i == a.position()) {
-				message.append(" ").append(method.getName());
+				message.append(" ").append(argumentWithAliases);
 			}
 			message.append(" <").append(params[i].getName());
 			if (params[i].getType().isArray()) {
@@ -287,6 +290,16 @@ public class LocalCommandExecutor implements CommandExecutor {
 		}
 		plugin.getLogger().log(Level.FINER, "Generated {0}", message);
 		return message.toString();
+	}
+
+	private String getArgumentWithAliases(Method method) {
+		Argument a = method.getAnnotation(Argument.class);
+		if (a.aliases().length == 0) {
+			return method.getName();
+		}
+		return "<" + method.getName() + Arrays.stream(a.aliases())
+				.map(alias -> "|" + alias)
+				.collect(Collectors.joining("")) + ">";
 	}
 
 	private Method inferMethod(List<Method> methods, List<Class<?>> classes) {
