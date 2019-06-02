@@ -4,7 +4,6 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.annotation.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,15 +26,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * The command executor to use instead of {@link org.bukkit.command.CommandExecutor}. Should be
- * registered as default command executor.
+ * Local command executor, allows customization of commands behavior.
  *
  * @author Andret
- * @see org.bukkit.command.CommandExecutor
- * @see eu.andret.arguments.LocalCommandExecutor
  * @since May 18, 2019
  */
-public class LocalCommandExecutor implements CommandExecutor {
+class LocalCommandExecutor implements CommandExecutor {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
 	private final Util util = Util.getInstance();
 	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
@@ -47,7 +43,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Listener to define action when sender performs unknown sub-command.
 	 */
-	public interface OnUnknownSubCommandExecutionListener {
+	interface OnUnknownSubCommandExecutionListener {
 		/**
 		 * Unknown sub-command executed.
 		 *
@@ -59,7 +55,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Listener to define action when sender has insufficient permissions.
 	 */
-	public interface OnInsufficientPermissionsListener {
+	interface OnInsufficientPermissionsListener {
 		/**
 		 * Insufficient permissions.
 		 *
@@ -71,7 +67,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * The interface On usage example listener.
 	 */
-	public interface OnUsageExampleListener {
+	interface OnUsageExampleListener {
 		/**
 		 * Usage example boolean.
 		 *
@@ -86,24 +82,17 @@ public class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandExecutor The {@link eu.andret.arguments.AnnotatedCommandExecutor} that will be
-	 * analized in search of methods annotated with {@link eu.andret.arguments.annotation.Argument}
+	 * @param commandExecutor The {@link AnnotatedCommandExecutor} that will be analized in search
+	 * of methods annotated with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
-	public LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandExecutor, JavaPlugin plugin) {
+	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandExecutor, JavaPlugin plugin) {
 		this.commandExecutor = commandExecutor;
 		this.plugin = plugin;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		BaseCommand baseCommand = commandExecutor.getDeclaredAnnotation(BaseCommand.class);
-		if (baseCommand == null) {
-			return true;
-		}
-		if (!cmd.getName().equalsIgnoreCase(baseCommand.value())) {
-			return true;
-		}
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
@@ -163,7 +152,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}
 	 */
-	public void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
+	void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
@@ -172,7 +161,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link OnInsufficientPermissionsListener}
 	 */
-	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
+	void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 
@@ -181,7 +170,7 @@ public class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link OnUsageExampleListener}
 	 */
-	public void setOnUsageExampleListener(OnUsageExampleListener listener) {
+	void setOnUsageExampleListener(OnUsageExampleListener listener) {
 		onUsageExampleListener = listener;
 	}
 
