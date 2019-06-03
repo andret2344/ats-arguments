@@ -1,24 +1,34 @@
 image: frekele/gradle
 
 stages:
-  - build
+  - prepare
+  - test
   - publish
 
 compile:
-  stage: build
+  stage: prepare
   script:
-    - gradle clean
-    - gradle jar
+    - gradle compileJava
 
-test:
-  stage: build
+delombok:
+  stage: prepare
   script:
-    - gradle clean
+    - gradle delombok
+  artifacts:
+    paths:
+      - ./build/delombok/**
+
+junit:
+  stage: test
+  script:
     - gradle test
   when: on_success
   artifacts:
     reports:
       junit: build/test-results/test/**.xml
+    paths:
+      - ./build/reports/**
+
 
 artifactory:
   stage: publish
