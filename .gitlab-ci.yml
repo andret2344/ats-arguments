@@ -8,7 +8,7 @@ stages:
 compile:
   stage: prepare
   script:
-    - gradle compile
+    - gradle compileJava
 
 delombok:
   stage: prepare
