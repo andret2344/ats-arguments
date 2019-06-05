@@ -9,6 +9,9 @@ compile:
   stage: prepare
   script:
     - gradle compileJava
+  artifacts:
+    paths:
+      - build/classes/**
 
 delombok:
   stage: prepare
@@ -20,6 +23,8 @@ delombok:
 
 junit:
   stage: test
+  dependencies: 
+    - compile
   script:
     - gradle test
   when: on_success
@@ -27,8 +32,8 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
     paths:
-      - ./build/reports/**
-
+      - build/reports/**
+      - build/test-results/test/**.xml
 
 artifactory:
   stage: publish
@@ -43,3 +48,15 @@ artifactory:
   only:
     - master
   when: manual
+  
+pages:
+  stage: publish
+  dependencies:
+    - junit
+  script:
+    - mv build/reports/tests/test public/ 
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
