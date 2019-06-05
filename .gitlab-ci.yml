@@ -5,18 +5,18 @@ stages:
   - test
   - publish
 
-compile:
-  stage: prepare
-  script:
-    - gradle compileJava
+#compile:
+#  stage: prepare
+#  script:
+#    - gradle compileJava
 
-delombok:
-  stage: prepare
-  script:
-    - gradle delombok
-  artifacts:
-    paths:
-      - ./build/delombok/**
+#delombok:
+#  stage: prepare
+#  script:
+#    - gradle delombok
+#  artifacts:
+#    paths:
+#      - ./build/delombok/**
 
 junit:
   stage: test
@@ -28,6 +28,7 @@ junit:
       junit: build/test-results/test/**.xml
     paths:
       - build/reports/**
+      - build/test-results/test/**.xml
 
 artifactory:
   stage: publish
