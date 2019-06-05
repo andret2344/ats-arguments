@@ -5,21 +5,26 @@ stages:
   - test
   - publish
 
-#compile:
-#  stage: prepare
-#  script:
-#    - gradle compileJava
+compile:
+  stage: prepare
+  script:
+    - gradle compileJava
+  artifacts:
+    paths:
+      - build/classes/**
 
-#delombok:
-#  stage: prepare
-#  script:
-#    - gradle delombok
-#  artifacts:
-#    paths:
-#      - ./build/delombok/**
+delombok:
+  stage: prepare
+  script:
+    - gradle delombok
+  artifacts:
+    paths:
+      - ./build/delombok/**
 
 junit:
   stage: test
+  dependencies: 
+    - compile
   script:
     - gradle test
   when: on_success
@@ -49,10 +54,9 @@ pages:
   dependencies:
     - junit
   script:
-    - mv build/test-results/ public/ 
+    - mv build/reports/tests/test public/ 
   artifacts:
     paths:
       - public
-    expire_in: 30 days
-  #only:
-  #  - master
+  only:
+    - master
