@@ -18,6 +18,14 @@ delombok:
     paths:
       - ./build/delombok/**
 
+rspec:
+  stage: test
+  script:
+    - rspec
+  artifacts:
+    paths:
+      - coverage/
+
 junit:
   stage: test
   script:
@@ -28,7 +36,6 @@ junit:
       junit: build/test-results/test/**.xml
     paths:
       - ./build/reports/**
-
 
 artifactory:
   stage: publish
@@ -43,3 +50,16 @@ artifactory:
   only:
     - master
   when: manual
+  
+pages:
+  stage: publish
+  dependencies:
+    - rspec
+  script:
+    - mv coverage/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  #only:
+  #  - master
