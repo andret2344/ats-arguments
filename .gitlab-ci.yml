@@ -27,8 +27,7 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
     paths:
-      - ./coverage/**
-      - ./build/reports/**
+      - build/reports/**
 
 artifactory:
   stage: publish
@@ -49,7 +48,7 @@ pages:
   dependencies:
     - junit
   script:
-    - mv coverage/ public/
+    - mv build/test-results/ public/ 
   artifacts:
     paths:
       - public
