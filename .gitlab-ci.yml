@@ -55,7 +55,7 @@ pages:
     - junit
   script:
 #    - mv build/reports/tests/test public/ 
-    - mv build/test-results/tests public/ 
+    - mv build/test-results/test public/ 
   artifacts:
     paths:
       - public
