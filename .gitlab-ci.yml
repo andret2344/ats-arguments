@@ -54,7 +54,8 @@ pages:
   dependencies:
     - junit
   script:
-    - mv build/reports/tests/test public/ 
+#    - mv build/reports/tests/test public/ 
+    - mv build/test-results/tests public/ 
   artifacts:
     paths:
       - public
