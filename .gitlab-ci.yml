@@ -3,7 +3,7 @@ image: frekele/gradle
 stages:
   - prepare
   - test
-  - publish
+  - deploy
 
 compile:
   stage: prepare
@@ -36,7 +36,7 @@ junit:
       - build/test-results/test/**.xml
 
 artifactory:
-  stage: publish
+  stage: deploy
   before_script:
     - curl -fL https://getcli.jfrog.io | sh
     - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
@@ -50,12 +50,11 @@ artifactory:
   when: manual
   
 pages:
-  stage: publish
+  stage: deploy
   dependencies:
     - junit
   script:
-#    - mv build/reports/tests/test public/ 
-    - mv build/test-results/test public/ 
+    - mv build/test-results/test public/
   artifacts:
     paths:
       - public
