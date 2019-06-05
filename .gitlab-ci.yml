@@ -18,14 +18,6 @@ delombok:
     paths:
       - ./build/delombok/**
 
-rspec:
-  stage: test
-  script:
-    - rspec
-  artifacts:
-    paths:
-      - coverage/
-
 junit:
   stage: test
   script:
@@ -35,6 +27,7 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
     paths:
+      - ./coverage/**
       - ./build/reports/**
 
 artifactory:
@@ -54,7 +47,7 @@ artifactory:
 pages:
   stage: publish
   dependencies:
-    - rspec
+    - junit
   script:
     - mv coverage/ public/
   artifacts:
