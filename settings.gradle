@@ -2,5 +2,3 @@
  * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
  */
 rootProject.name = 'ats-arguments'
-
-enableFeaturePreview('STABLE_PUBLISHING')

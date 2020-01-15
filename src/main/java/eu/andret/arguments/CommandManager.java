@@ -19,9 +19,8 @@ public class CommandManager {
 	/**
 	 * Method registering new command classes.
 	 *
-	 * @param commandExecutorClass The {@link eu.andret.arguments.AnnotatedCommandExecutor}'s
-	 * subclass
-	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin}'s subclass as main class of
+	 * @param commandExecutorClass The class extending {@link eu.andret.arguments.AnnotatedCommandExecutor}
+	 * @param plugin The class extending {@link org.bukkit.plugin.java.JavaPlugin} as main class of
 	 * plugin
 	 *
 	 * @return AnnotatedCommand

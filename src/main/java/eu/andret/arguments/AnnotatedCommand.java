@@ -32,7 +32,7 @@ public class AnnotatedCommand {
 	/**
 	 * Sets on unknown sub command execution listener.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUnknownSubCommandExecutionListener}
+	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUnknownSubCommandExecutionListener}.
 	 */
 	public void setOnUnknownSubCommandExecutionListener(LocalCommandExecutor.OnUnknownSubCommandExecutionListener listener) {
 		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
@@ -41,7 +41,7 @@ public class AnnotatedCommand {
 	/**
 	 * Sets on insufficient permissions' listener.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnInsufficientPermissionsListener}
+	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnInsufficientPermissionsListener}.
 	 */
 	public void setOnInsufficientPermissionsListener(LocalCommandExecutor.OnInsufficientPermissionsListener listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
@@ -50,7 +50,7 @@ public class AnnotatedCommand {
 	/**
 	 * Sets on usage example listener.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUsageExampleListener}
+	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUsageExampleListener}.
 	 */
 	public void setOnUsageExampleListener(LocalCommandExecutor.OnUsageExampleListener listener) {
 		getLocalCommandExecutor().setOnUsageExampleListener(listener);

@@ -22,7 +22,7 @@ public @interface BaseCommand {
 	/**
 	 * The command all methods will be arguments for.
 	 *
-	 * @return The base command
+	 * @return The base command.
 	 */
 	String value();
 }

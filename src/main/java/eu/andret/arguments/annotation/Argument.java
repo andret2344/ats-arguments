@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 	/**
-	 * The position of argument that's  matches the method's n.ame
+	 * The position of argument that's matches the method's n.ame
 	 *
 	 * @return The position.
 	 */
@@ -31,14 +31,14 @@ public @interface Argument {
 	/**
 	 * Permission whether sender can perform the command.
 	 *
-	 * @return The permission
+	 * @return The permission.
 	 */
 	String permission() default "";
 
 	/**
 	 * Executor type that is allowed to execute the command.
 	 *
-	 * @return The executor type
+	 * @return The executor type.
 	 *
 	 * @see eu.andret.arguments.ExecutorType
 	 */
@@ -47,7 +47,7 @@ public @interface Argument {
 	/**
 	 * Response type of the method.
 	 *
-	 * @return The response type
+	 * @return The response type.
 	 *
 	 * @see eu.andret.arguments.ResponseType
 	 */
@@ -63,7 +63,7 @@ public @interface Argument {
 	/**
 	 * Aliases for argument, eg. "cmd" as alias for "command", and so on.
 	 *
-	 * @return The list of aliases
+	 * @return The list of aliases.
 	 */
 	String[] aliases() default {};
 
