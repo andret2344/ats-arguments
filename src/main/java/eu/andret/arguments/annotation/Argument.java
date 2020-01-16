@@ -45,7 +45,7 @@ public @interface Argument {
 	ExecutorType executorType() default ExecutorType.ALL;
 
 	/**
-	 * Response type of the method.
+	 * Who should get the returned from method value.
 	 *
 	 * @return The response type.
 	 *
