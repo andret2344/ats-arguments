@@ -6,6 +6,7 @@ package eu.andret.arguments.annotation;
 import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.ResponseType;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -18,7 +19,7 @@ import java.lang.annotation.Target;
  * @see eu.andret.arguments.AnnotatedCommandExecutor
  * @since May 18, 2019
  */
-@Target(java.lang.annotation.ElementType.METHOD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 	/**
