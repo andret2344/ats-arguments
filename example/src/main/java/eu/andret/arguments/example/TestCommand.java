@@ -6,7 +6,7 @@ import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import org.bukkit.command.CommandSender;
 
-@BaseCommand(value = "test", aliases = {"t", "tt"})
+@BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor {
 	public TestCommand(CommandSender sender, TestPlugin plugin) {
 		super(sender, plugin);

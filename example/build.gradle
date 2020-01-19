@@ -1,0 +1,41 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+	}
+}
+
+plugins {
+	id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+group = pluginGroup
+version = pluginVersion
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+	maven { url 'https://oss.sonatype.org/content/groups/public/' }
+}
+
+dependencies {
+	implementation rootProject
+	compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+}
+
+shadowJar {
+	dependencies {
+		rootProject
+	}
+}
+
+build.dependsOn(shadowJar)

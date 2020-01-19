@@ -53,7 +53,10 @@ plugins {
 
 shadowJar {
     relocate "eu.andret.arguments", "eu.andret.YOURPLUGINNAME.arguments"
+    configurations = [project.configurations.compile]
 }
+
+build.dependsOn(shadowJar)
 ```
 `pom.xml`:
 ```xml

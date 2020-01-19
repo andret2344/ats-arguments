@@ -8,8 +8,6 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
-
 /**
  * Basic class for registering annotated methods.
  *
@@ -37,7 +35,6 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		pluginCommand.setAliases(Arrays.asList(annotation.aliases()));
 		pluginCommand.setExecutor(new LocalCommandExecutor(commandExecutorClass, plugin));
 		pluginCommand.setTabCompleter(new LocalTabCompleter(commandExecutorClass));
 		return new AnnotatedCommand(pluginCommand);

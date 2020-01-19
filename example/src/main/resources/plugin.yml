@@ -1,0 +1,10 @@
+name: Test
+main: eu.andret.arguments.example.TestPlugin
+version: 1.0-SNAPSHOT
+
+commands:
+  test:
+    usage: /<command>
+    aliases:
+      - t
+      - tt
