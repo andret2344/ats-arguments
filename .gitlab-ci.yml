@@ -1,4 +1,4 @@
-image: frekele/gradle
+image: gradle:alpine
 
 stages:
   - prepare
@@ -23,7 +23,7 @@ delombok:
 
 junit:
   stage: test
-  dependencies: 
+  dependencies:
     - compile
   script:
     - gradle test
@@ -48,7 +48,7 @@ artifactory:
   only:
     - master
   when: manual
-  
+
 pages:
   stage: deploy
   dependencies:
