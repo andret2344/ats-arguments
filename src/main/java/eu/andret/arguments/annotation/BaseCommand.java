@@ -25,4 +25,11 @@ public @interface BaseCommand {
 	 * @return The base command.
 	 */
 	String value();
+
+	/**
+	 * The command aliases array.
+	 *
+	 * @return Aliases.
+	 */
+	String[] aliases() default {};
 }

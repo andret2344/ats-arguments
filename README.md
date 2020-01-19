@@ -83,7 +83,7 @@ shadowJar {
     </plugins>
 </build>
 ```
-Node: It's not necessarily has to be `eu.andret.YOURPLUGINNAM`, it can be any package, that will be for sure unique on the server, but it can be your custom package (like: `com.example.test.arguments`).
+> **Note**: It's not necessarily has to be `eu.andret.YOURPLUGINNAM`, it can be any package, that will be for sure unique on the server, but it can be your custom package (like: `com.example.test.arguments`).
 
 ## Basic code setup
 To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and calling it's constructor. This class also needs to be annotated with `@BaseCommand`.
@@ -143,19 +143,20 @@ Now, let's see what can we set up using `@Argument`:
 
 | setting | type | values | default | description |
 | ------- | ---- | ------ | ------- | ----------- |
-| permission | `String` | any string | `""` | Permission whether sender can perform the command. |
-| executorType | `ExecutorType` | `ALL`, `PLAYER`, `CONSOLE` | `ALL` | Executor type that is allowed to execute the command. |
-| responseType | `ResponseType` | `NONE`, `SENDER`, `CONSOLE`, `BROADCAST` | `SENDER` | Who should get the returned from method value. |
-| description | `String` | any string | `` | The description of command that will show up in help. |
-| aliases | `String[]` | array of any non-colliding strings | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
-| position | `int` | any non-negative int lower or equal to methods arguments count | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
-| showIfNoPerms | `boolean` | Well, any boolean actually | `true` | If this argument should be visible in generic help message. |
+| permission | `String` | Any string. | `""` | Permission whether sender can perform the command. |
+| executorType | `ExecutorType` | `ALL`, `PLAYER` or `CONSOLE`. | `ALL` | Executor type that is allowed to execute the command. |
+| responseType | `ResponseType` | `NONE`, `SENDER`, `CONSOLE` or `BROADCAST`. | `SENDER` | Who should get the returned from method value. |
+| description | `String` | Any String. | `""` | The description of command that will show up in help. |
+| aliases | `String[]` | Array of any non-colliding strings. | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
+| position | `int` | Any non-negative int lower or equal to methods arguments count. | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
+| showIfNoPerms | `boolean` | Well, any boolean actually. | `true` | If this argument should be visible in generic help message. |
 
 To be formal, here's the table for `@BaseCommand`:
 
-| setting | type | values | description |
-| ------- | ---- | ------ | ----------- |
-| value | `String` | any string representing command | The command all methods will be arguments for. |
+| setting | type | values | default | description |
+| ------- | ---- | ------ | ------- | ----------- |
+| value | `String` | any string representing command | None. | The command all methods will be arguments for. |
+| aliases | `String[]` | Array od any Strings. | `{}` | Aliases to command. |
 
 At the end, you can use a few listeners to indicates certain behavior. All listeners needs to be set up on `AnnotatedCommand`.
 ```java
@@ -169,19 +170,22 @@ public class TestPlugin extends JavaPlugin {
 ```
 Possible listeners are:
 - `OnInsufficientPermissionsListener`
-- `OnUnknownSubCommandListener`
+- `OnUnknownSubCommandExecutionListener`
 - `OnUsageExampleListener`
 
 ## Example usage
 `TestPlugin.java`:
 ```java
 public class TestPlugin extends JavaPlugin {
-    @Override 
+    @Override
     public void onEnable() {
         AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
-        command.setOnIncufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
-        command.setOnUnknownSubCommandListener(sender -> sender.sendMessage("I don't know what you want from me"));
-        command.setOnUsageExampleListener((sender, description) -> sender.sendMessage("Here's what you probably wanted: " + description));
+        command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
+        command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
+        command.setOnUsageExampleListener((sender, description) -> {
+            sender.sendMessage("Here's what you probably wanted: " + description);
+            return true;
+        });
     }
 }
 ```
