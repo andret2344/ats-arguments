@@ -19,7 +19,7 @@ delombok:
     - gradle delombok
   artifacts:
     paths:
-      - ./build/delombok/**
+      - build/delombok/**
 
 junit:
   stage: test
