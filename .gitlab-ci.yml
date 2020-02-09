@@ -49,7 +49,7 @@ artifactory:
 pages:
   stage: deploy
   dependencies:
-    - junit
+    - jacoco
   script:
     - mv build/test-results/test public/
   artifacts:
