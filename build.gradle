@@ -20,6 +20,7 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'java'
+	id 'jacoco'
 }
 
 apply plugin: 'com.jfrog.artifactory'
@@ -45,6 +46,18 @@ dependencies {
 }
 
 compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
+
+jacoco {
+	toolVersion = "0.8.5"
+	reportsDir = file("$buildDir/reports/jacoco")
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		csv.enabled false
+	}
+}
 
 javadoc {
 	source = sourceSets.main.allJava
