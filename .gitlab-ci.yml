@@ -51,7 +51,7 @@ pages:
   dependencies:
     - jacoco
   script:
-    - mv build/test-results/test public/
+    - mv build/reports/jacoco/test public/
   artifacts:
     paths:
       - public
