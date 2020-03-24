@@ -32,7 +32,7 @@ junit:
     paths:
       - build/reports/jacoco/
     reports:
-      junit: build/test-results/test/**/TEST-*.xml
+      junit: build/test-results/test/TEST-*.xml
 
 artifactory:
   stage: deploy
