@@ -31,6 +31,8 @@ junit:
   artifacts:
     paths:
       - build/reports/jacoco/
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
 
 artifactory:
   stage: deploy
@@ -56,5 +58,5 @@ pages:
   artifacts:
     paths:
       - public
-  only:
-    - master
+#  only:
+#    - master
