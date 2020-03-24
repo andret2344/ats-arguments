@@ -26,7 +26,8 @@ junit:
   dependencies:
     - compile
   script:
-    - gradle test
+    - gradle test printCoverage
+  coverage: '/^Coverage:\s(\d+\.\d+%)/'
   when: on_success
   artifacts:
     paths:
