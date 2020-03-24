@@ -26,6 +26,7 @@ plugins {
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
+apply plugin: 'jacoco'
 
 group 'eu.andret'
 version '0.0.5-alpha2'
@@ -47,14 +48,25 @@ dependencies {
 
 compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
 
-jacoco {
-	toolVersion = "0.8.5"
-	reportsDir = file("$buildDir/reports/jacoco")
+test {
+	finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
 	reports {
-		xml.enabled true
+		xml.enabled false
+		csv.enabled false
+		html.destination new File("${buildDir}/jacocoHtml")
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.1
+			}
+		}
 	}
 }
 
@@ -143,26 +155,26 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
 }
 
 task coverageReport() {
-  dependsOn jacocoTestReport
+	dependsOn jacocoTestReport
 
-  def reportFile = project.file("build/reports/jacoco/test/jacocoTestReport.xml")
-  inputs.file(reportFile)
+	def reportFile = project.file("build/reports/jacoco/test/jacocoTestReport.xml")
+	inputs.file(reportFile)
 
-  doLast {
-    def slurper = new XmlSlurper()
-    slurper.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-    slurper.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-    def xml = slurper.parse(reportFile)
-    def counter = xml.counter.find {
-      node->node.@type == 'BRANCH'
-    }
-    def missed = counter.@missed.toDouble()
-    def covered = counter.@covered.toDouble()
-    def total = missed + covered
-    def percentage = covered / total * 100
+	doLast {
+		def slurper = new XmlSlurper()
+		slurper.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+		slurper.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+		def xml = slurper.parse(reportFile)
+		def counter = xml.counter.find {
+			node -> node.@type == 'BRANCH'
+		}
+		def missed = counter.@missed.toDouble()
+		def covered = counter.@covered.toDouble()
+		def total = missed + covered
+		def percentage = covered / total * 100
 
-    printf "Missed %.0f branches %n", missed
-    printf "Covered %.0f branches %n", covered
-    printf "Total %.0f %% %n", percentage
-  }
+		printf "Missed %.0f branches %n", missed
+		printf "Covered %.0f branches %n", covered
+		printf "Total %.0f %% %n", percentage
+	}
 }

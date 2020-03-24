@@ -21,16 +21,16 @@ delombok:
     paths:
       - build/delombok/**
 
-jacoco:
+junit:
   stage: test
   dependencies:
     - compile
   script:
-    - gradle check jacocoTestReport coverageReport
+    - gradle test
   when: on_success
   artifacts:
     paths:
-      - build/reports/jacoco/**
+      - build/reports/jacoco/
 
 artifactory:
   stage: deploy
@@ -49,9 +49,10 @@ artifactory:
 pages:
   stage: deploy
   dependencies:
-    - jacoco
+    - test
   script:
-    - mv build/reports/jacoco/test public/
+    - mkdir public
+    - mv build/reports/jacoco/test/html/* public
   artifacts:
     paths:
       - public
