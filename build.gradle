@@ -149,3 +149,28 @@ task delombok(type: DelombokTask, dependsOn: compileJava) {
 		outputDir.deleteDir()
 	}
 }
+
+task coverageReport() {
+	dependsOn jacocoTestReport
+
+	def reportFile = project.file("build/reports/jacoco/test/jacocoTestReport.xml")
+	inputs.file(reportFile)
+
+	doLast {
+		def slurper = new XmlSlurper()
+		slurper.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+		slurper.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+		def xml = slurper.parse(reportFile)
+		def counter = xml.counter.find {
+			node -> node.@type == 'BRANCH'
+		}
+		double missed = counter.@missed.toDouble()
+		double covered = counter.@covered.toDouble()
+		double total = missed + covered
+		double percentage = covered / total * 100
+
+		printf("Missed %.0f branches %n ", missed)
+		printf("Covered %.0f branches %n ", covered)
+		printf("Total %.0f %% %n ", percentage)
+	}
+}
