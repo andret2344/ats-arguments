@@ -7,6 +7,9 @@ package eu.andret.arguments;
 import lombok.Value;
 import org.bukkit.command.PluginCommand;
 
+import java.util.Map;
+import java.util.function.Function;
+
 /**
  * Wrapper class for classical {@link org.bukkit.command.PluginCommand}.
  *
@@ -15,11 +18,7 @@ import org.bukkit.command.PluginCommand;
  */
 @Value
 public class AnnotatedCommand {
-	private final PluginCommand command;
-
-	AnnotatedCommand(PluginCommand command) {
-		this.command = command;
-	}
+	PluginCommand command;
 
 	LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
@@ -54,5 +53,13 @@ public class AnnotatedCommand {
 	 */
 	public void setOnUsageExampleListener(LocalCommandExecutor.OnUsageExampleListener listener) {
 		getLocalCommandExecutor().setOnUsageExampleListener(listener);
+	}
+
+	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
+		Map<String, Mapper<?>> mappers = getLocalCommandExecutor().getMappers();
+		if (mappers.containsKey(id)) {
+			throw new IllegalArgumentException("Mapper with this id is already registered!");
+		}
+		mappers.put(id, new Mapper<>(clazz, mapper));
 	}
 }

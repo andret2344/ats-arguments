@@ -4,6 +4,8 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.Param;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,6 +38,8 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
 	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
 	private final JavaPlugin plugin;
+	@Getter
+	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	private OnUsageExampleListener onUsageExampleListener = (sender, desc) -> true;
@@ -318,8 +322,14 @@ class LocalCommandExecutor implements CommandExecutor {
 				if (!isTypeMatchingVarArgParameter(parameter, classes, i)) {
 					return false;
 				}
-			} else if (!classes.get(i).isAssignableFrom(parameter.getType())) {
-				return false;
+			} else {
+				Param param = parameter.getAnnotation(Param.class);
+				System.out.println(param);
+				System.out.println(mappers.get(param.value()).getClazz());
+				if ((param != null && !mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType())) &&
+						!classes.get(i).isAssignableFrom(parameter.getType())) {
+					return false;
+				}
 			}
 		}
 		return true;
