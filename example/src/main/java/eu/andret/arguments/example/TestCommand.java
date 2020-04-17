@@ -1,7 +1,6 @@
 /*
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
-
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -32,6 +31,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 
 	@Argument
 	public String player(@Param("basicPlayerMapper") Player player) {
-		return "Hello, " + player.getName() + "! :)";
+		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
+		return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
 	}
 }

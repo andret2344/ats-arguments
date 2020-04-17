@@ -143,7 +143,8 @@ The most meaningful part of `atsArguments` is the `@Argument` annotation. It has
 - The name of the method (case insensitive) is an command argument.
 - Return value will be send automatically, unless changed (`void` or `null` return types don't send anything)
 - Method can have multiple arguments, of any primitive type or String. Library will be trying to parse command argument into method ones.
-- Method can have array or vararg, rules as the point above.
+  - Exception is to create a `Mapper` and use the `@Param` annotation.
+- Method cannot have array, only vararg is possible, rules as the point above.
 - There can be multiple method with the same name, missing arguments are treated as obsolete.
 - Library automatically uses tab completion.
 - In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
@@ -168,6 +169,12 @@ To be formal, here's the table for `@BaseCommand`:
 | value | `String` | any string representing command | None. | The command all methods will be arguments for. |
 | aliases | `String[]` | Array od any Strings. | `{}` | Aliases to command. |
 
+Another annotation `@Param` has following table:
+
+| setting | type | values |  description |
+| ------- | ---- | ------ |  ----------- |
+| value | `String` | any string | The mapper id to find exact registered mapper. |
+
 At the end, you can use a few listeners to indicates certain behavior. All listeners needs to be set up on `AnnotatedCommand`.
 ```java
 public class TestPlugin extends JavaPlugin {
@@ -181,7 +188,13 @@ public class TestPlugin extends JavaPlugin {
 Possible listeners are:
 - `OnInsufficientPermissionsListener`
 - `OnUnknownSubCommandExecutionListener`
-- `OnUsageExampleListener`
+
+Command can also have mappers. Mappers are used to automate changes from String to any other type. The method `addArgumentMapper` requires 3 arguments:
+- The unique id of mapper
+- The target return type
+- The `Function<String, E>` where the second argument is the `E` type.
+
+Then you can use `@Param(value = "id")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
 
 ## Example usage
 `TestPlugin.java`:
@@ -192,10 +205,7 @@ public class TestPlugin extends JavaPlugin {
         AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-        command.setOnUsageExampleListener((sender, description) -> {
-            sender.sendMessage("Here's what you probably wanted: " + description);
-            return true;
-        });
+        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
     }
 }
 ```
@@ -216,7 +226,6 @@ public class TestCommand extends AnnotatedCommandExecutor {
     @Argument(executorType = ExecutorType.CONSOLE)
     public String administration(int level) { 
         // "/test administration 3", only console can perform this command, sender (console) gets "Level set to 3"
-        ((TestPlugin)plugin).setLevel(level);
         return "Level set to " + level; 
     }
     
@@ -231,6 +240,12 @@ public class TestCommand extends AnnotatedCommandExecutor {
         // "/test spleef start" (instead of "/test start spleef") 
         GameManager.getGame(gameName).start();
         return gameName + " started"; 
+    }
+    
+    @Argument
+    public String player(@Param("basicPlayerMapper") Player player) {
+        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844 
+        return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId(); 
     }
 }
 ```
