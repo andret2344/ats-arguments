@@ -1,12 +1,17 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.mapper.IPermissionMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.lang.reflect.Method;
 
-public final class PermissionMapper {
+public final class PermissionMapper implements IPermissionMapper {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean mapPermission(Method method, CommandSender sender) {
 		if (sender.isOp()) {
 			return true;

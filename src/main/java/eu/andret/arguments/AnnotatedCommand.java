@@ -47,7 +47,6 @@ public class AnnotatedCommand {
 		void insufficientPermissions(CommandSender sender);
 	}
 
-
 	LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
 	}
@@ -73,7 +72,6 @@ public class AnnotatedCommand {
 	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
 	}
-
 
 	/**
 	 * Adds the mapper that allows to instantly create matching type instead of expecting String.

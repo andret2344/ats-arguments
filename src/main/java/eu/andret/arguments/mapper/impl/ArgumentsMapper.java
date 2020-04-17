@@ -3,6 +3,7 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.mapper.IArgumentMapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -12,9 +13,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public final class ArgumentsMapper {
+/**
+ * An implementation for {@link eu.andret.arguments.mapper.IArgumentMapper}
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
+public final class ArgumentsMapper implements IArgumentMapper {
 	private final Util util = Util.getInstance();
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean mapArguments(Method method, String[] command, Map<String, Mapper<?>> mappers) {
 		int size = Math.min(method.getParameters().length, method.getParameterCount());
 		if (size == 0 && method.getParameters().length + method.getParameterCount() != 0) {

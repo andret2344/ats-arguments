@@ -5,6 +5,7 @@ import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,17 +18,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Value
-public class MethodInvoker {
+public class MethodInvoker implements IMethodInvoker {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
 	Util util = Util.getInstance();
 	JavaPlugin plugin;
 	Map<String, Mapper<?>> mappers;
 
-	public void invokeMethod(
-			Method method,
-			String[] command,
-			CommandSender sender,
-			Class<? extends AnnotatedCommandExecutor> executor) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
 		Object[] data = recalculateArguments(method, command);
 		Object result = invoke(method, sender, executor, data);
 		sendProperResponse(sender, result, method);

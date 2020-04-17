@@ -10,6 +10,10 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 
 public final class ExecutorTypeMapper implements IExecutorTypeMapper {
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean mapExecutorType(Method method, CommandSender sender) {
 		ExecutorType executorType = method.getAnnotation(Argument.class).executorType();

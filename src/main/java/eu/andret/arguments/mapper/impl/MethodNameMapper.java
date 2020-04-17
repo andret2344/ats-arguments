@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public final class MethodNameMapper implements IMethodNameMapper {
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean mapMethodName(Method method, String[] command) {
 		return Optional.of(method)

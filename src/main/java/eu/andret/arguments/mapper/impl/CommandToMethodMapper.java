@@ -12,11 +12,20 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Class that maps command to exact method to be called.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
 public final class CommandToMethodMapper implements ICommandToMethodMapper {
 	private final IMethodNameMapper methodNameMapper = new MethodNameMapper();
 	private final IExecutorTypeMapper executorTypeMapper = new ExecutorTypeMapper();
 	private final ArgumentsMapper argumentsMapper = new ArgumentsMapper();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<Method> mapCommandToMethod(Class<? extends AnnotatedCommandExecutor> commandClass,
 											   String[] command,

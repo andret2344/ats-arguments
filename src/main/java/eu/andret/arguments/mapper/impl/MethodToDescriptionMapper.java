@@ -1,18 +1,19 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public final class MethodToDescriptionMapper {
+public final class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String mapMethodToDescription(Method method, String command) {
-		return getDescription(command, method);
-	}
-
-	private String getDescription(String command, Method method) {
 		String message = "/" + command + getCommandPattern(method);
 		String description = method.getAnnotation(Argument.class).description();
 		if (!description.isEmpty()) {
