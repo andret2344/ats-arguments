@@ -1,3 +1,7 @@
+/*
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -5,8 +9,8 @@ import eu.andret.arguments.ResponseType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor {
@@ -27,7 +31,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") Material player) {
-		return "Hello, " + player.name() + "! :)";
+	public String player(@Param("basicPlayerMapper") Player player) {
+		return "Hello, " + player.getName() + "! :)";
 	}
 }
