@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
@@ -26,12 +26,9 @@ plugins {
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
-apply plugin: 'jacoco'
 
-group 'eu.andret'
-version '0.0.5-alpha2'
-
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
