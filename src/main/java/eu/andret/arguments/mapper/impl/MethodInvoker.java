@@ -1,3 +1,7 @@
+/*
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -87,10 +91,8 @@ public class MethodInvoker implements IMethodInvoker {
 	}
 
 	private Object convert(Param param, Class<?> c, String value) {
-		System.out.println(param);
 		if (param != null && mappers.containsKey(param.value())) {
 			Mapper<?> mapper = mappers.get(param.value());
-			System.out.println(mapper);
 			if (mapper.getClazz().equals(c)) {
 				return c.cast(mapper.getFunction().apply(value));
 			}
