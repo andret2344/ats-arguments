@@ -32,33 +32,6 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Sets on unknown sub command execution listener.
-	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUnknownSubCommandExecutionListener}.
-	 */
-	public void setOnUnknownSubCommandExecutionListener(LocalCommandExecutor.OnUnknownSubCommandExecutionListener listener) {
-		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
-	}
-
-	/**
-	 * Sets on insufficient permissions' listener.
-	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnInsufficientPermissionsListener}.
-	 */
-	public void setOnInsufficientPermissionsListener(LocalCommandExecutor.OnInsufficientPermissionsListener listener) {
-		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
-	}
-
-	/**
-	 * Sets on usage example listener.
-	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUsageExampleListener}.
-	 */
-	public void setOnUsageExampleListener(LocalCommandExecutor.OnUsageExampleListener listener) {
-		getLocalCommandExecutor().setOnUsageExampleListener(listener);
-	}
-
-	/**
 	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link
