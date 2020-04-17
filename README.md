@@ -20,9 +20,11 @@ repositories {
         <id>andret-tools-system</id>
         <url>https://repo.andret.eu/andret-tools-system</url>
     </repository>
+    <!-- other repositories -->
 </repositories>
 ```
-- Next, add the dependency.
+
+- Add the dependency.
 
 `build.gradle`:
 ```groovy
@@ -39,8 +41,10 @@ dependencies {
         <artifactId>ats-arguments</artifactId>
         <version>0.0.5-alpha2</version>
     </dependency>
+    <!-- other dependencies -->
 </dependencies>
 ```
+
 - At the end, you have to shadow the dependency not to have collision in case two plugins uses the same classes
 
 `build.gradle`:
@@ -84,9 +88,11 @@ build.dependsOn(shadowJar)
             </executions>
         </plugin>
     </plugins>
+    <!-- ... -->
 </build>
 ```
-> **Note**: It's not necessarily has to be `eu.andret.YOURPLUGINNAM`, it can be any package, that will be for sure unique on the server, but it can be your custom package (like: `com.example.test.arguments`).
+
+> **Note**: It's not necessarily has to be `eu.andret.YOURPLUGINNAME`, it can be any package, that will be for sure unique on the server, but it can be your custom package (like: `com.example.test.arguments`).
 
 ## Basic code setup
 To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and calling it's constructor. This class also needs to be annotated with `@BaseCommand`.
@@ -108,9 +114,10 @@ public class TestPlugin extends JavaPlugin {
     }
 }
 ```
-That's it, basic setup is done. However, you have to remember to register the command you wrote in `@BaseCommand` inside your `plugin.yml` file!
 
-Now, to use this library in proper way, simply write any non-static method in your Command class, annotating it with `@Argument`:
+That's it, the basic setup is done. However, you have to remember to register the command you put into  `@BaseCommand` inside your `plugin.yml` file!
+
+Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`-annotated class, annotating it with `@Argument`:
 ```java
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor {
@@ -124,22 +131,22 @@ public class TestCommand extends AnnotatedCommandExecutor {
     }
 }
 ```
-This one will be parsed into `/test testing` command, which executing will result in displaying text on console.
+This one will be parsed into `/test testing` command, which executing will result in displaying the text on the console.
 
 ## How should I use it?
-First of all, you have to know, that **only** annotated classes and methods are important. You can write any amount of "typical" methods in `@BaseCommand` class, and if they don't have `@Argument` annotation, you don't have to worry of them.
+First of all, you have to know, that **only** annotated classes and methods are important. You can write any amount of "typical" methods in `@BaseCommand` class, and if they aren't annotated with `@Argument`, you don't have to worry of them.
 
 Ok, but what exactly can you do?
 
-The most meaning part of this library is the `@Argument` annotation. It has plenty of settings you can use, but first, look at rules that applies:
+The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings you can use, but first, look at rules that applies:
 
-- The name of the method (case insensitive) is an argument.
-- Return value will be send automatically, unless changed (`void` or `null` don't send anything)
+- The name of the method (case insensitive) is an command argument.
+- Return value will be send automatically, unless changed (`void` or `null` return types don't send anything)
 - Method can have multiple arguments, of any primitive type or String. Library will be trying to parse command argument into method ones.
-- Method can have array or vararg, rules are above.
+- Method can have array or vararg, rules as the point above.
 - There can be multiple method with the same name, missing arguments are treated as obsolete.
 - Library automatically uses tab completion.
-- In case of mismatching argument (method's name) or length of others, it'll result in error to sender.
+- In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
 - No argument after base command will produce simple syntax of available arguments.
 
 Now, let's see what can we set up using `@Argument`:
