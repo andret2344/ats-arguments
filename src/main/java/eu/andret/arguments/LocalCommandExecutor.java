@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
 package eu.andret.arguments;
 
@@ -29,7 +29,7 @@ import java.util.stream.Stream;
  * Local command executor, allows customization of commands behavior.
  *
  * @author Andret
- * @since May 18, 2019
+ * @since May 18, 2020
  */
 class LocalCommandExecutor implements CommandExecutor {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();

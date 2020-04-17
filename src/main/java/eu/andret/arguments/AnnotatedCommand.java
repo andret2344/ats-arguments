@@ -1,9 +1,11 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.bukkit.command.PluginCommand;
 
@@ -14,12 +16,9 @@ import org.bukkit.command.PluginCommand;
  * @since Jun 02, 2019
  */
 @Value
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class AnnotatedCommand {
-	private final PluginCommand command;
-
-	AnnotatedCommand(PluginCommand command) {
-		this.command = command;
-	}
+	PluginCommand command;
 
 	LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
