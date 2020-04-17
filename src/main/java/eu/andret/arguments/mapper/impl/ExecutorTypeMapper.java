@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 
-public class ExecutorTypeMapper implements IExecutorTypeMapper {
+public final class ExecutorTypeMapper implements IExecutorTypeMapper {
 	@Override
 	public boolean mapExecutorType(Method method, CommandSender sender) {
 		ExecutorType executorType = method.getAnnotation(Argument.class).executorType();

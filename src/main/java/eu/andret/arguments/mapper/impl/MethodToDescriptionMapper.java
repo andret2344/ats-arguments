@@ -7,7 +7,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class MethodToDescriptionMapper {
+public final class MethodToDescriptionMapper {
 	public String mapMethodToDescription(Method method, String command) {
 		return getDescription(command, method);
 	}

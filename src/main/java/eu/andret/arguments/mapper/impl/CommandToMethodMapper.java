@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
-public class CommandToMethodMapper implements ICommandToMethodMapper {
+public final class CommandToMethodMapper implements ICommandToMethodMapper {
 	private final IMethodNameMapper methodNameMapper = new MethodNameMapper();
 	private final IExecutorTypeMapper executorTypeMapper = new ExecutorTypeMapper();
 	private final PermissionMapper permissionMapper = new PermissionMapper();

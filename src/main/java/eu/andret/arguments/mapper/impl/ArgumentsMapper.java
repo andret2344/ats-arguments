@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ArgumentsMapper {
+public final class ArgumentsMapper {
 	private final Util util = Util.getInstance();
 
 	public boolean mapArguments(Method method, String[] command, Map<String, Mapper<?>> mappers) {

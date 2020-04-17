@@ -6,7 +6,7 @@ import org.bukkit.command.ConsoleCommandSender;
 
 import java.lang.reflect.Method;
 
-public class PermissionMapper {
+public final class PermissionMapper {
 	public boolean mapPermission(Method method, CommandSender sender) {
 		if (sender.isOp()) {
 			return true;

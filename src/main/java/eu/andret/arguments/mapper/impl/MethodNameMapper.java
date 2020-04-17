@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class MethodNameMapper implements IMethodNameMapper {
+public final class MethodNameMapper implements IMethodNameMapper {
 	@Override
 	public boolean mapMethodName(Method method, String[] command) {
 		return Optional.of(method)
