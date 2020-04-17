@@ -15,7 +15,6 @@ import java.util.Optional;
 public final class CommandToMethodMapper implements ICommandToMethodMapper {
 	private final IMethodNameMapper methodNameMapper = new MethodNameMapper();
 	private final IExecutorTypeMapper executorTypeMapper = new ExecutorTypeMapper();
-	private final PermissionMapper permissionMapper = new PermissionMapper();
 	private final ArgumentsMapper argumentsMapper = new ArgumentsMapper();
 
 	@Override
@@ -26,7 +25,6 @@ public final class CommandToMethodMapper implements ICommandToMethodMapper {
 		return Arrays.stream(commandClass.getDeclaredMethods())
 				.filter(method -> methodNameMapper.mapMethodName(method, command))
 				.filter(method -> executorTypeMapper.mapExecutorType(method, sender))
-				.filter(method -> permissionMapper.mapPermission(method, sender))
 				.filter(method -> argumentsMapper.mapArguments(method, command, mappers))
 				.findFirst();
 	}

@@ -7,6 +7,7 @@ package eu.andret.arguments;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 import java.util.function.Function;
@@ -22,6 +23,31 @@ import java.util.function.Function;
 public class AnnotatedCommand {
 	PluginCommand command;
 
+	/**
+	 * Listener to define action when sender performs unknown sub-command.
+	 */
+	public interface OnUnknownSubCommandExecutionListener {
+		/**
+		 * Unknown sub-command executed.
+		 *
+		 * @param sender The sender that executed the unknown sub-command
+		 */
+		void unknownSubCommandExecuted(CommandSender sender);
+	}
+
+	/**
+	 * Listener to define action when sender has insufficient permissions.
+	 */
+	public interface OnInsufficientPermissionsListener {
+		/**
+		 * Insufficient permissions.
+		 *
+		 * @param sender The sender that executed the command with no permissions.
+		 */
+		void insufficientPermissions(CommandSender sender);
+	}
+
+
 	LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
 	}
@@ -29,6 +55,25 @@ public class AnnotatedCommand {
 	LocalTabCompleter getLocalTabCompleter() {
 		return (LocalTabCompleter) command.getTabCompleter();
 	}
+
+	/**
+	 * Sets on unknown sub command execution listener.
+	 *
+	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
+	 */
+	public void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
+		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
+	}
+
+	/**
+	 * Sets on insufficient permissions' listener.
+	 *
+	 * @param listener The {@link OnInsufficientPermissionsListener}.
+	 */
+	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
+		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
+	}
+
 
 	/**
 	 * Adds the mapper that allows to instantly create matching type instead of expecting String.

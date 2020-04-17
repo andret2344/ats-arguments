@@ -7,6 +7,7 @@ import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
+import eu.andret.arguments.mapper.impl.PermissionMapper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,9 +27,12 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper();
 	private final MethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
+	private final PermissionMapper permissionMapper = new PermissionMapper();
 	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private final Class<? extends AnnotatedCommandExecutor> executor;
 	private final MethodInvoker methodInvoker;
+	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
+	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 
 	/**
 	 * Constructs the LocalCommandExecutor.
@@ -39,7 +43,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 */
 	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> executor, JavaPlugin plugin) {
 		this.executor = executor;
-		methodInvoker = new MethodInvoker(plugin);
+		methodInvoker = new MethodInvoker(plugin, mappers);
 	}
 
 	@Override
@@ -51,7 +55,15 @@ class LocalCommandExecutor implements CommandExecutor {
 		}
 		commandToMethodMapper
 				.mapCommandToMethod(executor, args, sender, mappers)
-				.ifPresent(method -> methodInvoker.invokeMethod(method, args, sender, executor));
+				.ifPresentOrElse(method -> {
+							if (permissionMapper.mapPermission(method, sender)) {
+								methodInvoker.invokeMethod(method, args, sender, executor);
+							} else {
+								onInsufficientPermissionsListener.insufficientPermissions(sender);
+							}
+						},
+						() -> onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender)
+				);
 		return true;
 	}
 
@@ -62,4 +74,23 @@ class LocalCommandExecutor implements CommandExecutor {
 		mappers.put(id, mapper);
 		return true;
 	}
+
+	/**
+	 * Sets on unknown sub command execution listener.
+	 *
+	 * @param listener The {@link AnnotatedCommand.OnUnknownSubCommandExecutionListener}
+	 */
+	void setOnUnknownSubCommandExecutionListener(AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
+		onUnknownSubCommandExecutionListener = listener;
+	}
+
+	/**
+	 * Sets on insufficient permissions' listener.
+	 *
+	 * @param listener The {@link AnnotatedCommand.OnInsufficientPermissionsListener}
+	 */
+	void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
+		onInsufficientPermissionsListener = listener;
+	}
+
 }

@@ -1,8 +1,10 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.Param;
 import lombok.Value;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,10 +19,15 @@ import java.util.Map;
 @Value
 public class MethodInvoker {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
-	JavaPlugin plugin;
 	Util util = Util.getInstance();
+	JavaPlugin plugin;
+	Map<String, Mapper<?>> mappers;
 
-	public void invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
+	public void invokeMethod(
+			Method method,
+			String[] command,
+			CommandSender sender,
+			Class<? extends AnnotatedCommandExecutor> executor) {
 		Object[] data = recalculateArguments(method, command);
 		Object result = invoke(method, sender, executor, data);
 		sendProperResponse(sender, result, method);
@@ -55,20 +62,33 @@ public class MethodInvoker {
 			if (i == argument.position()) {
 				skip++;
 			}
+			Param param = method.getParameters()[i].getAnnotation(Param.class);
 			if (method.getParameters()[i].isVarArgs()) {
 				Class<?> type = method.getParameters()[i].getType().getComponentType();
 				int length = args.length - i + skip - 2;
 				Object array = Array.newInstance(type, length);
 				for (int j = 0; j < length; j++) {
-					Array.set(array, j, util.convert(type, args[j + i + skip]));
+					Array.set(array, j, convert(param, type, args[j + i + skip]));
 				}
 				data[i] = array;
 				break;
 			} else {
-				data[i] = util.convert(method.getParameters()[i].getType(), args[i + skip]);
+				data[i] = convert(param, method.getParameters()[i].getType(), args[i + skip]);
 			}
 		}
 		return data;
+	}
+
+	private Object convert(Param param, Class<?> c, String value) {
+		System.out.println(param);
+		if (param != null && mappers.containsKey(param.value())) {
+			Mapper<?> mapper = mappers.get(param.value());
+			System.out.println(mapper);
+			if (mapper.getClazz().equals(c)) {
+				return c.cast(mapper.getFunction().apply(value));
+			}
+		}
+		return util.convert(c, value);
 	}
 
 	private Object invoke(Method method, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor, Object... data) {

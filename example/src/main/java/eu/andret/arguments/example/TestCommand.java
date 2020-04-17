@@ -5,8 +5,8 @@ import eu.andret.arguments.ResponseType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor {
@@ -27,8 +27,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") Player player) {
-		// "/test player Andret2344" will produce "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844! :)"
-		return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId() + "! :)";
+	public String player(@Param("basicPlayerMapper") Material player) {
+		return "Hello, " + player.name() + "! :)";
 	}
 }
