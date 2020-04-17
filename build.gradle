@@ -26,12 +26,9 @@ plugins {
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
-apply plugin: 'jacoco'
 
-group 'eu.andret'
-version '0.0.5-alpha2'
-
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
