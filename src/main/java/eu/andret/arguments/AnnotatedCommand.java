@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.bukkit.command.PluginCommand;
 
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -43,10 +42,8 @@ public class AnnotatedCommand {
 	 * method's parameter
 	 */
 	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
-		Map<String, Mapper<?>> mappers = getLocalCommandExecutor().getMappers();
-		if (mappers.containsKey(id)) {
+		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper))) {
 			throw new IllegalArgumentException("Mapper with this id is already registered!");
 		}
-		mappers.put(id, new Mapper<>(clazz, mapper));
 	}
 }

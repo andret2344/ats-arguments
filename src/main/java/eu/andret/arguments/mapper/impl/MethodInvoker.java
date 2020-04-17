@@ -74,12 +74,13 @@ public class MethodInvoker {
 	private Object invoke(Method method, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor, Object... data) {
 		try {
 			if (!executors.containsKey(sender)) {
-				Constructor<? extends AnnotatedCommandExecutor> constructor = executor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class);
+				Constructor<? extends AnnotatedCommandExecutor> constructor = executor.getDeclaredConstructor(CommandSender.class, plugin.getClass());
 				executors.put(sender, constructor.newInstance(sender, plugin));
 			}
 			return method.invoke(executors.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			Bukkit.getLogger().throwing(getClass().getName(), "invoke", e);
+			e.printStackTrace();
+			plugin.getLogger().throwing(getClass().getName(), "invoke", e);
 		}
 		return null;
 	}

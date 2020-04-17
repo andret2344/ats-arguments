@@ -6,12 +6,13 @@ package eu.andret.arguments;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
-import lombok.Getter;
+import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +25,10 @@ import java.util.Map;
 class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper();
+	private final MethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
+	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private final Class<? extends AnnotatedCommandExecutor> executor;
 	private final MethodInvoker methodInvoker;
-	@Getter
-	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 
 	/**
 	 * Constructs the LocalCommandExecutor.
@@ -43,9 +44,22 @@ class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (args.length == 0) {
+			Arrays.stream(executor.getDeclaredMethods())
+					.forEach(method -> sender.sendMessage(mapper.mapMethodToDescription(method, cmd.getName())));
+			return true;
+		}
 		commandToMethodMapper
 				.mapCommandToMethod(executor, args, sender, mappers)
 				.ifPresent(method -> methodInvoker.invokeMethod(method, args, sender, executor));
+		return true;
+	}
+
+	public <E> boolean addMapper(String id, Mapper<E> mapper) {
+		if (mappers.containsKey(id)) {
+			return false;
+		}
+		mappers.put(id, mapper);
 		return true;
 	}
 }
