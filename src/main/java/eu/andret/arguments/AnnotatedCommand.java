@@ -4,6 +4,8 @@
 
 package eu.andret.arguments;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.bukkit.command.PluginCommand;
 
@@ -17,6 +19,7 @@ import java.util.function.Function;
  * @since Jun 02, 2019
  */
 @Value
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class AnnotatedCommand {
 	PluginCommand command;
 
@@ -55,6 +58,17 @@ public class AnnotatedCommand {
 		getLocalCommandExecutor().setOnUsageExampleListener(listener);
 	}
 
+	/**
+	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
+	 *
+	 * @param id The id of mapper that has to be unique. This is passed to {@link
+	 * eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
+	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
+	 * <code>clazz</code> object of String
+	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
+	 * method's parameter
+	 */
 	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
 		Map<String, Mapper<?>> mappers = getLocalCommandExecutor().getMappers();
 		if (mappers.containsKey(id)) {

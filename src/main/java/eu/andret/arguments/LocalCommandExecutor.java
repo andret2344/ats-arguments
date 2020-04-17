@@ -5,19 +5,19 @@ package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +38,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
 	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
 	private final JavaPlugin plugin;
+	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper();
 	@Getter
 	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -97,27 +98,7 @@ class LocalCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
-				.filter(m -> m.getAnnotation(Argument.class) != null)
-				.filter(m -> !Modifier.isStatic(m.getModifiers()))
-				.collect(Collectors.toList());
-		if (args.length == 0) {
-			methodList.stream()
-					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
-					.map(m -> getDescription(cmd.getName(), m))
-					.forEach(sender::sendMessage);
-			return true;
-		}
-		List<Method> methods = methodList.stream()
-				.filter(m -> args.length >= m.getAnnotation(Argument.class).position())
-				.filter(m -> isNameMatchingArg(m, args))
-				.filter(m -> {
-					ExecutorType executorType = m.getAnnotation(Argument.class).executorType();
-					return executorType.equals(ExecutorType.ALL)
-							|| executorType.equals(ExecutorType.CONSOLE) && sender instanceof ConsoleCommandSender
-							|| executorType.equals(ExecutorType.PLAYER) && sender instanceof Player;
-				})
-				.collect(Collectors.toList());
+		List<Method> methods = commandToMethodMapper.mapCommandToMethod(commandExecutor, args, sender);
 		if (methods.isEmpty()) {
 			if (onUnknownSubCommandExecutionListener != null) {
 				onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
@@ -143,12 +124,6 @@ class LocalCommandExecutor implements CommandExecutor {
 		Object result = invoke(method, sender, data);
 		sendProperResponse(sender, result, method);
 		return true;
-	}
-
-	private boolean isNameMatchingArg(Method m, String[] args) {
-		Argument annotation = m.getAnnotation(Argument.class);
-		return Stream.concat(Stream.of(annotation.aliases()), Stream.of(m.getName()))
-				.anyMatch(args[annotation.position()]::equalsIgnoreCase);
 	}
 
 	/**
@@ -324,8 +299,6 @@ class LocalCommandExecutor implements CommandExecutor {
 				}
 			} else {
 				Param param = parameter.getAnnotation(Param.class);
-				System.out.println(param);
-				System.out.println(mappers.get(param.value()).getClazz());
 				if ((param != null && !mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType())) &&
 						!classes.get(i).isAssignableFrom(parameter.getType())) {
 					return false;
