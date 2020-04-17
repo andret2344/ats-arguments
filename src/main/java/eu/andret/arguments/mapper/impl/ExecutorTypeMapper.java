@@ -3,14 +3,21 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.IExecutorTypeMapper;
+import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 
-public final class ExecutorTypeMapper implements IExecutorTypeMapper {
-
+/**
+ * An implementation of {@link eu.andret.arguments.mapper.IExecutorTypeMapper}.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
+@Value
+public class ExecutorTypeMapper implements IExecutorTypeMapper {
 	/**
 	 * {@inheritDoc}
 	 */

@@ -4,6 +4,7 @@ import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.mapper.IArgumentMapper;
+import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -14,13 +15,14 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IArgumentMapper}
+ * An implementation for {@link eu.andret.arguments.mapper.IArgumentMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020
  */
-public final class ArgumentsMapper implements IArgumentMapper {
-	private final Util util = Util.getInstance();
+@Value
+public class ArgumentsMapper implements IArgumentMapper {
+	Util util = Util.getInstance();
 
 	/**
 	 * {@inheritDoc}

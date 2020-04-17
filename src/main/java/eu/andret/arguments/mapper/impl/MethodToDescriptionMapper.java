@@ -2,13 +2,21 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
+import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public final class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
+/**
+ * An implementation for {@link eu.andret.arguments.mapper.IMethodToDescriptionMapper}.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
+@Value
+public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 	/**
 	 * {@inheritDoc}
 	 */

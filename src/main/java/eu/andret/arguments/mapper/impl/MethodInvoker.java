@@ -17,6 +17,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
 @Value
 public class MethodInvoker implements IMethodInvoker {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();

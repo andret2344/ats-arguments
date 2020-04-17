@@ -2,6 +2,7 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.IMethodNameMapper;
+import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,7 +10,14 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public final class MethodNameMapper implements IMethodNameMapper {
+/**
+ * An implementation of {@link eu.andret.arguments.mapper.IMethodNameMapper}.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
+@Value
+public class MethodNameMapper implements IMethodNameMapper {
 	/**
 	 * {@inheritDoc}
 	 */

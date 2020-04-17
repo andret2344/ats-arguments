@@ -2,12 +2,20 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.IPermissionMapper;
+import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.lang.reflect.Method;
 
-public final class PermissionMapper implements IPermissionMapper {
+/**
+ * An implementation for {@link eu.andret.arguments.mapper.IPermissionMapper}.
+ *
+ * @author Andret
+ * @since Apr 17, 2020
+ */
+@Value
+public class PermissionMapper implements IPermissionMapper {
 	/**
 	 * {@inheritDoc}
 	 */

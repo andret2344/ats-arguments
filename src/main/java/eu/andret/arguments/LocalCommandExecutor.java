@@ -25,10 +25,10 @@ import java.util.Map;
  */
 class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
-	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper();
+	private final Map<String, Mapper<?>> mappers = new HashMap<>();
+	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
 	private final MethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 	private final PermissionMapper permissionMapper = new PermissionMapper();
-	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private final Class<? extends AnnotatedCommandExecutor> executor;
 	private final MethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -51,19 +51,19 @@ class LocalCommandExecutor implements CommandExecutor {
 		if (args.length == 0) {
 			Arrays.stream(executor.getDeclaredMethods())
 					.forEach(method -> sender.sendMessage(mapper.mapMethodToDescription(method, cmd.getName())));
-			return true;
+		} else {
+			commandToMethodMapper
+					.mapCommandToMethod(executor, args, sender)
+					.ifPresentOrElse(method -> {
+								if (permissionMapper.mapPermission(method, sender)) {
+									methodInvoker.invokeMethod(method, args, sender, executor);
+								} else {
+									onInsufficientPermissionsListener.insufficientPermissions(sender);
+								}
+							},
+							() -> onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender)
+					);
 		}
-		commandToMethodMapper
-				.mapCommandToMethod(executor, args, sender, mappers)
-				.ifPresentOrElse(method -> {
-							if (permissionMapper.mapPermission(method, sender)) {
-								methodInvoker.invokeMethod(method, args, sender, executor);
-							} else {
-								onInsufficientPermissionsListener.insufficientPermissions(sender);
-							}
-						},
-						() -> onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender)
-				);
 		return true;
 	}
 

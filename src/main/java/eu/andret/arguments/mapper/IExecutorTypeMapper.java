@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import java.lang.reflect.Method;
 
 /**
- * Mapper for Executor type
+ * An Interface for mapping Executor type.
  *
  * @author Andret
  * @since Apr 17, 2020
@@ -13,11 +13,11 @@ import java.lang.reflect.Method;
 public interface IExecutorTypeMapper {
 
 	/**
-	 * @param method The method
-	 * @param sender The real command sender
+	 * @param method The method that will be analyzed.
+	 * @param sender The real command sender who performed command.
 	 *
 	 * @return <code>true</code> if command executor matches with the one provided in {@link
-	 * eu.andret.arguments.annotation.Argument#executorType()}
+	 * eu.andret.arguments.annotation.Argument#executorType()}.
 	 */
 	boolean mapExecutorType(Method method, CommandSender sender);
 }
