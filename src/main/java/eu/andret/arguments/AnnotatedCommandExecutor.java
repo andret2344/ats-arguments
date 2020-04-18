@@ -30,9 +30,9 @@ public abstract class AnnotatedCommandExecutor {
 	/**
 	 * The Sender that performed the command.
 	 */
-	protected final CommandSender sender;
+	protected CommandSender sender;
 	/**
 	 * The Plugin that uses this executor.
 	 */
-	protected final JavaPlugin plugin;
+	protected JavaPlugin plugin;
 }

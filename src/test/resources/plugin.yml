@@ -1,8 +1,0 @@
-main: eu.andret.test.Test
-name: Test
-authors: [Andret]
-version: NaN
-
-commands:
-  test:
-    usage: /command

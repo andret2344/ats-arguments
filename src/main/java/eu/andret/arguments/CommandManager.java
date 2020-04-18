@@ -25,8 +25,8 @@ public class CommandManager {
 	 *
 	 * @return AnnotatedCommand
 	 */
-	public static AnnotatedCommand registerCommand(Class<? extends AnnotatedCommandExecutor> commandExecutorClass,
-												   JavaPlugin plugin) {
+	public AnnotatedCommand registerCommand(Class<? extends AnnotatedCommandExecutor> commandExecutorClass,
+											JavaPlugin plugin) {
 		BaseCommand annotation = commandExecutorClass.getAnnotation(BaseCommand.class);
 		if (annotation == null) {
 			throw new UnsupportedOperationException("Class not annotated with @" + BaseCommand.class.getName());

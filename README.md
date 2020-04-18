@@ -1,5 +1,9 @@
 # atsArguments
 
+## License
+
+Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+
 ## Dependency setup
 To set up the library in your project, you have to do following steps:
 
@@ -216,7 +220,6 @@ public class TestCommand extends AnnotatedCommandExecutor {
     @Argument(executorType = ExecutorType.CONSOLE)
     public String administration(int level) { 
         // "/test administration 3", only console can perform this command, sender (console) gets "Level set to 3"
-        ((TestPlugin)plugin).setLevel(level);
         return "Level set to " + level; 
     }
     

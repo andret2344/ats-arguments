@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * @since May 18, 2020
  */
 class LocalCommandExecutor implements CommandExecutor {
-	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
+	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
 	private final Util util = Util.getInstance();
 	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
 	private final JavaPlugin plugin;
@@ -82,7 +82,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandExecutor The {@link AnnotatedCommandExecutor} that will be analized in search
+	 * @param commandExecutor The {@link AnnotatedCommandExecutor} that will be analyzed in search
 	 * of methods annotated with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
@@ -92,7 +92,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
@@ -100,7 +100,7 @@ class LocalCommandExecutor implements CommandExecutor {
 		if (args.length == 0) {
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
-					.map(m -> getDescription(cmd.getName(), m))
+					.map(m -> getDescription(command.getName(), m))
 					.forEach(sender::sendMessage);
 			return true;
 		}
@@ -125,8 +125,8 @@ class LocalCommandExecutor implements CommandExecutor {
 		if (method == null) {
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
-					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
-					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
+					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(command.getName(), m)))
+					.forEach(m -> sender.sendMessage("Usage: " + getDescription(command.getName(), m)));
 			return true;
 		}
 		if (!hasPermission(sender, method)) {
@@ -243,11 +243,11 @@ class LocalCommandExecutor implements CommandExecutor {
 
 	private Object invoke(Method method, CommandSender sender, Object... data) {
 		try {
-			if (!executors.containsKey(sender)) {
+			if (!EXECUTORS.containsKey(sender)) {
 				Constructor<? extends AnnotatedCommandExecutor> constructor = commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class);
-				executors.put(sender, constructor.newInstance(sender, plugin));
+				EXECUTORS.put(sender, constructor.newInstance(sender, plugin));
 			}
-			return method.invoke(executors.get(sender), data);
+			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
 			Bukkit.getLogger().throwing(getClass().getName(), "invoke", e);
 		}
