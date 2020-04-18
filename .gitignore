@@ -1,9 +1,15 @@
-.gradle/
-.idea/
-gradle/
-build/
-gradlew
-gradlew.bat
-ats-arguments.iml
-src/main/java/eu/andret/test
-src/main/resources/plugin.yml
+#project folders
+/.gradle/
+/.idea/
+/gradle/
+/build/
+
+#project files
+/gradlew
+/gradlew.bat
+/ats-arguments.iml
+
+#empty directories
+/example/src/main/resources/
+/example/src/test/
+/src/test/resources/
