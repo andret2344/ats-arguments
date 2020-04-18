@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IArgumentMapper {
+public interface IArgumentsMapper {
 	/**
 	 * @param method The {@link java.lang.reflect.Method} that will be analyzed.
 	 * @param command The array of {@link java.lang.String} with arguments passed with command.

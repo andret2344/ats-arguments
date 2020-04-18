@@ -3,7 +3,6 @@
  */
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.AnnotatedCommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;
@@ -17,13 +16,12 @@ import java.util.Optional;
  */
 public interface ICommandToMethodMapper {
 	/**
-	 * @param commandClass The class reference from which {@link eu.andret.arguments.annotation.Argument}
-	 * annotated method will be gathered.
+	 * @param methods Methods annotated with {@link eu.andret.arguments.annotation.Argument}.
 	 * @param command The arguments array that followed up base command.
 	 * @param sender The {@link org.bukkit.command.CommandSender} of the command.
 	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link
 	 * java.util.Optional#empty()} if none found.
 	 */
-	Optional<Method> mapCommandToMethod(Class<? extends AnnotatedCommandExecutor> commandClass, String[] command, CommandSender sender);
+	Optional<Method> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender);
 }

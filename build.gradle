@@ -46,6 +46,7 @@ dependencies {
 }
 
 compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
+compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
 
 test {
 	finalizedBy jacocoTestReport

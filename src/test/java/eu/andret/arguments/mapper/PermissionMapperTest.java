@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PermissionMapperTest {
-	private final PermissionMapper mapper = new PermissionMapper();
+	private final IPermissionMapper mapper = new PermissionMapper();
 
 	@Test
 	public void methodWithPermissionCalledByConsole() throws NoSuchMethodException {
@@ -82,7 +82,7 @@ public class PermissionMapperTest {
 	public void methodWithoutPermissionCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutPermission");
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -96,7 +96,7 @@ public class PermissionMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.isOp()).thenReturn(true);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutPermission");
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -110,7 +110,7 @@ public class PermissionMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(true);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutPermission");
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -124,7 +124,7 @@ public class PermissionMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(false);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutPermission");
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);

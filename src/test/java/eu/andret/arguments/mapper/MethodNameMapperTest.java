@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MethodNameMapperTest {
-	private final MethodNameMapper mapper = new MethodNameMapper();
+	private final IMethodNameMapper mapper = new MethodNameMapper();
 
 	@Test(expected = IllegalStateException.class)
 	public void staticAnnotatedMethodCalled() throws NoSuchMethodException {

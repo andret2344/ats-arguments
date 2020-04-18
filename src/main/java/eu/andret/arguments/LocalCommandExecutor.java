@@ -55,7 +55,7 @@ class LocalCommandExecutor implements CommandExecutor {
 					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(executor, args, sender)
+					.mapCommandToMethod(executor.getDeclaredMethods(), args, sender)
 					.ifPresentOrElse(method -> {
 								if (permissionMapper.mapPermission(method, sender)) {
 									methodInvoker.invokeMethod(method, args, sender, executor);

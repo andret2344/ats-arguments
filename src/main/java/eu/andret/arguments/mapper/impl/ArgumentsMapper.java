@@ -6,7 +6,7 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
-import eu.andret.arguments.mapper.IArgumentMapper;
+import eu.andret.arguments.mapper.IArgumentsMapper;
 import lombok.Value;
 
 import java.lang.reflect.Method;
@@ -18,13 +18,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IArgumentMapper}.
+ * An implementation for {@link eu.andret.arguments.mapper.IArgumentsMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020
  */
 @Value
-public class ArgumentsMapper implements IArgumentMapper {
+public class ArgumentsMapper implements IArgumentsMapper {
 	Util util = Util.getInstance();
 	Map<String, Mapper<?>> mappers;
 

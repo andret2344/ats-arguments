@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorTypeMapperTest {
-	private final ExecutorTypeMapper mapper = new ExecutorTypeMapper();
+	private final IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 	@Test
 	public void methodWithExecutorTypePlayerCalledByPlayer() throws NoSuchMethodException {
