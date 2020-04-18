@@ -1,7 +1,6 @@
 /*
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
-
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.Mapper;
