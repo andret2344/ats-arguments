@@ -21,17 +21,30 @@ import java.util.stream.Stream;
  */
 @Value
 public class MethodNameMapper implements IMethodNameMapper {
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean mapMethodName(Method method, String[] command) {
 		return Optional.of(method)
-				.filter(m -> !Modifier.isStatic(m.getModifiers()))
+				.filter(m -> m.isAnnotationPresent(Argument.class))
+				.filter(this::verifyNonStatic)
+				.filter(m -> verifyArgumentPosition(m, command))
 				.map(m -> m.getAnnotation(Argument.class))
-				.filter(a -> a.position() <= command.length)
 				.map(a -> Stream.concat(Arrays.stream(a.aliases()), Stream.of(method.getName()))
 						.anyMatch(command[a.position()]::equalsIgnoreCase))
 				.orElse(false);
+	}
+
+	private boolean verifyNonStatic(Method method) {
+		if (Modifier.isStatic(method.getModifiers())) {
+			throw new IllegalStateException("@Argument method cannot be static! Method: " + method);
+		}
+		return true;
+	}
+
+	private boolean verifyArgumentPosition(Method method, String[] command) {
+		Argument argument = method.getAnnotation(Argument.class);
+		if (argument.position() > command.length) {
+			throw new IllegalArgumentException("@Argument.position() cannot be greater than methods arguments count. Method: " + method);
+		}
+		return true;
 	}
 }

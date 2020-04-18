@@ -4,6 +4,8 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
+import eu.andret.arguments.mapper.IPermissionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
@@ -27,8 +29,8 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final Util util = Util.getInstance();
 	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
-	private final MethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
-	private final PermissionMapper permissionMapper = new PermissionMapper();
+	private final IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
+	private final IPermissionMapper permissionMapper = new PermissionMapper();
 	private final Class<? extends AnnotatedCommandExecutor> executor;
 	private final MethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -47,10 +49,10 @@ class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 0) {
 			Arrays.stream(executor.getDeclaredMethods())
-					.forEach(method -> sender.sendMessage(mapper.mapMethodToDescription(method, cmd.getName())));
+					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
 		} else {
 			commandToMethodMapper
 					.mapCommandToMethod(executor, args, sender)

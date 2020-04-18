@@ -26,12 +26,10 @@ import java.util.stream.Stream;
 @Value
 public class ArgumentsMapper implements IArgumentMapper {
 	Util util = Util.getInstance();
+	Map<String, Mapper<?>> mappers;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public boolean mapArguments(Method method, String[] command, Map<String, Mapper<?>> mappers) {
+	public boolean mapArguments(Method method, String[] command) {
 		int size = Math.min(method.getParameters().length, method.getParameterCount());
 		if (size == 0 && method.getParameters().length + method.getParameterCount() != 0) {
 			return false;
@@ -47,14 +45,14 @@ public class ArgumentsMapper implements IArgumentMapper {
 			if (parameter.getType().isArray() && !parameter.isVarArgs()) {
 				throw new IllegalArgumentException("Cannot be the array! Use VarArgs instead. Method " + method);
 			}
+			Param param = parameter.getAnnotation(Param.class);
 			if (!parameter.isVarArgs()) {
-				Param param = parameter.getAnnotation(Param.class);
 				if ((param != null && !mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType())) &&
 						!classes.get(i).isAssignableFrom(parameter.getType())) {
 					return false;
 				}
 			} else {
-				if (!isTypeMatchingVarArgParameter(parameter, classes, i)) {
+				if (!isTypeMatchingVarArgParameter(parameter, param, classes, i)) {
 					return false;
 				}
 			}
@@ -62,9 +60,10 @@ public class ArgumentsMapper implements IArgumentMapper {
 		return true;
 	}
 
-	private boolean isTypeMatchingVarArgParameter(Parameter parameter, List<Class<?>> classes, int i) {
+	private boolean isTypeMatchingVarArgParameter(Parameter parameter, Param param, List<Class<?>> classes, int i) {
 		return IntStream.range(i, classes.size())
 				.mapToObj(classes::get)
-				.allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()));
+				.allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
+						(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
 	}
 }

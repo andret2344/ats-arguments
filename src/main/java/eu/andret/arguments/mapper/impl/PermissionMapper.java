@@ -19,9 +19,6 @@ import java.lang.reflect.Method;
  */
 @Value
 public class PermissionMapper implements IPermissionMapper {
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean mapPermission(Method method, CommandSender sender) {
 		if (sender.isOp()) {

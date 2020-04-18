@@ -21,9 +21,6 @@ import java.lang.reflect.Method;
  */
 @Value
 public class ExecutorTypeMapper implements IExecutorTypeMapper {
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean mapExecutorType(Method method, CommandSender sender) {
 		ExecutorType executorType = method.getAnnotation(Argument.class).executorType();

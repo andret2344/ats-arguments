@@ -28,14 +28,11 @@ import java.util.Map;
  */
 @Value
 public class MethodInvoker implements IMethodInvoker {
-	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
+	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
 	Util util = Util.getInstance();
 	JavaPlugin plugin;
 	Map<String, Mapper<?>> mappers;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
 		Object[] data = recalculateArguments(method, command);
@@ -101,11 +98,11 @@ public class MethodInvoker implements IMethodInvoker {
 
 	private Object invoke(Method method, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor, Object... data) {
 		try {
-			if (!executors.containsKey(sender)) {
+			if (!EXECUTORS.containsKey(sender)) {
 				Constructor<? extends AnnotatedCommandExecutor> constructor = executor.getDeclaredConstructor(CommandSender.class, plugin.getClass());
-				executors.put(sender, constructor.newInstance(sender, plugin));
+				EXECUTORS.put(sender, constructor.newInstance(sender, plugin));
 			}
-			return method.invoke(executors.get(sender), data);
+			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 			plugin.getLogger().throwing(getClass().getName(), "invoke", e);

@@ -18,8 +18,8 @@ public interface IMethodNameMapper {
 	 * @param method The {@link java.lang.reflect.Method} that will be mapped.
 	 * @param command The command arguments.
 	 *
-	 * @return <code>true</code> if method's name matches argument at correct position,
-	 * <code>false</code> otherwise.
+	 * @return {@code true} if method's name matches argument at correct position, {@code false}
+	 * otherwise.
 	 */
 	boolean mapMethodName(Method method, String[] command);
 }

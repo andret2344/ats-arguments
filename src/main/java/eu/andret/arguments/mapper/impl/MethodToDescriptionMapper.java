@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
  */
 @Value
 public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String mapMethodToDescription(Method method, String command) {
 		String message = "/" + command + getCommandPattern(method);

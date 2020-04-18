@@ -79,7 +79,7 @@ public class AnnotatedCommand {
 	 * eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
 	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
 	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
-	 * <code>clazz</code> object of String
+	 * {@code clazz} object of String
 	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
 	 * method's parameter
 	 */
