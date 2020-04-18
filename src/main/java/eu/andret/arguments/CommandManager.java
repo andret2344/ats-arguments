@@ -19,15 +19,15 @@ public class CommandManager {
 	/**
 	 * Method registering new command classes.
 	 *
-	 * @param commandExecutorClass The class extending {@link eu.andret.arguments.AnnotatedCommandExecutor}
+	 * @param commandClass The class extending {@link eu.andret.arguments.AnnotatedCommandExecutor}
 	 * @param plugin The class extending {@link org.bukkit.plugin.java.JavaPlugin} as main class of
 	 * plugin
 	 *
 	 * @return AnnotatedCommand
 	 */
-	public AnnotatedCommand registerCommand(Class<? extends AnnotatedCommandExecutor> commandExecutorClass,
+	public AnnotatedCommand registerCommand(Class<? extends AnnotatedCommandExecutor> commandClass,
 											JavaPlugin plugin) {
-		BaseCommand annotation = commandExecutorClass.getAnnotation(BaseCommand.class);
+		BaseCommand annotation = commandClass.getAnnotation(BaseCommand.class);
 		if (annotation == null) {
 			throw new UnsupportedOperationException("Class not annotated with @" + BaseCommand.class.getName());
 		}
@@ -35,8 +35,8 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		pluginCommand.setExecutor(new LocalCommandExecutor(commandExecutorClass, plugin));
-		pluginCommand.setTabCompleter(new LocalTabCompleter(commandExecutorClass));
+		pluginCommand.setExecutor(new LocalCommandExecutor(commandClass, plugin));
+		pluginCommand.setTabCompleter(new LocalTabCompleter(commandClass));
 		return new AnnotatedCommand(pluginCommand);
 	}
 }

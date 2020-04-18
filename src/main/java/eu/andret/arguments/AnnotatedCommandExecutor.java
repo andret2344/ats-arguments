@@ -3,7 +3,6 @@
  */
 package eu.andret.arguments;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
@@ -23,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * org.bukkit.plugin.java.JavaPlugin)
  * @since May 18, 2019
  */
-@AllArgsConstructor
 @Value
 @NonFinal
 public abstract class AnnotatedCommandExecutor {

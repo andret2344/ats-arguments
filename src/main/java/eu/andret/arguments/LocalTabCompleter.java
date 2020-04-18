@@ -4,6 +4,9 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -20,12 +23,10 @@ import java.util.stream.Stream;
  * @author Andret
  * @since Jun 02, 2019
  */
+@Value
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 class LocalTabCompleter implements TabCompleter {
-	private final Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
-
-	LocalTabCompleter(Class<? extends AnnotatedCommandExecutor> commandExecutorClass) {
-		this.commandExecutorClass = commandExecutorClass;
-	}
+	Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {

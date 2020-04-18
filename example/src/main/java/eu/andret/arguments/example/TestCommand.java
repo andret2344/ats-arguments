@@ -22,7 +22,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	}
 
 	@Argument(responseType = ResponseType.BROADCAST)
-	public String broadcast(String[] message) {
+	public String broadcast(String... message) {
 		// "/test broadcast Welcome to the new server!", everyone on server gets "Welcome to the new server"
 		return String.join(" ", message);
 	}

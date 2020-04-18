@@ -147,7 +147,7 @@ The most meaningful part of `atsArguments` is the `@Argument` annotation. It has
 - The name of the method (case insensitive) is a command argument.
 - Return value will be send automatically, unless changed (`void` or `null` return types don't send anything)
 - Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments into method ones.
-- Method can have array or vararg, rules as the point above.
+- Method cannot have array, only vararg is possible, rules as the point above.
 - There can be multiple methods with the same name, missing arguments are treated as obsolete.
 - Library automatically uses tab completion.
 - In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
