@@ -18,10 +18,12 @@ import org.mockito.Mock;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -68,6 +70,19 @@ public class CommandToMethodMapperTest {
 				{true, true, true},
 		};
 		return Arrays.asList(objects);
+	}
+
+	@Test
+	public void constructs() {
+		// given
+		Map<String, Mapper<?>> mappers = new HashMap<>();
+
+		// when
+		ICommandToMethodMapper mapper = new CommandToMethodMapper(mappers);
+
+		// then
+		assertNotNull(mapper);
+		assertNotNull(mapper.toString());
 	}
 
 	@Test

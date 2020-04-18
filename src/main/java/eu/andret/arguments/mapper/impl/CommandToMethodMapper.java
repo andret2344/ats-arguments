@@ -8,7 +8,9 @@ import eu.andret.arguments.mapper.IArgumentsMapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IExecutorTypeMapper;
 import eu.andret.arguments.mapper.IMethodNameMapper;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 
@@ -25,6 +27,7 @@ import java.util.Optional;
  */
 @Value
 @AllArgsConstructor
+@Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
 	Map<String, Mapper<?>> mappers;
 	IMethodNameMapper methodNameMapper;

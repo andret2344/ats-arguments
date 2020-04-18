@@ -104,7 +104,6 @@ public class MethodInvoker implements IMethodInvoker {
 			}
 			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
 			plugin.getLogger().throwing(getClass().getName(), "invoke", e);
 		}
 		return null;

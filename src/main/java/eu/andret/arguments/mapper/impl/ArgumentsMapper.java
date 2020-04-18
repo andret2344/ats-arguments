@@ -7,6 +7,8 @@ import eu.andret.arguments.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.mapper.IArgumentsMapper;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 
 import java.lang.reflect.Method;
@@ -24,21 +26,22 @@ import java.util.stream.Stream;
  * @since Apr 17, 2020
  */
 @Value
+@Getter(AccessLevel.NONE)
 public class ArgumentsMapper implements IArgumentsMapper {
 	Util util = Util.getInstance();
 	Map<String, Mapper<?>> mappers;
 
 	@Override
 	public boolean mapArguments(Method method, String[] command) {
-		int size = Math.min(method.getParameters().length, method.getParameterCount());
-		if (size == 0 && method.getParameters().length + method.getParameterCount() != 0) {
+		int size = Math.min(command.length - 1, method.getParameterCount());
+		if (size == 0 && command.length - 1 + method.getParameterCount() != 0) {
 			return false;
 		}
 		List<Class<?>> list = Stream.of(command).skip(1).map(util::getRealClass).collect(Collectors.toList());
-		return checkParameters(method, list, mappers);
+		return checkParameters(method, list);
 	}
 
-	private boolean checkParameters(Method method, List<Class<?>> classes, Map<String, Mapper<?>> mappers) {
+	private boolean checkParameters(Method method, List<Class<?>> classes) {
 		List<Parameter> parameters = Stream.of(method.getParameters()).collect(Collectors.toList());
 		for (int i = 0; i < parameters.size(); i++) {
 			Parameter parameter = parameters.get(i);
@@ -46,15 +49,10 @@ public class ArgumentsMapper implements IArgumentsMapper {
 				throw new IllegalArgumentException("Cannot be the array! Use VarArgs instead. Method " + method);
 			}
 			Param param = parameter.getAnnotation(Param.class);
-			if (!parameter.isVarArgs()) {
-				if ((param != null && !mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType())) &&
-						!classes.get(i).isAssignableFrom(parameter.getType())) {
-					return false;
-				}
-			} else {
-				if (!isTypeMatchingVarArgParameter(parameter, param, classes, i)) {
-					return false;
-				}
+			if (parameter.isVarArgs()
+					? !isTypeMatchingVarArgParameter(parameter, param, classes, i)
+					: !isTypeMatchingParam(parameter, param, classes.get(i))) {
+				return false;
 			}
 		}
 		return true;
@@ -65,5 +63,11 @@ public class ArgumentsMapper implements IArgumentsMapper {
 				.mapToObj(classes::get)
 				.allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
 						(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
+	}
+
+	private boolean isTypeMatchingParam(Parameter parameter, Param param, Class<?> clazz) {
+		return param == null
+				? clazz.isAssignableFrom(parameter.getType())
+				: mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType());
 	}
 }

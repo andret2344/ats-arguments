@@ -6,6 +6,8 @@ package eu.andret.arguments.provider;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.Param;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -61,7 +63,27 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	public void testMethodWithVararg(String... text) {
 	}
 
+	@Argument
+	public void testMethodWithIntVararg(int... text) {
+	}
+
 	@Argument(description = "test description")
 	public void testMethodWithDescription() {
+	}
+
+	@Argument
+	public void testMethodWithMultipleArguments(String text, int value, boolean bool) {
+	}
+
+	@Argument
+	public void testMethodWithArray(String[] text) {
+	}
+
+	@Argument
+	public void testMethodWithParam(@Param("testMaterialMapper") Material material) {
+	}
+
+	@Argument
+	public void testMethodWithParamVarArg(@Param("testMaterialMapper") Material... material) {
 	}
 }
