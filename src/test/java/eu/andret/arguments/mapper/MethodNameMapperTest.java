@@ -7,7 +7,7 @@ import eu.andret.arguments.mapper.impl.MethodNameMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Method;
 

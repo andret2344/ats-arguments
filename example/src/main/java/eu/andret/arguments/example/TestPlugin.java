@@ -18,4 +18,3 @@ public class TestPlugin extends JavaPlugin {
 		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
 	}
 }
-

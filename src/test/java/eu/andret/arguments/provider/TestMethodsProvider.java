@@ -6,11 +6,13 @@ package eu.andret.arguments.provider;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	public TestMethodsProvider(CommandSender sender, JavaPlugin plugin) {
 		super(sender, plugin);

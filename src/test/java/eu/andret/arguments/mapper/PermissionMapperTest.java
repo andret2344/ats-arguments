@@ -10,7 +10,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.lang.reflect.Method;
 
@@ -106,24 +106,9 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithoutPermissionCalledByPlayerWithPermission() throws NoSuchMethodException {
+	public void methodWithoutPermissionCalled() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
-		when(commandSender.hasPermission("ats.test.method")).thenReturn(true);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
-
-		// when
-		boolean result = mapper.mapPermission(method, commandSender);
-
-		// then
-		assertTrue(result);
-	}
-
-	@Test
-	public void methodWithoutPermissionCalledByPlayerWithoutPermission() throws NoSuchMethodException {
-		// given
-		CommandSender commandSender = mock(Player.class);
-		when(commandSender.hasPermission("ats.test.method")).thenReturn(false);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
