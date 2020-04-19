@@ -20,20 +20,11 @@ public class Util {
 		if (c.isAssignableFrom(double.class)) {
 			return Double.parseDouble(value);
 		}
-		if (c.isAssignableFrom(float.class)) {
-			return Float.parseFloat(value);
-		}
 		if (c.isAssignableFrom(char.class)) {
 			return value.charAt(0);
 		}
-		if (c.isAssignableFrom(short.class)) {
-			return Short.parseShort(value);
-		}
 		if (c.isAssignableFrom(long.class)) {
 			return Long.parseLong(value);
-		}
-		if (c.isAssignableFrom(byte.class)) {
-			return Byte.parseByte(value);
 		}
 		if (c.isAssignableFrom(boolean.class)) {
 			return Boolean.parseBoolean(value);

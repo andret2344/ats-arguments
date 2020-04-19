@@ -4,17 +4,34 @@
 
 package eu.andret.arguments;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UtilTest {
-	public static Collection<Object[]> data() {
+	public static Collection<Object[]> convertData() {
+		Object[][] objects = {
+				{"123", int.class, 123},
+				{"false", boolean.class, false},
+				{"12.34", double.class, 12.34},
+				{"test", char.class, 't'},
+				{"99999999999", long.class, 99999999999L},
+				{"9 9 9", String[].class, "9 9 9"},
+				{"other", String.class, "other"}
+		};
+		return Arrays.asList(objects);
+	}
+
+	public static Collection<Object[]> getRealClassData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -25,18 +42,40 @@ public class UtilTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("data")
+	@MethodSource("convertData")
 	public void convert(String input, Class<?> targetClass, Object realValue) {
+		// given
 		Util util = Util.getInstance();
-		Object i = util.convert(targetClass, input);
-		assertEquals(realValue, i);
+
+		// when
+		Object result = util.convert(targetClass, input);
+
+		// then
+		assertEquals(realValue, result);
+	}
+
+	@Test
+	public void convertUnsupportedType() {
+		// given
+		Util util = Util.getInstance();
+
+		// when
+		Executable result = () -> util.convert(Stream.class, "input");
+
+		// then
+		assertThrows(UnsupportedOperationException.class, result);
 	}
 
 	@ParameterizedTest
-	@MethodSource("data")
+	@MethodSource("getRealClassData")
 	public void getRealClass(String input, Class<?> targetClass, Object realValue) {
+		// given
 		Util util = Util.getInstance();
+
+		// when
 		Class<?> realClass = util.getRealClass(input);
+
+		// then
 		assertTrue(targetClass.isAssignableFrom(realClass), String.format("Class %s is not assignable from %s", targetClass, realClass));
 	}
 }
