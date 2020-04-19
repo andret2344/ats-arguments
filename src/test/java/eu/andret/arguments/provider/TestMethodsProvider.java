@@ -89,4 +89,9 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	@Argument
 	public void testMethodWithParamVarArg(@Param("testWorldMapper") World... material) {
 	}
+
+	@Argument
+	public void testMethodWithException() {
+		throw new IllegalArgumentException();
+	}
 }

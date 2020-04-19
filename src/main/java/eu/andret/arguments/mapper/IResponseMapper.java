@@ -4,9 +4,8 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.ResponseType;
 import org.bukkit.command.CommandSender;
-
-import java.lang.reflect.Method;
 
 /**
  * A mapper interface to mapping response generated from method.
@@ -18,9 +17,9 @@ public interface IResponseMapper extends IMapper {
 	/**
 	 * The mapper function that maps response to exact behavior
 	 *
-	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command
-	 * @param result The result returned from called method
-	 * @param method The method that has been called
+	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
+	 * @param result The result returned from called method.
+	 * @param responseType The {@link eu.andret.arguments.ResponseType}.
 	 */
-	void mapResponse(CommandSender sender, Object result, Method method);
+	void mapResponse(CommandSender sender, Object result, ResponseType responseType);
 }

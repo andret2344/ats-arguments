@@ -31,7 +31,7 @@ public class LocalTabCompleterTest {
 
 		// then
 		assertNotNull(result);
-		assertEquals(16, result.size());
+		assertEquals(17, result.size());
 		assertTrue(result.containsAll(Arrays.asList(
 				"testMethod",
 				"testMethodWithCorrectPosition",
@@ -48,7 +48,8 @@ public class LocalTabCompleterTest {
 				"testMethodWithParam",
 				"testMethodWithExecutorTypeAll",
 				"testMethodWithDescription",
-				"testMethodWithExecutorTypePlayer"
+				"testMethodWithExecutorTypePlayer",
+				"testMethodWithException"
 		)));
 	}
 

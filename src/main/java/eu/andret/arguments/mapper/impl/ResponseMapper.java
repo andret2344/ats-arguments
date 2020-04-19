@@ -4,29 +4,26 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.ResponseType;
 import eu.andret.arguments.mapper.IResponseMapper;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-
-import java.lang.reflect.Method;
 
 public class ResponseMapper implements IResponseMapper {
 	@Override
-	public void mapResponse(CommandSender sender, Object result, Method method) {
+	public void mapResponse(CommandSender sender, Object result, ResponseType responseType) {
 		if (result == null) {
 			return;
 		}
 		String message = String.valueOf(result);
-		switch (method.getAnnotation(Argument.class).responseType()) {
+		switch (responseType) {
 			case SENDER:
 				sender.sendMessage(message);
 				break;
 			case CONSOLE:
-				Bukkit.getLogger().info(message);
+				sender.getServer().getLogger().info(message);
 				break;
 			case BROADCAST:
-				Bukkit.broadcastMessage(message);
+				sender.getServer().broadcastMessage(message);
 				break;
 			case NONE:
 			default:

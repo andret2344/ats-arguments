@@ -67,7 +67,7 @@ class LocalCommandExecutor implements CommandExecutor {
 					.ifPresentOrElse(method -> {
 								if (permissionMapper.mapPermission(method, sender)) {
 									Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-									responseMapper.mapResponse(sender, result, method);
+									responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType());
 								} else {
 									onInsufficientPermissionsListener.insufficientPermissions(sender);
 								}

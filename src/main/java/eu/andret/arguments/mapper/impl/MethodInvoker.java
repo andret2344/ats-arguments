@@ -10,6 +10,8 @@ import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.mapper.IMethodInvoker;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +31,7 @@ import java.util.Optional;
  * @since Apr 17, 2020
  */
 @Value
+@Getter(AccessLevel.NONE)
 public class MethodInvoker implements IMethodInvoker {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
 	Util util = Util.getInstance();
