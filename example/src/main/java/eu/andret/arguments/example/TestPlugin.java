@@ -19,4 +19,3 @@ public class TestPlugin extends JavaPlugin {
 		});
 	}
 }
-

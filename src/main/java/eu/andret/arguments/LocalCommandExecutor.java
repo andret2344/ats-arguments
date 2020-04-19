@@ -1,6 +1,7 @@
 /*
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
@@ -11,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -92,7 +94,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		List<Method> methodList = Stream.of(executor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))

@@ -1,15 +1,16 @@
 /*
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
-class Util {
+public class Util {
 	private static Util instance;
 
 	private Util() {
 	}
 
-	Object convert(Class<?> c, String value) {
+	public Object convert(Class<?> c, String value) {
 		if (c.isArray()) {
 			return value;
 		}
@@ -51,7 +52,7 @@ class Util {
 	 *
 	 * @return the class, which value inside the string arguments matches
 	 */
-	Class<?> getRealClass(String value) {
+	public Class<?> getRealClass(String value) {
 		if (value.matches("\\d+")) {
 			return int.class;
 		}
@@ -69,7 +70,7 @@ class Util {
 	 *
 	 * @return The instance of this singleton class
 	 */
-	static Util getInstance() {
+	public static Util getInstance() {
 		if (instance == null) {
 			instance = new Util();
 		}
