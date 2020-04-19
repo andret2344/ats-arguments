@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -52,5 +55,19 @@ public class CommandManagerTest {
 		// then
 		verify(pluginCommand, times(1)).setExecutor(any());
 		verify(pluginCommand, times(1)).setTabCompleter(any());
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void constructorCall() throws Throwable {
+		// given
+		Constructor<CommandManager> constructor = CommandManager.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+
+		// when
+		try {
+			constructor.newInstance();
+		} catch (InvocationTargetException ex) {
+			throw ex.getTargetException();
+		}
 	}
 }
