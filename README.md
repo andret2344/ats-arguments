@@ -248,8 +248,25 @@ public class TestCommand extends AnnotatedCommandExecutor {
     
     @Argument
     public String player(@Param("basicPlayerMapper") Player player) {
-        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844 
-        return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId(); 
+        if (player == null) {
+            // "/test player Andret2344", sender gets: "Who do you mean?"
+            return "Who do you mean?";
+        }
+        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
+        return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
+    }
+    
+    @Argument(executorType = ExecutorType.PLAYER)
+    public String distance(@Param("basicPlayerMapper") Player... players) {
+        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
+        OptionalDouble min = Arrays.stream(players)
+                .filter(Objects::nonNull)
+                .mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
+                .min();
+        if (min.isPresent()) {
+            return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
+        } 
+        return "No min distance could be found :(";
     }
 }
 ```

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -115,7 +116,7 @@ public class MethodInvokerTest {
 		invoker.invokeMethod(method, new String[]{"testMethodWithException"}, sender, commandClass);
 
 		// then
-		verify(logger, times(1)).throwing(eq("eu.andret.arguments.mapper.impl.MethodInvoker"), eq("invoke"), any());
+		verify(logger, times(1)).log(eq(Level.SEVERE), any(Throwable.class), any());
 		verify(method, times(1)).invoke(eq(new TestMethodsProvider(sender, plugin)));
 	}
 }

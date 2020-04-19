@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 
 /**
  * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
@@ -90,7 +91,7 @@ public class MethodInvoker implements IMethodInvoker {
 			}
 			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
-			plugin.getLogger().throwing(getClass().getName(), "invoke", e);
+			plugin.getLogger().log(Level.SEVERE, e, String::new);
 		}
 		return null;
 	}
