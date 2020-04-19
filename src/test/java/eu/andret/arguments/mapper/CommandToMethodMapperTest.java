@@ -1,6 +1,7 @@
 /*
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,8 +27,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class CommandToMethodMapperTest {
@@ -53,7 +55,10 @@ public class CommandToMethodMapperTest {
 
 	@Before
 	public void setup() {
-		initMocks(this);
+		Mockito.mockitoSession()
+				.initMocks(this)
+				.startMocking()
+				.finishMocking();
 	}
 
 	@Parameterized.Parameters(name = "{0} && {1} && {2}")
@@ -89,12 +94,13 @@ public class CommandToMethodMapperTest {
 		// given
 		Class<? extends AnnotatedCommandExecutor> executor = TestMethodsProvider.class;
 		Method method = executor.getDeclaredMethod("testMethod");
-		when(methodNameMapper.mapMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
-		when(executorTypeMapper.mapExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
-		when(argumentsMapper.mapArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
+		CommandSender sender = mock(CommandSender.class);
+		lenient().when(methodNameMapper.mapMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
+		lenient().when(executorTypeMapper.mapExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
+		lenient().when(argumentsMapper.mapArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{"test"}, null);
+		Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {
