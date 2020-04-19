@@ -4,23 +4,16 @@
 
 package eu.andret.arguments;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(Parameterized.class)
 public class UtilTest {
-	private final String input;
-	private final Class<?> targetClass;
-	private final Object realValue;
-
-	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
 		Object[][] objects = {
 				{"123", int.class, 123},
@@ -31,23 +24,19 @@ public class UtilTest {
 		return Arrays.asList(objects);
 	}
 
-	public UtilTest(String input, Class<?> targetClass, Object realValue) {
-		this.input = input;
-		this.targetClass = targetClass;
-		this.realValue = realValue;
-	}
-
-	@Test
-	public void convert() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void convert(String input, Class<?> targetClass, Object realValue) {
 		Util util = Util.getInstance();
 		Object i = util.convert(targetClass, input);
 		assertEquals(realValue, i);
 	}
 
-	@Test
-	public void getRealClass() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void getRealClass(String input, Class<?> targetClass, Object realValue) {
 		Util util = Util.getInstance();
 		Class<?> realClass = util.getRealClass(input);
-		assertTrue(String.format("Class %s is not assignable from %s", targetClass, realClass), targetClass.isAssignableFrom(realClass));
+		assertTrue(targetClass.isAssignableFrom(realClass), String.format("Class %s is not assignable from %s", targetClass, realClass));
 	}
 }
