@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IPermissionMapper {
+public interface IPermissionMapper extends IMapper {
 	/**
 	 * Maps the argument permissions.
 	 *

@@ -7,6 +7,7 @@ package eu.andret.arguments;
 import eu.andret.arguments.annotation.Argument;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter(AccessLevel.NONE)
 class LocalTabCompleter implements TabCompleter {
 	Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
 

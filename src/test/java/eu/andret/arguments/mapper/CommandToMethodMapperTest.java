@@ -9,10 +9,10 @@ import eu.andret.arguments.Mapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,14 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-@RunWith(Parameterized.class)
 public class CommandToMethodMapperTest {
 	@Mock
 	private IMethodNameMapper methodNameMapper;
@@ -43,17 +42,7 @@ public class CommandToMethodMapperTest {
 	@InjectMocks
 	private CommandToMethodMapper mapper;
 
-	private final boolean methodNameMapperResult;
-	private final boolean executorTypeMapperResult;
-	private final boolean argumentsMapperResult;
-
-	public CommandToMethodMapperTest(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) {
-		this.methodNameMapperResult = methodNameMapperResult;
-		this.executorTypeMapperResult = executorTypeMapperResult;
-		this.argumentsMapperResult = argumentsMapperResult;
-	}
-
-	@Before
+	@BeforeEach
 	public void setup() {
 		Mockito.mockitoSession()
 				.initMocks(this)
@@ -61,7 +50,6 @@ public class CommandToMethodMapperTest {
 				.finishMocking();
 	}
 
-	@Parameterized.Parameters(name = "{0} && {1} && {2}")
 	public static Iterable<Object[]> data() {
 		Object[][] objects = {
 				{false, false, false},
@@ -89,8 +77,9 @@ public class CommandToMethodMapperTest {
 		assertNotNull(mapper.toString());
 	}
 
-	@Test
-	public void methodCalled() throws NoSuchMethodException {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
 		// given
 		Class<? extends AnnotatedCommandExecutor> executor = TestMethodsProvider.class;
 		Method method = executor.getDeclaredMethod("testMethod");

@@ -15,7 +15,7 @@ import java.util.Optional;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface ICommandToMethodMapper {
+public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param methods Methods annotated with {@link eu.andret.arguments.annotation.Argument}.
 	 * @param command The arguments array that followed up base command.

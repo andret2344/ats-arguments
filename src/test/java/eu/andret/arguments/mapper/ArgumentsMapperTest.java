@@ -7,19 +7,20 @@ package eu.andret.arguments.mapper;
 import eu.andret.arguments.Mapper;
 import eu.andret.arguments.mapper.impl.ArgumentsMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.bukkit.Material;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class ArgumentsMapperTest {
 	@Test
 	public void methodWithoutArguments() throws NoSuchMethodException {
@@ -105,7 +106,7 @@ public class ArgumentsMapperTest {
 		assertFalse(result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void methodWithArray() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
@@ -113,16 +114,19 @@ public class ArgumentsMapperTest {
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArray", String[].class);
 
 		// when
-		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		Executable result = () -> mapper.mapArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
 	}
 
 	@Test
 	public void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testMaterialMapper", new Mapper<>(Material.class, Material::getMaterial));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", Material.class);
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
 		// when
 		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "AIR"});
@@ -163,12 +167,12 @@ public class ArgumentsMapperTest {
 	public void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testMaterialMapper", new Mapper<>(Material.class, Material::getMaterial));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", Material[].class);
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when
-		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "AIR", "DIRT"});
+		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "world", "world_nether"});
 
 		// then
 		assertTrue(result);

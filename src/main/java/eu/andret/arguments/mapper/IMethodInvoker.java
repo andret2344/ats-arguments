@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IMethodInvoker {
+public interface IMethodInvoker extends IMapper {
 	/**
 	 * Invokes the method and correctly puts all arguments.
 	 *
@@ -25,5 +25,5 @@ public interface IMethodInvoker {
 	 * command.
 	 * @param executor The class reference, where the method was written.
 	 */
-	void invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor);
+	Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor);
 }

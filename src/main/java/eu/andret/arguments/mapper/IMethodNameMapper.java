@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IMethodNameMapper {
+public interface IMethodNameMapper extends IMapper {
 	/**
 	 * The method that maps method to right command argument.
 	 *

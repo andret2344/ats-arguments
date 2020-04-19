@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IMethodToDescriptionMapper {
+public interface IMethodToDescriptionMapper extends IMapper {
 	/**
 	 * Method that maps {@link java.lang.reflect.Method} to its description.
 	 *

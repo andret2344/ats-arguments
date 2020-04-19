@@ -11,15 +11,16 @@ import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.Value;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
@@ -35,31 +36,9 @@ public class MethodInvoker implements IMethodInvoker {
 	Map<String, Mapper<?>> mappers;
 
 	@Override
-	public void invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
+	public Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
 		Object[] data = recalculateArguments(method, command);
-		Object result = invoke(method, sender, executor, data);
-		sendProperResponse(sender, result, method);
-	}
-
-	private void sendProperResponse(CommandSender sender, Object obj, Method method) {
-		if (obj == null) {
-			return;
-		}
-		String message = String.valueOf(obj);
-		switch (method.getAnnotation(Argument.class).responseType()) {
-			case SENDER:
-				sender.sendMessage(message);
-				break;
-			case CONSOLE:
-				Bukkit.getLogger().info(message);
-				break;
-			case BROADCAST:
-				Bukkit.broadcastMessage(message);
-				break;
-			case NONE:
-			default:
-				break;
-		}
+		return invoke(method, sender, executor, data);
 	}
 
 	private Object[] recalculateArguments(Method method, String... args) {
@@ -97,16 +76,28 @@ public class MethodInvoker implements IMethodInvoker {
 		return util.convert(c, value);
 	}
 
-	private Object invoke(Method method, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor, Object... data) {
+	private <E extends AnnotatedCommandExecutor> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
 		try {
 			if (!EXECUTORS.containsKey(sender)) {
-				Constructor<? extends AnnotatedCommandExecutor> constructor = executor.getDeclaredConstructor(CommandSender.class, plugin.getClass());
-				EXECUTORS.put(sender, constructor.newInstance(sender, plugin));
+				Optional<Constructor<E>> optionalConstructor = findMatchingConstructor(executor);
+				if (optionalConstructor.isPresent()) {
+					Constructor<? extends AnnotatedCommandExecutor> c = optionalConstructor.get();
+					EXECUTORS.put(sender, c.newInstance(sender, plugin));
+				}
 			}
 			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
 			plugin.getLogger().throwing(getClass().getName(), "invoke", e);
 		}
 		return null;
+	}
+
+	private <E extends AnnotatedCommandExecutor> Optional<Constructor<E>> findMatchingConstructor(Class<E> executor) {
+		return Arrays.stream(executor.getDeclaredConstructors())
+				.filter(c -> c.getParameterCount() == 2)
+				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
+				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()))
+				.findAny()
+				.map(c -> (Constructor<E>) c);
 	}
 }

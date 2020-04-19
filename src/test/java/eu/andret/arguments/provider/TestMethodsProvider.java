@@ -9,7 +9,7 @@ import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
-import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -83,10 +83,10 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	}
 
 	@Argument
-	public void testMethodWithParam(@Param("testMaterialMapper") Material material) {
+	public void testMethodWithParam(@Param("testWorldMapper") World block) {
 	}
 
 	@Argument
-	public void testMethodWithParamVarArg(@Param("testMaterialMapper") Material... material) {
+	public void testMethodWithParamVarArg(@Param("testWorldMapper") World... material) {
 	}
 }

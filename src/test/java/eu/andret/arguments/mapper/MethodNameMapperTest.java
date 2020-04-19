@@ -6,37 +6,42 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.mapper.impl.MethodNameMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
 public class MethodNameMapperTest {
 	private final IMethodNameMapper mapper = new MethodNameMapper();
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void staticAnnotatedMethodCalled() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testStaticMethod");
 
 		// when
-		boolean result = mapper.mapMethodName(method, command);
+		Executable result = () -> mapper.mapMethodName(method, command);
+
+		// then
+		assertThrows(IllegalStateException.class, result);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void methodWithExceededPositionCalled() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExceededPosition");
 
 		// when
-		boolean result = mapper.mapMethodName(method, command);
+		Executable result = () -> mapper.mapMethodName(method, command);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
 	}
 
 	@Test

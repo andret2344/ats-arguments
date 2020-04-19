@@ -3,19 +3,23 @@
  */
 package eu.andret.arguments;
 
+import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.IPermissionMapper;
+import eu.andret.arguments.mapper.IResponseMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.PermissionMapper;
+import eu.andret.arguments.mapper.impl.ResponseMapper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +36,8 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
 	private final IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	private final IPermissionMapper permissionMapper = new PermissionMapper();
-	private final Class<? extends AnnotatedCommandExecutor> executor;
+	private final IResponseMapper responseMapper = new ResponseMapper();
+	private final Class<? extends AnnotatedCommandExecutor> commandClass;
 	private final MethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
@@ -40,26 +45,29 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param executor The {@link AnnotatedCommandExecutor} that will be analyzed in search of
+	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of
 	 * methods annotated with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
-	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> executor, JavaPlugin plugin) {
-		this.executor = executor;
+	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandClass, JavaPlugin plugin) {
+		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);
 	}
 
 	@Override
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 0) {
-			Arrays.stream(executor.getDeclaredMethods())
+			Arrays.stream(commandClass.getDeclaredMethods())
+					.filter(method -> !Modifier.isStatic(method.getModifiers()))
+					.filter(method -> method.isAnnotationPresent(Argument.class))
 					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(executor.getDeclaredMethods(), args, sender)
+					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender)
 					.ifPresentOrElse(method -> {
 								if (permissionMapper.mapPermission(method, sender)) {
-									methodInvoker.invokeMethod(method, args, sender, executor);
+									Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
+									responseMapper.mapResponse(sender, result, method);
 								} else {
 									onInsufficientPermissionsListener.insufficientPermissions(sender);
 								}
@@ -95,5 +103,4 @@ class LocalCommandExecutor implements CommandExecutor {
 	void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
-
 }
