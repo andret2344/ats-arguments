@@ -72,8 +72,7 @@ public @interface Argument {
 	/**
 	 * Should sender see annotated method as available command if has no perms to perform it.
 	 *
-	 * @return <code>true</code> if should be shown in help with lack of
-	 * perms, <code>false</code> otherwise.
+	 * @return {@code true} if should be shown in help with lack of perms, {@code false} otherwise.
 	 */
 	boolean showIfNoPerms() default false;
 }
