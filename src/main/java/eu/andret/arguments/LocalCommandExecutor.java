@@ -5,6 +5,7 @@ package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.IPermissionMapper;
 import eu.andret.arguments.mapper.IResponseMapper;
@@ -38,7 +39,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final IPermissionMapper permissionMapper = new PermissionMapper();
 	private final IResponseMapper responseMapper = new ResponseMapper();
 	private final Class<? extends AnnotatedCommandExecutor> commandClass;
-	private final MethodInvoker methodInvoker;
+	private final IMethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 
@@ -68,11 +69,15 @@ class LocalCommandExecutor implements CommandExecutor {
 								if (permissionMapper.mapPermission(method, sender)) {
 									Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
 									responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType());
-								} else {
+								} else if (onInsufficientPermissionsListener != null) {
 									onInsufficientPermissionsListener.insufficientPermissions(sender);
 								}
 							},
-							() -> onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender)
+							() -> {
+								if (onUnknownSubCommandExecutionListener != null) {
+									onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
+								}
+							}
 					);
 		}
 		return true;
@@ -91,7 +96,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnUnknownSubCommandExecutionListener}
 	 */
-	void setOnUnknownSubCommandExecutionListener(AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
@@ -100,7 +105,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnInsufficientPermissionsListener}
 	 */
-	void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 }
