@@ -1,6 +1,7 @@
 buildscript {
 	repositories {
 		jcenter()
+		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
 		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
@@ -8,28 +9,29 @@ buildscript {
 }
 
 plugins {
+	id 'java'
+	id 'idea'
 	id "com.github.johnrengelman.shadow" version "5.2.0"
+	id 'kr.entree.spigradle' version "1.2.1"
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group = pluginGroup
 version = pluginVersion
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
-	maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-	maven { url 'https://oss.sonatype.org/content/groups/public/' }
+	mavenLocal()
+	spigot()
 }
 
 dependencies {
 	implementation rootProject
-	compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
+	compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
 }
 
 shadowJar {
@@ -38,4 +40,21 @@ shadowJar {
 	}
 }
 
+tasks.withType(JavaCompile) {
+	options.compilerArgs << '-Xlint:unchecked' << '-parameters' << '-g'
+	options.deprecation = true
+}
+
 build.dependsOn(shadowJar)
+
+spigot {
+	authors = ['Andret']
+	apiVersion = '1.15'
+
+	commands {
+		test {
+			description = 'The main Help command.'
+			usage = '/<command>'
+		}
+	}
+}

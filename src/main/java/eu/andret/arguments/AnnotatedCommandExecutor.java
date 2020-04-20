@@ -1,9 +1,9 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
@@ -23,16 +23,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  * org.bukkit.plugin.java.JavaPlugin)
  * @since May 18, 2019
  */
-@AllArgsConstructor
 @Value
 @NonFinal
 public abstract class AnnotatedCommandExecutor {
 	/**
 	 * The Sender that performed the command.
 	 */
-	protected final CommandSender sender;
+	protected CommandSender sender;
 	/**
 	 * The Plugin that uses this executor.
 	 */
-	protected final JavaPlugin plugin;
+	protected JavaPlugin plugin;
 }

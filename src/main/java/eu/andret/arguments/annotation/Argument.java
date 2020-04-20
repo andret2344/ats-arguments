@@ -1,6 +1,7 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments.annotation;
 
 import eu.andret.arguments.ExecutorType;
@@ -71,8 +72,7 @@ public @interface Argument {
 	/**
 	 * Should sender see annotated method as available command if has no perms to perform it.
 	 *
-	 * @return <code>true</code> if should be shown in help with lack of
-	 * perms, <code>false</code> otherwise.
+	 * @return {@code true} if should be shown in help with lack of perms, {@code false} otherwise.
 	 */
 	boolean showIfNoPerms() default false;
 }

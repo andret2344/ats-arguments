@@ -1,12 +1,18 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Value;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -20,15 +26,14 @@ import java.util.stream.Stream;
  * @author Andret
  * @since Jun 02, 2019
  */
+@Value
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Getter(AccessLevel.NONE)
 class LocalTabCompleter implements TabCompleter {
-	private final Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
-
-	LocalTabCompleter(Class<? extends AnnotatedCommandExecutor> commandExecutorClass) {
-		this.commandExecutorClass = commandExecutorClass;
-	}
+	Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
 		if (args.length != 1) {
 			return Collections.emptyList();
 		}

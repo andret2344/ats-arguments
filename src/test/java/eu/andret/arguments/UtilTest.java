@@ -1,26 +1,37 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(Parameterized.class)
 public class UtilTest {
-	private final String input;
-	private final Class<?> targetClass;
-	private final Object realValue;
+	public static Collection<Object[]> convertData() {
+		Object[][] objects = {
+				{"123", int.class, 123},
+				{"false", boolean.class, false},
+				{"12.34", double.class, 12.34},
+				{"test", char.class, 't'},
+				{"99999999999", long.class, 99999999999L},
+				{"9 9 9", String[].class, "9 9 9"},
+				{"other", String.class, "other"}
+		};
+		return Arrays.asList(objects);
+	}
 
-	@Parameterized.Parameters
-	public static Collection<Object[]> data() {
+	public static Collection<Object[]> getRealClassData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -30,23 +41,41 @@ public class UtilTest {
 		return Arrays.asList(objects);
 	}
 
-	public UtilTest(String input, Class<?> targetClass, Object realValue) {
-		this.input = input;
-		this.targetClass = targetClass;
-		this.realValue = realValue;
+	@ParameterizedTest
+	@MethodSource("convertData")
+	public void convert(String input, Class<?> targetClass, Object realValue) {
+		// given
+		Util util = Util.getInstance();
+
+		// when
+		Object result = util.convert(targetClass, input);
+
+		// then
+		assertEquals(realValue, result);
 	}
 
 	@Test
-	public void convert() {
+	public void convertUnsupportedType() {
+		// given
 		Util util = Util.getInstance();
-		Object i = util.convert(targetClass, input);
-		assertEquals(realValue, i);
+
+		// when
+		Executable result = () -> util.convert(Stream.class, "input");
+
+		// then
+		assertThrows(UnsupportedOperationException.class, result);
 	}
 
-	@Test
-	public void getRealClass() {
+	@ParameterizedTest
+	@MethodSource("getRealClassData")
+	public void getRealClass(String input, Class<?> targetClass, Object realValue) {
+		// given
 		Util util = Util.getInstance();
+
+		// when
 		Class<?> realClass = util.getRealClass(input);
-		assertTrue(String.format("Class %s is not assignable from %s", targetClass, realClass), targetClass.isAssignableFrom(realClass));
+
+		// then
+		assertTrue(targetClass.isAssignableFrom(realClass), String.format("Class %s is not assignable from %s", targetClass, realClass));
 	}
 }

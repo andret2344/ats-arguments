@@ -1,3 +1,7 @@
+/*
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommand;
@@ -16,4 +20,3 @@ public class TestPlugin extends JavaPlugin {
 		});
 	}
 }
-

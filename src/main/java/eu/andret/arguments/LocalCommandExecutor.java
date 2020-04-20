@@ -1,6 +1,7 @@
 /*
- * Copyright Andret (c) 2019. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
+
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
@@ -11,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -29,12 +31,12 @@ import java.util.stream.Stream;
  * Local command executor, allows customization of commands behavior.
  *
  * @author Andret
- * @since May 18, 2019
+ * @since May 18, 2020
  */
 class LocalCommandExecutor implements CommandExecutor {
-	private static final Map<CommandSender, AnnotatedCommandExecutor> executors = new HashMap<>();
+	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
 	private final Util util = Util.getInstance();
-	private final Class<? extends AnnotatedCommandExecutor> commandExecutor;
+	private final Class<? extends AnnotatedCommandExecutor> executor;
 	private final JavaPlugin plugin;
 	private OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private OnInsufficientPermissionsListener onInsufficientPermissionsListener;
@@ -82,25 +84,25 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandExecutor The {@link AnnotatedCommandExecutor} that will be analized in search
-	 * of methods annotated with {@link eu.andret.arguments.annotation.Argument}
+	 * @param executor The {@link AnnotatedCommandExecutor} that will be analyzed in search of
+	 * methods annotated with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
-	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandExecutor, JavaPlugin plugin) {
-		this.commandExecutor = commandExecutor;
+	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> executor, JavaPlugin plugin) {
+		this.executor = executor;
 		this.plugin = plugin;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		List<Method> methodList = Stream.of(commandExecutor.getDeclaredMethods())
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+		List<Method> methodList = Stream.of(executor.getDeclaredMethods())
 				.filter(m -> m.getAnnotation(Argument.class) != null)
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.collect(Collectors.toList());
 		if (args.length == 0) {
 			methodList.stream()
 					.filter(m -> m.getAnnotation(Argument.class).showIfNoPerms() || hasPermission(sender, m))
-					.map(m -> getDescription(cmd.getName(), m))
+					.map(m -> getDescription(command.getName(), m))
 					.forEach(sender::sendMessage);
 			return true;
 		}
@@ -125,8 +127,8 @@ class LocalCommandExecutor implements CommandExecutor {
 		if (method == null) {
 			methods.stream()
 					.filter(m -> onUsageExampleListener != null)
-					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(cmd.getName(), m)))
-					.forEach(m -> sender.sendMessage("Usage: " + getDescription(cmd.getName(), m)));
+					.filter(m -> onUsageExampleListener.usageExample(sender, getDescription(command.getName(), m)))
+					.forEach(m -> sender.sendMessage("Usage: " + getDescription(command.getName(), m)));
 			return true;
 		}
 		if (!hasPermission(sender, method)) {
@@ -243,11 +245,11 @@ class LocalCommandExecutor implements CommandExecutor {
 
 	private Object invoke(Method method, CommandSender sender, Object... data) {
 		try {
-			if (!executors.containsKey(sender)) {
-				Constructor<? extends AnnotatedCommandExecutor> constructor = commandExecutor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class);
-				executors.put(sender, constructor.newInstance(sender, plugin));
+			if (!EXECUTORS.containsKey(sender)) {
+				Constructor<? extends AnnotatedCommandExecutor> constructor = executor.getDeclaredConstructor(CommandSender.class, JavaPlugin.class);
+				EXECUTORS.put(sender, constructor.newInstance(sender, plugin));
 			}
-			return method.invoke(executors.get(sender), data);
+			return method.invoke(EXECUTORS.get(sender), data);
 		} catch (ReflectiveOperationException e) {
 			Bukkit.getLogger().throwing(getClass().getName(), "invoke", e);
 		}

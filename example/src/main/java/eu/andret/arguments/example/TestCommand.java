@@ -1,3 +1,7 @@
+/*
+ * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -19,7 +23,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	}
 
 	@Argument(responseType = ResponseType.BROADCAST)
-	public String broadcast(String[] message) {
+	public String broadcast(String... message) {
 		// "/test broadcast Welcome to the new server!", everyone on server gets "Welcome to the new server"
 		return String.join(" ", message);
 	}
