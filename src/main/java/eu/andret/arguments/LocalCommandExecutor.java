@@ -33,7 +33,6 @@ import java.util.Map;
  * @since May 18, 2020
  */
 class LocalCommandExecutor implements CommandExecutor {
-	private final Util util = Util.getInstance();
 	private final Map<String, Mapper<?>> mappers = new HashMap<>();
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
 	private final IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();

@@ -4,20 +4,24 @@
 
 package eu.andret.arguments;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Value;
+import lombok.experimental.UtilityClass;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+@UtilityClass
+@Value
+@Getter(AccessLevel.NONE)
 public class Util {
-	private static Util instance;
-	private final Map<Class<?>, Predicate<String>> realClassPredicates = new HashMap<>();
-	private final Map<Predicate<Class<?>>, Function<String, ?>> convertFunctions = new HashMap<>();
+	Map<Class<?>, Predicate<String>> realClassPredicates = new HashMap<>();
+	Map<Predicate<Class<?>>, Function<String, ?>> convertFunctions = new HashMap<>();
 
-	/**
-	 * Private constructor for creating an instance of this singleton class.
-	 */
-	private Util() {
+	static {
 		realClassPredicates.put(int.class, value -> value.matches("\\d+"));
 		realClassPredicates.put(double.class, value -> value.matches("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)"));
 		realClassPredicates.put(boolean.class, value -> value.equals("false") || value.equals("true"));
@@ -65,17 +69,5 @@ public class Util {
 				.map(Map.Entry::getKey)
 				.findFirst()
 				.orElse((Class) String.class);
-	}
-
-	/**
-	 * The singleton accessor method
-	 *
-	 * @return The instance of this singleton class
-	 */
-	public static Util getInstance() {
-		if (instance == null) {
-			instance = new Util();
-		}
-		return instance;
 	}
 }

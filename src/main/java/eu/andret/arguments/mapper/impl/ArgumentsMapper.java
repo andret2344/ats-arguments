@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 @Value
 @Getter(AccessLevel.NONE)
 public class ArgumentsMapper implements IArgumentsMapper {
-	Util util = Util.getInstance();
 	Map<String, Mapper<?>> mappers;
 
 	@Override
@@ -38,7 +37,7 @@ public class ArgumentsMapper implements IArgumentsMapper {
 		if (size == 0 && command.length - 1 + method.getParameterCount() != 0) {
 			return false;
 		}
-		List<Class<?>> list = Stream.of(command).skip(1).map(util::getRealClass).collect(Collectors.toList());
+		List<Class<?>> list = Stream.of(command).skip(1).map(Util::getRealClass).collect(Collectors.toList());
 		return checkParameters(method, list);
 	}
 

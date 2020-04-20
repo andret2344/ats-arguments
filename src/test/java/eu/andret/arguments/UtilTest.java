@@ -46,10 +46,9 @@ public class UtilTest {
 	@MethodSource("convertData")
 	public void convert(String input, Class<?> targetClass, Object realValue) {
 		// given
-		Util util = Util.getInstance();
 
 		// when
-		Object result = util.convert(targetClass, input);
+		Object result = Util.convert(targetClass, input);
 
 		// then
 		assertEquals(realValue, result);
@@ -58,10 +57,9 @@ public class UtilTest {
 	@Test
 	public void convertUnsupportedType() {
 		// given
-		Util util = Util.getInstance();
 
 		// when
-		Executable result = () -> util.convert(Stream.class, "input");
+		Executable result = () -> Util.convert(Stream.class, "input");
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);
@@ -71,10 +69,9 @@ public class UtilTest {
 	@MethodSource("getRealClassData")
 	public void getRealClass(String input, Class<?> targetClass, Object realValue) {
 		// given
-		Util util = Util.getInstance();
 
 		// when
-		Class<?> realClass = util.getRealClass(input);
+		Class<?> realClass = Util.getRealClass(input);
 
 		// then
 		assertTrue(targetClass.isAssignableFrom(realClass), String.format("Class %s is not assignable from %s", targetClass, realClass));

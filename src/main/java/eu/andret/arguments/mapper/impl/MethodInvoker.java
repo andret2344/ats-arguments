@@ -35,7 +35,6 @@ import java.util.logging.Level;
 @Getter(AccessLevel.NONE)
 public class MethodInvoker implements IMethodInvoker {
 	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
-	Util util = Util.getInstance();
 	JavaPlugin plugin;
 	Map<String, Mapper<?>> mappers;
 
@@ -77,7 +76,7 @@ public class MethodInvoker implements IMethodInvoker {
 				return c.cast(mapper.getFunction().apply(value));
 			}
 		}
-		return util.convert(c, value);
+		return Util.convert(c, value);
 	}
 
 	private <E extends AnnotatedCommandExecutor> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
