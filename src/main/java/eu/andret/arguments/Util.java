@@ -4,35 +4,50 @@
 
 package eu.andret.arguments;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 public class Util {
 	private static Util instance;
+	private final Map<Class<?>, Predicate<String>> realClassPredicates = new HashMap<>();
+	private final Map<Predicate<Class<?>>, Function<String, ?>> convertFunctions = new HashMap<>();
 
+	/**
+	 * Private constructor for creating an instance of this singleton class.
+	 */
 	private Util() {
+		realClassPredicates.put(int.class, value -> value.matches("\\d+"));
+		realClassPredicates.put(double.class, value -> value.matches("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)"));
+		realClassPredicates.put(boolean.class, value -> value.equals("false") || value.equals("true"));
+
+		convertFunctions.put(Class::isArray, value -> value);
+		convertFunctions.put(c -> c.isAssignableFrom(int.class), Integer::parseInt);
+		convertFunctions.put(c -> c.isAssignableFrom(double.class), Double::parseDouble);
+		convertFunctions.put(c -> c.isAssignableFrom(char.class), value -> value.charAt(0));
+		convertFunctions.put(c -> c.isAssignableFrom(long.class), Long::parseLong);
+		convertFunctions.put(c -> c.isAssignableFrom(boolean.class), Boolean::parseBoolean);
+		convertFunctions.put(c -> c.isAssignableFrom(String.class), value -> value);
 	}
 
-	public Object convert(Class<?> c, String value) {
-		if (c.isArray()) {
-			return value;
-		}
-		if (c.isAssignableFrom(int.class)) {
-			return Integer.parseInt(value);
-		}
-		if (c.isAssignableFrom(double.class)) {
-			return Double.parseDouble(value);
-		}
-		if (c.isAssignableFrom(char.class)) {
-			return value.charAt(0);
-		}
-		if (c.isAssignableFrom(long.class)) {
-			return Long.parseLong(value);
-		}
-		if (c.isAssignableFrom(boolean.class)) {
-			return Boolean.parseBoolean(value);
-		}
-		if (c.isAssignableFrom(String.class)) {
-			return value;
-		}
-		throw new UnsupportedOperationException("Use primitive type or String!");
+	/**
+	 * Method that tries to convert value in string into class type provides.
+	 *
+	 * @param clazz The {@link java.lang.Class} which type variable is trying to be made
+	 * @param value The string containing possible to convert value, eg. "1", "false" or "0.009".
+	 *
+	 * @return The converted value, or not if no possible assignment found, or is an array.
+	 */
+	public Object convert(Class<?> clazz, String value) {
+		return convertFunctions.entrySet()
+				.stream()
+				.filter(entry -> entry.getKey().test(clazz))
+				.findFirst()
+				.map(Map.Entry::getValue)
+				.map(predicate -> predicate.apply(value))
+				.orElseThrow(() -> new UnsupportedOperationException("Use primitive type or String!"));
+
 	}
 
 	/**
@@ -44,16 +59,12 @@ public class Util {
 	 * @return the class, which value inside the string arguments matches
 	 */
 	public Class<?> getRealClass(String value) {
-		if (value.matches("\\d+")) {
-			return int.class;
-		}
-		if (value.matches("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)")) {
-			return double.class;
-		}
-		if (value.equals("false") || value.equals("true")) {
-			return boolean.class;
-		}
-		return String.class;
+		return realClassPredicates.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue().test(value))
+				.map(Map.Entry::getKey)
+				.findFirst()
+				.orElse((Class) String.class);
 	}
 
 	/**
