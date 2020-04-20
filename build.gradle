@@ -44,14 +44,15 @@ dependencies {
 	compileOnly group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
 	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 
+	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	testCompileOnly group: 'org.jetbrains', name: 'annotations', version: '19.0.0'
-	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
 	testImplementation group: 'org.spigotmc', name: 'spigot-api', version: '1.15.2-R0.1-SNAPSHOT'
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
 	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.6.2'
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
 	testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.3.3'
+	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 }
 
 compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
