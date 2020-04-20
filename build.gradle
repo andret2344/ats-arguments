@@ -147,7 +147,7 @@ artifactory {
 
 artifactoryPublish {
 	doFirst {
-		rename "${buildDir}/libs/${project.codeName}", "${buildDir}/libs/${project.name}"
+		rename "${buildDir}/libs/${project.codeName}.jar", "${buildDir}/libs/${project.name}.jar"
 	}
 	publications(publishing.publications.lib)
 }
