@@ -104,7 +104,7 @@ publishing {
 		lib(MavenPublication) {
 			groupId = project.group
 			version = project.version
-			artifactId = project.name
+			artifactId = project.codeName
 
 			artifact "${project.buildDir}/libs/${artifactId}-${version}.jar"
 			artifact sourceJar
