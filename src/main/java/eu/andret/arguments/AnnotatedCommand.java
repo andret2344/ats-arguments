@@ -7,7 +7,10 @@ package eu.andret.arguments;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+
+import java.util.function.Function;
 
 /**
  * Wrapper class for classical {@link org.bukkit.command.PluginCommand}.
@@ -20,6 +23,30 @@ import org.bukkit.command.PluginCommand;
 public class AnnotatedCommand {
 	PluginCommand command;
 
+	/**
+	 * Listener to define action when sender performs unknown sub-command.
+	 */
+	public interface OnUnknownSubCommandExecutionListener {
+		/**
+		 * Unknown sub-command executed.
+		 *
+		 * @param sender The sender that executed the unknown sub-command
+		 */
+		void unknownSubCommandExecuted(CommandSender sender);
+	}
+
+	/**
+	 * Listener to define action when sender has insufficient permissions.
+	 */
+	public interface OnInsufficientPermissionsListener {
+		/**
+		 * Insufficient permissions.
+		 *
+		 * @param sender The sender that executed the command with no permissions.
+		 */
+		void insufficientPermissions(CommandSender sender);
+	}
+
 	LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
 	}
@@ -31,27 +58,35 @@ public class AnnotatedCommand {
 	/**
 	 * Sets on unknown sub command execution listener.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUnknownSubCommandExecutionListener}.
+	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
 	 */
-	public void setOnUnknownSubCommandExecutionListener(LocalCommandExecutor.OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
 		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
 	}
 
 	/**
 	 * Sets on insufficient permissions' listener.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnInsufficientPermissionsListener}.
+	 * @param listener The {@link OnInsufficientPermissionsListener}.
 	 */
-	public void setOnInsufficientPermissionsListener(LocalCommandExecutor.OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
 	}
 
 	/**
-	 * Sets on usage example listener.
+	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
 	 *
-	 * @param listener The {@link eu.andret.arguments.LocalCommandExecutor.OnUsageExampleListener}.
+	 * @param id The id of mapper that has to be unique. This is passed to {@link
+	 * eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
+	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
+	 * {@code clazz} object of String
+	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
+	 * method's parameter
 	 */
-	public void setOnUsageExampleListener(LocalCommandExecutor.OnUsageExampleListener listener) {
-		getLocalCommandExecutor().setOnUsageExampleListener(listener);
+	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
+		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper))) {
+			throw new IllegalArgumentException("Mapper with this id is already registered!");
+		}
 	}
 }
