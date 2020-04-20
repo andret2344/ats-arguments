@@ -21,11 +21,13 @@ plugins {
 	id 'maven-publish'
 	id 'java'
 	id 'jacoco'
+	id 'de.jansauer.printcoverage' version '2.0.0'
 }
 
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
+apply plugin: 'jacoco'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -57,7 +59,7 @@ compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:depreca
 
 test {
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport
+	finalizedBy jacocoTestReport, printCoverage
 }
 
 jacocoTestReport {
