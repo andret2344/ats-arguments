@@ -145,10 +145,11 @@ artifactory {
 	}
 }
 
+jar {
+	setArchivesBaseName "${project.codeName}"
+}
+
 artifactoryPublish {
-	doFirst {
-		rename "${buildDir}/libs/${project.name}.jar", "${buildDir}/libs/${project.codeName}.jar"
-	}
 	publications(publishing.publications.lib)
 }
 
