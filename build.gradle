@@ -104,9 +104,9 @@ publishing {
 		lib(MavenPublication) {
 			groupId = project.group
 			version = project.version
-			artifactId = 'ats-arguments'
+			artifactId = project.name
 
-			artifact "${project.buildDir}/libs/${artifactId}-${project.version}.jar"
+			artifact "${project.buildDir}/libs/${artifactId}-${version}.jar"
 			artifact sourceJar
 			artifact packageJavadoc
 
