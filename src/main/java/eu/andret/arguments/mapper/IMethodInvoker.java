@@ -24,6 +24,8 @@ public interface IMethodInvoker extends IMapper {
 	 * @param sender The {@link org.bukkit.command.CommandSender} who actually performed the
 	 * command.
 	 * @param executor The class reference, where the method was written.
+	 *
+	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor);
 }
