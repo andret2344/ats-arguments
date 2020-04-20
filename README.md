@@ -33,7 +33,7 @@ repositories {
 `build.gradle`:
 ```groovy
 dependencies {
-    compile group: 'eu.andret', name: 'ats-arguments', version: '0.0.5-alpha2'
+    compile group: 'eu.andret', name: 'ats-arguments', version: '0.1.0'
     // other dependencies
 }
 ```
@@ -43,7 +43,7 @@ dependencies {
     <dependency>
         <groupId>eu.andret</groupId>
         <artifactId>ats-arguments</artifactId>
-        <version>0.0.5-alpha2</version>
+        <version>0.1.0</version>
     </dependency>
     <!-- other dependencies -->
 </dependencies>
