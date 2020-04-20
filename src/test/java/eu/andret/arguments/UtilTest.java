@@ -35,6 +35,7 @@ public class UtilTest {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
+				{"true", boolean.class, true},
 				{"12.34", double.class, 12.34},
 				{"other", String.class, "other"}
 		};

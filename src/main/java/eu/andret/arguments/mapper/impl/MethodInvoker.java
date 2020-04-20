@@ -83,10 +83,12 @@ public class MethodInvoker implements IMethodInvoker {
 	private <E extends AnnotatedCommandExecutor> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
 		try {
 			if (!EXECUTORS.containsKey(sender)) {
-				Optional<Constructor<E>> optionalConstructor = findMatchingConstructor(executor);
+				Optional<Constructor<?>> optionalConstructor = findMatchingConstructor(executor);
 				if (optionalConstructor.isPresent()) {
-					Constructor<? extends AnnotatedCommandExecutor> c = optionalConstructor.get();
-					EXECUTORS.put(sender, c.newInstance(sender, plugin));
+					Constructor<?> c = optionalConstructor.get();
+					EXECUTORS.put(sender, (AnnotatedCommandExecutor) c.newInstance(sender, plugin));
+				} else {
+					throw new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin");
 				}
 			}
 			return method.invoke(EXECUTORS.get(sender), data);
@@ -96,12 +98,11 @@ public class MethodInvoker implements IMethodInvoker {
 		return null;
 	}
 
-	private <E extends AnnotatedCommandExecutor> Optional<Constructor<E>> findMatchingConstructor(Class<E> executor) {
+	private Optional<Constructor<?>> findMatchingConstructor(Class<?> executor) {
 		return Arrays.stream(executor.getDeclaredConstructors())
 				.filter(c -> c.getParameterCount() == 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
 				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()))
-				.findAny()
-				.map(c -> (Constructor<E>) c);
+				.findAny();
 	}
 }
