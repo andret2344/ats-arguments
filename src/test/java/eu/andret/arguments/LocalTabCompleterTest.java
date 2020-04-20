@@ -66,7 +66,6 @@ public class LocalTabCompleterTest {
 		// then
 		assertNotNull(result);
 		assertEquals(1, result.size());
-		System.out.println(result);
 		assertTrue(result.contains("testAlias1"));
 	}
 

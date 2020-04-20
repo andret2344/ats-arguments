@@ -62,8 +62,20 @@ public class ArgumentsMapper implements IArgumentsMapper {
 	private boolean isTypeMatchingVarArgParameter(Parameter parameter, Param param, List<Class<?>> classes, int i) {
 		return IntStream.range(i, classes.size())
 				.mapToObj(classes::get)
-				.allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
-						(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
+				.allMatch(clazz -> {
+					if (clazz.isAssignableFrom(parameter.getType().getComponentType())) {
+						return true;
+					}
+					if (clazz == String.class) {
+						if (param != null) {
+							return mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType());
+						} else {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				});
 	}
 
 	private boolean isTypeMatchingParam(Parameter parameter, Param param, Class<?> clazz) {

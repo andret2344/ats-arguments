@@ -12,13 +12,16 @@ import org.bukkit.World;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import javax.xml.stream.Location;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 
 public class ArgumentsMapperTest {
@@ -176,5 +179,38 @@ public class ArgumentsMapperTest {
 
 		// then
 		assertTrue(result);
+	}
+
+	@Test
+	public void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+		// given
+		Map<String, Mapper<?>> mappers = new HashMap<>();
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
+
+		// when
+		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "1", "2"});
+
+		// then
+		assertFalse(result);
+	}
+
+	@Test
+	public void methodWithMissingParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+		// given
+		Map<String, Mapper<?>> mappers = new HashMap<>();
+		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
+		abstract class LocalFunction implements Function<String, Location> {
+		}
+		LocalFunction getLocation = mock(LocalFunction.class);
+		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation));
+		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
+
+		// when
+		boolean result = mapper.mapArguments(method, new String[]{"testMethod", "world", "world_nether"});
+
+		// then
+		assertFalse(result);
 	}
 }
