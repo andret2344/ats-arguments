@@ -1,17 +1,27 @@
 # atsArguments changelog
 
+## 0.1.0
+ * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
+ * Spllitted code into parts.
+
 ## 0.0.5-alpha2
-* Updated javadoc
+* Updated javadoc.
 
 ## 0.0.5-alpha1
-* Made listener interfaces public
+* Made listener interfaces public.
 
 ## 0.0.5-alpha
-* Redesigned way of usage
-* Added TabCompleter
+* Redesigned way of usage.
+* Added TabCompleter.
 
 ## 0.0.4-alpha
-* Added `@BaseCommand` annotation
+* Added `@BaseCommand` annotation.
 
 ## 0.0.3-alpha
-* Removed obsolete debugger
+* Removed obsolete debugger.
+
+## 0.0.2-alpha
+* Fixed errors.
+
+## 0.0.1-alpha
+* Initial version.
