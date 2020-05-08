@@ -4,8 +4,10 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.entity.ResponseType;
 import eu.andret.arguments.mapper.impl.ResponseMapper;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,7 @@ public class ResponseMapperTest {
 		IResponseMapper mapper = new ResponseMapper();
 
 		// when
-		mapper.mapResponse(sender, null, ResponseType.SENDER);
+		mapper.mapResponse(sender, null, ResponseType.SENDER, new AnnotatedCommand.Options());
 
 		// then
 		verify(sender, times(0)).sendMessage(anyString());
@@ -40,7 +42,7 @@ public class ResponseMapperTest {
 		IResponseMapper mapper = new ResponseMapper();
 
 		// when
-		mapper.mapResponse(sender, "test response", ResponseType.NONE);
+		mapper.mapResponse(sender, "test response", ResponseType.NONE, new AnnotatedCommand.Options());
 
 		// then
 		verify(sender, times(0)).sendMessage(anyString());
@@ -53,7 +55,7 @@ public class ResponseMapperTest {
 		IResponseMapper mapper = new ResponseMapper();
 
 		// when
-		mapper.mapResponse(sender, "test response", ResponseType.SENDER);
+		mapper.mapResponse(sender, "test response", ResponseType.SENDER, new AnnotatedCommand.Options());
 
 		// then
 		verify(sender, times(1)).sendMessage(eq("test response"));
@@ -70,7 +72,7 @@ public class ResponseMapperTest {
 		when(server.getLogger()).thenReturn(logger);
 
 		// when
-		mapper.mapResponse(sender, "test response", ResponseType.CONSOLE);
+		mapper.mapResponse(sender, "test response", ResponseType.CONSOLE, new AnnotatedCommand.Options());
 
 		// then
 		verify(logger, times(1)).info(eq("test response"));
@@ -85,9 +87,37 @@ public class ResponseMapperTest {
 		when(sender.getServer()).thenReturn(server);
 
 		// when
-		mapper.mapResponse(sender, "test response", ResponseType.BROADCAST);
+		mapper.mapResponse(sender, "test response", ResponseType.BROADCAST, new AnnotatedCommand.Options());
 
 		// then
 		verify(server, times(1)).broadcastMessage(eq("test response"));
+	}
+
+	@Test
+	public void methodWithColoredResponse() {
+		// given
+		CommandSender sender = mock(CommandSender.class);
+		IResponseMapper mapper = new ResponseMapper();
+		AnnotatedCommand.Options options = new AnnotatedCommand.Options();
+		options.setAutoTranslateColors(true);
+
+		// when
+		mapper.mapResponse(sender, "&7test&a response", ResponseType.SENDER, options);
+
+		// then
+		verify(sender, times(1)).sendMessage(eq(ChatColor.translateAlternateColorCodes('&', "&7test&a response")));
+	}
+
+	@Test
+	public void methodWithoutColoredResponse() {
+		// given
+		CommandSender sender = mock(CommandSender.class);
+		IResponseMapper mapper = new ResponseMapper();
+
+		// when
+		mapper.mapResponse(sender, "&7test&a response", ResponseType.SENDER, new AnnotatedCommand.Options());
+
+		// then
+		verify(sender, times(1)).sendMessage(eq("&7test&a response"));
 	}
 }

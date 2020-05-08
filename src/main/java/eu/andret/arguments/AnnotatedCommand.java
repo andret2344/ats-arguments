@@ -4,8 +4,7 @@
 
 package eu.andret.arguments;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -19,14 +18,28 @@ import java.util.function.Function;
  * @since Jun 02, 2019
  */
 @Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class AnnotatedCommand {
 	PluginCommand command;
+	Options options = new Options();
+
+	AnnotatedCommand(PluginCommand command) {
+		this.command = command;
+		getLocalCommandExecutor().setOptions(options);
+	}
+
+	/**
+	 * The Options to manipulate the behavior
+	 */
+	@Data
+	public static class Options {
+		private boolean autoTranslateColors;
+	}
 
 	/**
 	 * Listener to define action when sender performs unknown sub-command.
 	 */
 	public interface OnUnknownSubCommandExecutionListener {
+
 		/**
 		 * Unknown sub-command executed.
 		 *
@@ -39,6 +52,7 @@ public class AnnotatedCommand {
 	 * Listener to define action when sender has insufficient permissions.
 	 */
 	public interface OnInsufficientPermissionsListener {
+
 		/**
 		 * Insufficient permissions.
 		 *
@@ -88,5 +102,15 @@ public class AnnotatedCommand {
 		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper))) {
 			throw new IllegalArgumentException("Mapper with this id is already registered!");
 		}
+	}
+
+	/**
+	 * The config method that changes the color translation behavior.
+	 *
+	 * @param autoTranslateColors If chat color sign {@code &} should be translated in responses
+	 * into real color, no.
+	 */
+	public void setAutoTranslateColors(boolean autoTranslateColors) {
+		options.setAutoTranslateColors(autoTranslateColors);
 	}
 }

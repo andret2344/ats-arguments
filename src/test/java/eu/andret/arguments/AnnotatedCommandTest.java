@@ -10,7 +10,6 @@ import org.bukkit.command.TabCompleter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -115,17 +114,5 @@ public class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(executor, times(1)).addMapper(eq("test"), any());
-	}
-
-	@Test
-	public void toStringTest() {
-		// given
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(null);
-
-		// when
-		String result = annotatedCommand.toString();
-
-		// then
-		assertEquals("AnnotatedCommand(command=null)", result);
 	}
 }

@@ -46,6 +46,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final IMethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
+	private AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 	/**
 	 * Constructs the LocalCommandExecutor.
@@ -92,7 +93,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private void invokeMethod(Method method, CommandSender sender, String[] args) {
 		if (permissionMapper.mapPermission(method, sender)) {
 			Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-			responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType());
+			responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType(), options);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}
@@ -114,5 +115,9 @@ class LocalCommandExecutor implements CommandExecutor {
 	 */
 	public void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
+	}
+
+	void setOptions(AnnotatedCommand.Options options) {
+		this.options = options;
 	}
 }

@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.entity.ResponseType;
 import org.bukkit.command.CommandSender;
 
@@ -21,5 +22,5 @@ public interface IResponseMapper extends IMapper {
 	 * @param result The result returned from called method.
 	 * @param responseType The {@link eu.andret.arguments.entity.ResponseType}.
 	 */
-	void mapResponse(CommandSender sender, Object result, ResponseType responseType);
+	void mapResponse(CommandSender sender, Object result, ResponseType responseType, AnnotatedCommand.Options options);
 }
