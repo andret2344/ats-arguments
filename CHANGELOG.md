@@ -5,7 +5,7 @@
 
 ## 0.1.0
  * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
- * Slitted code into parts.
+ * Split code into parts.
 
 ## 0.0.5-alpha2
 * Updated javadoc.

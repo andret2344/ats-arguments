@@ -282,7 +282,7 @@ public class TestCommand extends AnnotatedCommandExecutor {
 
 	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
 	public void alwaysDisplayed() {
-		// Argument will be displayed when "/test" under no conditions
+		// Argument will be displayed when "/test" will be executed under no conditions
 	}
 }
 ```
