@@ -258,14 +258,15 @@ public class TestCommand extends AnnotatedCommandExecutor {
     
     @Argument(executorType = ExecutorType.PLAYER)
     public String distance(@Param("basicPlayerMapper") Player... players) {
-        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
         OptionalDouble min = Arrays.stream(players)
                 .filter(Objects::nonNull)
                 .mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
                 .min();
         if (min.isPresent()) {
+            // "/test player Andret2344 deyanix", sender gets: "The shortest distance is 53.23634. Guess whom it is!"
             return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
         } 
+        // "/test player Andret2344 deyanix", sender gets: "No min distance could be found :("
         return "No min distance could be found :(";
     }
 
