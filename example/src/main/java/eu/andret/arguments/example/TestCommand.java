@@ -5,11 +5,12 @@
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.ExecutorType;
-import eu.andret.arguments.ResponseType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.entity.DisplayType;
+import eu.andret.arguments.entity.ExecutorType;
+import eu.andret.arguments.entity.ResponseType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -56,5 +57,20 @@ public class TestCommand extends AnnotatedCommandExecutor {
 			return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
 		}
 		return "No min distance could be found :(";
+	}
+
+	@Argument(displayType = DisplayType.NONE)
+	public void notDisplayed() {
+		// Argument won't be displayed when "/test" will be executed
+	}
+
+	@Argument(displayType = DisplayType.IF_PERMS, permission = "eu.andret.test.conditions")
+	public void conditionallyDisplayed() {
+		// Argument will be displayed when "/test" will be executed only if sender has permissions
+	}
+
+	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
+	public void alwaysDisplayed() {
+		// Argument will be displayed when "/test" under no conditions
 	}
 }

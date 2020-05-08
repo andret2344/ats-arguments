@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.ResponseType;
+import eu.andret.arguments.entity.ResponseType;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -19,7 +19,7 @@ public interface IResponseMapper extends IMapper {
 	 *
 	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
 	 * @param result The result returned from called method.
-	 * @param responseType The {@link eu.andret.arguments.ResponseType}.
+	 * @param responseType The {@link eu.andret.arguments.entity.ResponseType}.
 	 */
 	void mapResponse(CommandSender sender, Object result, ResponseType responseType);
 }

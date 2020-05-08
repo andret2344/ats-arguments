@@ -164,7 +164,7 @@ Now, let's see what can we set up using `@Argument`:
 | description | `String` | Any String. | `""` | The description of command that will show up in help. |
 | aliases | `String[]` | Array of any non-colliding strings. | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
 | position | `int` | Any non-negative int lower or equal to methods arguments count. | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
-| showIfNoPerms | `boolean` | Well, any boolean actually. | `true` | If this argument should be visible in generic help message. |
+| displayType | `DisplayType` | `ALWAYS`, `IF_PERMS`, `NONE` | `ALWAYS` | Describes when argument in help message should be visible. |
 
 To be formal, here's the table for `@BaseCommand`:
 
@@ -268,5 +268,20 @@ public class TestCommand extends AnnotatedCommandExecutor {
         } 
         return "No min distance could be found :(";
     }
+
+	@Argument(displayType = DisplayType.NONE)
+	public void notDisplayed() {
+		// Argument won't be displayed when "/test" will be executed
+	}
+
+	@Argument(displayType = DisplayType.IF_PERMS, permission = "eu.andret.test.conditions")
+	public void conditionallyDisplayed() {
+		// Argument will be displayed when "/test" will be executed only if sender has permissions
+	}
+
+	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
+	public void alwaysDisplayed() {
+		// Argument will be displayed when "/test" under no conditions
+	}
 }
 ```

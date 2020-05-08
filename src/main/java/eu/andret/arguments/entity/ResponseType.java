@@ -2,7 +2,7 @@
  * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
  */
 
-package eu.andret.arguments;
+package eu.andret.arguments.entity;
 
 /**
  * Describes who will get the result from executed method. Used in {@link

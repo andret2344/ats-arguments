@@ -7,6 +7,7 @@ package eu.andret.arguments;
 import eu.andret.arguments.AnnotatedCommand.OnInsufficientPermissionsListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.entity.ResponseType;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IMapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
@@ -53,7 +54,7 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(17)).sendMessage(eq("/test testString"));
+		verify(sender, times(19)).sendMessage(eq("/test testString"));
 	}
 
 	@Test

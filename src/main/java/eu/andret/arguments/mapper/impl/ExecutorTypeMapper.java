@@ -4,8 +4,8 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.entity.ExecutorType;
 import eu.andret.arguments.mapper.IExecutorTypeMapper;
 import lombok.Value;
 import org.bukkit.command.CommandSender;

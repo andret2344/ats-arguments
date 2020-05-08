@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.ResponseType;
+import eu.andret.arguments.entity.ResponseType;
 import eu.andret.arguments.mapper.IResponseMapper;
 import org.bukkit.command.CommandSender;
 

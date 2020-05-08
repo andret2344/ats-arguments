@@ -5,10 +5,11 @@
 package eu.andret.arguments.provider;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.entity.DisplayType;
+import eu.andret.arguments.entity.ExecutorType;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -93,5 +94,17 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	@Argument
 	public void testMethodWithException() {
 		throw new IllegalArgumentException();
+	}
+
+	@Argument(displayType = DisplayType.ALWAYS)
+	public void testMethodDisplayedAlways() {
+	}
+
+	@Argument(displayType = DisplayType.IF_PERMS)
+	public void testMethodDisplayedConditionally() {
+	}
+
+	@Argument(displayType = DisplayType.NONE)
+	public void testMethodDisplayedNever() {
 	}
 }
