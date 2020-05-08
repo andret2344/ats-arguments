@@ -1,8 +1,11 @@
 # atsArguments changelog
 
+## 0.1.1
+ * Changed not working `showIfNoPerms` into `displayType` `@Argument` element.
+
 ## 0.1.0
  * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
- * Spllitted code into parts.
+ * Slitted code into parts.
 
 ## 0.0.5-alpha2
 * Updated javadoc.
