@@ -53,6 +53,8 @@ public class CommandManagerTest {
 		// given
 		JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		PluginCommand pluginCommand = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(pluginCommand.getExecutor()).thenReturn(executor);
 		when(javaPlugin.getCommand(anyString())).thenReturn(pluginCommand);
 
 		// when
