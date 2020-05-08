@@ -73,4 +73,10 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	public void alwaysDisplayed() {
 		// Argument will be displayed when "/test" will be executed under no conditions
 	}
+
+	@Argument
+	public String colored() {
+		// Response will be automatically coloured due to "&4" and "&b"
+		return "&4Nothing to look at here. &bBye!";
+	}
 }

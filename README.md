@@ -200,6 +200,9 @@ Command can also have mappers. Mappers are used to automate changes from String 
 
 Then you can use `@Param(value = "id")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
 
+There is also possible to sets simple things up.
+* `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should sutomatically translate colors from `'&'` to `'§'`.
+
 ## Example usage
 `TestPlugin.java`:
 ```java
@@ -210,6 +213,7 @@ public class TestPlugin extends JavaPlugin {
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
         command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
+        command.setAutoTranslateColors(true);
     }
 }
 ```
@@ -283,6 +287,12 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
 	public void alwaysDisplayed() {
 		// Argument will be displayed when "/test" will be executed under no conditions
+	}
+
+	@Argument
+	public String colored() {
+		// Response will be automatically coloured due to "&4" and "&b"
+        return "&4Nothing to look at here. &bBye!"; 
 	}
 }
 ```

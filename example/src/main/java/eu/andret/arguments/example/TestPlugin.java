@@ -17,5 +17,6 @@ public class TestPlugin extends JavaPlugin {
 		command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
 		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
+		command.setAutoTranslateColors(true);
 	}
 }

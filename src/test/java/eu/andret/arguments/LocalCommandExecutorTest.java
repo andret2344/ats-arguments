@@ -200,7 +200,7 @@ public class LocalCommandExecutorTest {
 		assertTrue(result);
 		verify(unknownSubCommandExecutionListener, times(0)).unknownSubCommandExecuted(any(CommandSender.class));
 		verify(insufficientPermissionsListener, times(0)).insufficientPermissions(eq(sender));
-		verify(responseMapper, times(1)).mapResponse(eq(sender), eq(value), eq(ResponseType.SENDER));
+		verify(responseMapper, times(1)).mapResponse(eq(sender), eq(value), eq(ResponseType.SENDER), any(AnnotatedCommand.Options.class));
 	}
 
 	@Test

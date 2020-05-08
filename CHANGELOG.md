@@ -1,11 +1,12 @@
 # atsArguments changelog
 
 ## 0.1.1
- * Changed not working `showIfNoPerms` into `displayType` `@Argument` element.
+* Changed not working `showIfNoPerms` into `displayType` `@Argument` element.
+* Added possibility to automatically translate color codes 
 
 ## 0.1.0
- * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
- * Split code into parts.
+* Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
+* Split code into parts.
 
 ## 0.0.5-alpha2
 * Updated javadoc.

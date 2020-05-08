@@ -10,7 +10,6 @@ import org.bukkit.command.TabCompleter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +25,8 @@ public class AnnotatedCommandTest {
 	public void correctCommandReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
@@ -39,9 +40,9 @@ public class AnnotatedCommandTest {
 	public void correctListenersSetup() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> {
@@ -58,9 +59,9 @@ public class AnnotatedCommandTest {
 	public void correctExecutorReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
 		CommandExecutor result = annotatedCommand.getLocalCommandExecutor();
@@ -73,6 +74,8 @@ public class AnnotatedCommandTest {
 	public void correctCompleterReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
@@ -88,9 +91,9 @@ public class AnnotatedCommandTest {
 	public void correctAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(true);
 
 		// when
@@ -104,9 +107,9 @@ public class AnnotatedCommandTest {
 	public void incorrectAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(false);
 
 		// when
@@ -115,17 +118,5 @@ public class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(executor, times(1)).addMapper(eq("test"), any());
-	}
-
-	@Test
-	public void toStringTest() {
-		// given
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(null);
-
-		// when
-		String result = annotatedCommand.toString();
-
-		// then
-		assertEquals("AnnotatedCommand(command=null)", result);
 	}
 }
