@@ -4,8 +4,9 @@
 
 package eu.andret.arguments.annotation;
 
-import eu.andret.arguments.ExecutorType;
-import eu.andret.arguments.ResponseType;
+import eu.andret.arguments.entity.DisplayType;
+import eu.andret.arguments.entity.ExecutorType;
+import eu.andret.arguments.entity.ResponseType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -42,7 +43,7 @@ public @interface Argument {
 	 *
 	 * @return The executor type.
 	 *
-	 * @see eu.andret.arguments.ExecutorType
+	 * @see eu.andret.arguments.entity.ExecutorType
 	 */
 	ExecutorType executorType() default ExecutorType.ALL;
 
@@ -51,7 +52,7 @@ public @interface Argument {
 	 *
 	 * @return The response type.
 	 *
-	 * @see eu.andret.arguments.ResponseType
+	 * @see eu.andret.arguments.entity.ResponseType
 	 */
 	ResponseType responseType() default ResponseType.SENDER;
 
@@ -70,9 +71,9 @@ public @interface Argument {
 	String[] aliases() default {};
 
 	/**
-	 * Should sender see annotated method as available command if has no perms to perform it.
+	 * Under what circumstances sender should see an argument in help
 	 *
-	 * @return {@code true} if should be shown in help with lack of perms, {@code false} otherwise.
+	 * @return The display type.
 	 */
-	boolean showIfNoPerms() default false;
+	DisplayType displayType() default DisplayType.ALWAYS;
 }

@@ -6,11 +6,13 @@ package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IDisplayTypeMapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.IPermissionMapper;
 import eu.andret.arguments.mapper.IResponseMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
+import eu.andret.arguments.mapper.impl.DisplayTypeMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.PermissionMapper;
@@ -21,6 +23,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	private final IPermissionMapper permissionMapper = new PermissionMapper();
 	private final IResponseMapper responseMapper = new ResponseMapper();
+	private final IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
 	private final Class<? extends AnnotatedCommandExecutor> commandClass;
 	private final IMethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -61,18 +65,12 @@ class LocalCommandExecutor implements CommandExecutor {
 			Arrays.stream(commandClass.getDeclaredMethods())
 					.filter(method -> !Modifier.isStatic(method.getModifiers()))
 					.filter(method -> method.isAnnotationPresent(Argument.class))
+					.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
 					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
 		} else {
 			commandToMethodMapper
 					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender)
-					.ifPresentOrElse(method -> {
-								if (permissionMapper.mapPermission(method, sender)) {
-									Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-									responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType());
-								} else if (onInsufficientPermissionsListener != null) {
-									onInsufficientPermissionsListener.insufficientPermissions(sender);
-								}
-							},
+					.ifPresentOrElse(method -> invokeMethod(method, sender, args),
 							() -> {
 								if (onUnknownSubCommandExecutionListener != null) {
 									onUnknownSubCommandExecutionListener.unknownSubCommandExecuted(sender);
@@ -89,6 +87,15 @@ class LocalCommandExecutor implements CommandExecutor {
 		}
 		mappers.put(id, mapper);
 		return true;
+	}
+
+	private void invokeMethod(Method method, CommandSender sender, String[] args) {
+		if (permissionMapper.mapPermission(method, sender)) {
+			Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
+			responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType());
+		} else if (onInsufficientPermissionsListener != null) {
+			onInsufficientPermissionsListener.insufficientPermissions(sender);
+		}
 	}
 
 	/**
