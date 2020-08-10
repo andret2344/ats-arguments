@@ -29,6 +29,7 @@ import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -218,6 +219,22 @@ public class LocalCommandExecutorTest {
 		assertTrue(result1);
 		assertFalse(result2);
 		assertTrue(result3);
+	}
+
+	@Test
+	public void setOptions() throws NoSuchFieldException, IllegalAccessException {
+		// given
+		JavaPlugin plugin = mock(JavaPlugin.class);
+		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
+
+		// when
+		executor.setOptions(new AnnotatedCommand.Options());
+
+		// then
+		Field field = executor.getClass().getDeclaredField("options");
+		field.setAccessible(true);
+		AnnotatedCommand.Options options = (AnnotatedCommand.Options) field.get(executor);
+		assertNotNull(options);
 	}
 
 	private void injectMapper(LocalCommandExecutor executor, IMapper mapper, String mapperName) {
