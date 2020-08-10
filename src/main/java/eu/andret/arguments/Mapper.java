@@ -7,6 +7,7 @@ package eu.andret.arguments;
 import lombok.Value;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * This class remembers the returned from mapping function class. It was needed to have such a
@@ -21,4 +22,5 @@ import java.util.function.Function;
 public class Mapper<T> {
 	Class<T> clazz;
 	Function<String, T> function;
+	Predicate<Object> fallbackCondition;
 }

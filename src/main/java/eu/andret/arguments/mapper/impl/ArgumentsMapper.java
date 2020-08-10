@@ -17,7 +17,6 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -50,7 +49,7 @@ public class ArgumentsMapper implements IArgumentsMapper {
 			}
 			Param param = parameter.getAnnotation(Param.class);
 			if (parameter.isVarArgs()
-					? !isTypeMatchingVarArgParameter(parameter, param, classes, i)
+					? !isTypeMatchingVarArgParameter(parameter, param, classes.subList(i, classes.size()))
 					: !isTypeMatchingParam(parameter, param, classes.get(i))) {
 				return false;
 			}
@@ -58,11 +57,9 @@ public class ArgumentsMapper implements IArgumentsMapper {
 		return true;
 	}
 
-	private boolean isTypeMatchingVarArgParameter(Parameter parameter, Param param, List<Class<?>> classes, int i) {
-		return IntStream.range(i, classes.size())
-				.mapToObj(classes::get)
-				.allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
-						(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
+	private boolean isTypeMatchingVarArgParameter(Parameter parameter, Param param, List<Class<?>> classes) {
+		return classes.stream().allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
+				(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
 	}
 
 	private boolean isTypeMatchingParam(Parameter parameter, Param param, Class<?> clazz) {

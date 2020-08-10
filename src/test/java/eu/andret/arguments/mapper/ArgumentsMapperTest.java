@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.Mapper;
+import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.mapper.impl.ArgumentsMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Bukkit;
@@ -22,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-
 
 public class ArgumentsMapperTest {
 	@Test
@@ -127,7 +127,7 @@ public class ArgumentsMapperTest {
 	public void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
@@ -170,7 +170,7 @@ public class ArgumentsMapperTest {
 	public void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
@@ -185,7 +185,7 @@ public class ArgumentsMapperTest {
 	public void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -204,7 +204,7 @@ public class ArgumentsMapperTest {
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		LocalFunction getLocation = mock(LocalFunction.class);
-		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation));
+		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation, Fallback.NEVER));
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when

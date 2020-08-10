@@ -7,6 +7,7 @@ package eu.andret.arguments.example;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
+import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.DisplayType;
 import eu.andret.arguments.entity.ExecutorType;
@@ -34,6 +35,11 @@ public class TestCommand extends AnnotatedCommandExecutor {
 	public String broadcast(String... message) {
 		// "/test broadcast Welcome to the new server!", everyone on server gets "Welcome to the new server"
 		return String.join(" ", message);
+	}
+
+	@Fallback
+	public String player(String player) {
+		return "The " + player + " is offline!";
 	}
 
 	@Argument

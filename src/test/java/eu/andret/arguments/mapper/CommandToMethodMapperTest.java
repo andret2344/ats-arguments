@@ -6,6 +6,7 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.Mapper;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
@@ -31,6 +32,8 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 public class CommandToMethodMapperTest {
+	@Mock
+	private IExecutionCallMapper executionCallMapper;
 	@Mock
 	private IMethodNameMapper methodNameMapper;
 	@Mock
@@ -84,16 +87,17 @@ public class CommandToMethodMapperTest {
 		Class<? extends AnnotatedCommandExecutor> executor = TestMethodsProvider.class;
 		Method method = executor.getDeclaredMethod("testMethod");
 		CommandSender sender = mock(CommandSender.class);
+		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));
 		lenient().when(methodNameMapper.mapMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
 		lenient().when(executorTypeMapper.mapExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
 		lenient().when(argumentsMapper.mapArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
+		Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {
-			assertEquals(Optional.of(method), result);
+			assertEquals(Optional.of(method), result.map(ExecutionCall::getMethod));
 		} else {
 			assertEquals(Optional.empty(), result);
 		}
