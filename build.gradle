@@ -106,7 +106,7 @@ publishing {
     }
     repositories {
         maven {
-            url "https://git.recadel.com/api/v4/projects/25/packages/maven"
+            url "https://gitlab.com/api/v4/projects/12063927/packages/maven"
             credentials(HttpHeaderCredentials) {
             	name = 'Job-Token'
             	value = System.getenv("CI_JOB_TOKEN")
