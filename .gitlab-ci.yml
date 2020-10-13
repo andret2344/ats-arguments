@@ -40,8 +40,8 @@ publish:
   script:
     - gradle clean
     - gradle publish
-  only:
-    - master
+#  only:
+#    - master
   when: manual
 
 pages:
