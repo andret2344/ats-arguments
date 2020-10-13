@@ -24,7 +24,6 @@ plugins {
 	id 'de.jansauer.printcoverage' version '2.0.0'
 }
 
-apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
 apply plugin: 'jacoco'
@@ -100,57 +99,28 @@ task packageJavadoc(type: Jar) {
 }
 
 publishing {
-	artifactoryPublish.dependsOn('build')
-	publications {
-		lib(MavenPublication) {
-			groupId = project.group
-			version = project.version
-			artifactId = project.codeName
-
-			artifact "${project.buildDir}/libs/${artifactId}-${version}.jar"
-			artifact sourceJar
-			artifact packageJavadoc
-
-			pom.withXml {
-				def dependenciesNode = asNode().appendNode("dependencies")
-
-				configurations.implementation.allDependencies.each {
-					def dependencyNode = dependenciesNode.appendNode('dependency')
-					dependencyNode.appendNode('groupId', it.group)
-					dependencyNode.appendNode('artifactId', it.name)
-					dependencyNode.appendNode('version', it.version)
-				}
-			}
-		}
-	}
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "https://git.recadel.com/api/v4/projects/25/packages/maven"
+            credentials(HttpHeaderCredentials) {
+            	name = 'Job-Token'
+            	value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
+    }
 }
 
-artifactory {
-	contextUrl = 'https://repo.andret.eu/'
-
-	publish {
-		repository {
-			repoKey = 'andret-tools-system'
-			if (project.hasProperty('username') && project.hasProperty('username')) {
-				username = project.property('username')
-				password = project.property('password')
-			} else {
-				print 'No credentials'
-			}
-		}
-		defaults {
-			publishArtifacts = true
-			publishPom = true
-		}
-	}
-}
 
 jar {
 	setArchivesBaseName "${project.codeName}"
-}
-
-artifactoryPublish {
-	publications(publishing.publications.lib)
 }
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {
