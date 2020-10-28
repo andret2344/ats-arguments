@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DisplayTypeMapperTest {
+class DisplayTypeMapperTest {
 	@Mock
 	private IPermissionMapper permissionMapper;
 
@@ -29,7 +29,7 @@ public class DisplayTypeMapperTest {
 	private DisplayTypeMapper mapper;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		Mockito.mockitoSession()
 				.initMocks(this)
 				.startMocking()
@@ -38,7 +38,7 @@ public class DisplayTypeMapperTest {
 
 
 	@Test
-	public void methodAlwaysDisplayed() throws NoSuchMethodException {
+	void methodAlwaysDisplayed() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodDisplayedAlways");
@@ -51,7 +51,7 @@ public class DisplayTypeMapperTest {
 	}
 
 	@Test
-	public void methodDisplayedIfPerms() throws NoSuchMethodException {
+	void methodDisplayedIfPerms() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodDisplayedConditionally");
@@ -65,7 +65,7 @@ public class DisplayTypeMapperTest {
 	}
 
 	@Test
-	public void methodDisplayedIfNoPerms() throws NoSuchMethodException {
+	void methodDisplayedIfNoPerms() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodDisplayedConditionally");
@@ -79,7 +79,7 @@ public class DisplayTypeMapperTest {
 	}
 
 	@Test
-	public void methodDisplayedNever() throws NoSuchMethodException {
+	void methodDisplayedNever() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodDisplayedNever");

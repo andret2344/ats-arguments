@@ -21,9 +21,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ResponseMapperTest {
+class ResponseMapperTest {
 	@Test
-	public void nullResult() {
+	void nullResult() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		IResponseMapper mapper = new ResponseMapper();
@@ -36,7 +36,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithNoneResponse() {
+	void methodWithNoneResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		IResponseMapper mapper = new ResponseMapper();
@@ -49,7 +49,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithSenderResponse() {
+	void methodWithSenderResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		IResponseMapper mapper = new ResponseMapper();
@@ -62,7 +62,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithConsoleResponse() {
+	void methodWithConsoleResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Server server = mock(Server.class);
@@ -79,7 +79,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithBroadcastResponse() {
+	void methodWithBroadcastResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Server server = mock(Server.class);
@@ -94,7 +94,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithColoredResponse() {
+	void methodWithColoredResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		IResponseMapper mapper = new ResponseMapper();
@@ -109,7 +109,7 @@ public class ResponseMapperTest {
 	}
 
 	@Test
-	public void methodWithoutColoredResponse() {
+	void methodWithoutColoredResponse() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		IResponseMapper mapper = new ResponseMapper();

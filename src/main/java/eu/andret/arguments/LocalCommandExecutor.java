@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IDisplayTypeMapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
@@ -43,7 +44,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final IPermissionMapper permissionMapper = new PermissionMapper();
 	private final IResponseMapper responseMapper = new ResponseMapper();
 	private final IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
-	private final Class<? extends AnnotatedCommandExecutor> commandClass;
+	private final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	private final IMethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
@@ -56,7 +57,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 * 		with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
 	 */
-	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandClass, JavaPlugin plugin) {
+	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass, JavaPlugin plugin) {
 		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);
 	}

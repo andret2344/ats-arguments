@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Value
 @BaseCommand("malformed")
 @EqualsAndHashCode(callSuper = true)
-public class MalformedClass extends AnnotatedCommandExecutor {
+public class MalformedClass extends AnnotatedCommandExecutor<JavaPlugin> {
 	String world;
 
 	public MalformedClass(CommandSender sender, JavaPlugin plugin, String world) {

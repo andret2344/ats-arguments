@@ -16,16 +16,18 @@ import org.bukkit.plugin.java.JavaPlugin;
  * argument of {@link eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
  * org.bukkit.plugin.java.JavaPlugin)}
  *
+ * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin} that will be administrating commands.
+ *
  * @author Andret
  * @see org.bukkit.command.CommandExecutor
  * @see eu.andret.arguments.annotation.Argument
  * @see eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
- * org.bukkit.plugin.java.JavaPlugin)
+ *        org.bukkit.plugin.java.JavaPlugin)
  * @since May 18, 2019
  */
 @Value
 @NonFinal
-public abstract class AnnotatedCommandExecutor {
+public abstract class AnnotatedCommandExecutor<T extends JavaPlugin> {
 	/**
 	 * The Sender that performed the command.
 	 */
@@ -33,5 +35,5 @@ public abstract class AnnotatedCommandExecutor {
 	/**
 	 * The Plugin that uses this executor.
 	 */
-	protected JavaPlugin plugin;
+	protected T plugin;
 }

@@ -6,85 +6,41 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-public class MethodToDescriptionMapperTest {
+class MethodToDescriptionMapperTest {
 	private final IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 
-	@Test
-	public void testMappingPureMethod() throws NoSuchMethodException {
-		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
-
-		// when
-		String result = mapper.mapMethodToDescription(method, "test");
-
-		// then
-		assertEquals("/test testMethod", result);
+	static Collection<Object[]> getMappingData() {
+		Object[][] objects = {
+				{"testMethod", "testMethod", null},
+				{"testMethodWithAliases", "<testMethodWithAliases|testAlias1>", null},
+				{"testMethodWithDescription", "testMethodWithDescription - test description", null},
+				{"testMethodWithArgument", "testMethodWithArgument <text>", String.class},
+				{"testMethodWithCorrectPosition", "<text> testMethodWithCorrectPosition", String.class},
+				{"testMethodWithVararg", "testMethodWithVararg <text...>", String[].class}
+		};
+		return Arrays.asList(objects);
 	}
 
-	@Test
-	public void testMappingMethodWithAlias() throws NoSuchMethodException {
+	@ParameterizedTest
+	@MethodSource("getMappingData")
+	void testMappingMethod(String input, String output, Class<?> clazz) throws NoSuchMethodException {
 		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithAliases");
+		Class<?>[] args = clazz == null ? new Class<?>[0] : new Class<?>[]{clazz};
+		Method method = TestMethodsProvider.class.getDeclaredMethod(input, args);
 
 		// when
 		String result = mapper.mapMethodToDescription(method, "test");
 
 		// then
-		assertEquals("/test <testMethodWithAliases|testAlias1>", result);
-	}
-
-	@Test
-	public void testMappingMethodWithArgument() throws NoSuchMethodException {
-		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
-
-		// when
-		String result = mapper.mapMethodToDescription(method, "test");
-
-		// then
-		assertEquals("/test testMethodWithArgument <text>", result);
-	}
-
-	@Test
-	public void testMappingMethodWithArgumentAndPosition() throws NoSuchMethodException {
-		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class);
-
-		// when
-		String result = mapper.mapMethodToDescription(method, "test");
-
-		// then
-		assertEquals("/test <text> testMethodWithCorrectPosition", result);
-	}
-
-	@Test
-	public void testMappingMethodWithVararg() throws NoSuchMethodException {
-		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
-
-		// when
-		String result = mapper.mapMethodToDescription(method, "test");
-
-		// then
-		assertEquals("/test testMethodWithVararg <text...>", result);
-	}
-
-	@Test
-	public void testMappingMethodWithDescription() throws NoSuchMethodException {
-		// given
-		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithDescription");
-
-		// when
-		String result = mapper.mapMethodToDescription(method, "test");
-
-		// then
-		assertEquals("/test testMethodWithDescription - test description", result);
+		assertEquals("/test " + output, result);
 	}
 }

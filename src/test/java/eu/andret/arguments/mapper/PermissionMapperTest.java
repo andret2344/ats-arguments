@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PermissionMapperTest {
+class PermissionMapperTest {
 	private final IPermissionMapper mapper = new PermissionMapper();
 
 	@Test
-	public void methodWithPermissionCalledByConsole() throws NoSuchMethodException {
+	void methodWithPermissionCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithPermission");
@@ -35,7 +35,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithPermissionCalledByOpPlayer() throws NoSuchMethodException {
+	void methodWithPermissionCalledByOpPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.isOp()).thenReturn(true);
@@ -49,7 +49,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithPermissionCalledByPlayerWithPermission() throws NoSuchMethodException {
+	void methodWithPermissionCalledByPlayerWithPermission() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(true);
@@ -63,7 +63,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithPermissionCalledByPlayerWithoutPermission() throws NoSuchMethodException {
+	void methodWithPermissionCalledByPlayerWithoutPermission() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(false);
@@ -77,7 +77,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithoutPermissionCalledByConsole() throws NoSuchMethodException {
+	void methodWithoutPermissionCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
@@ -90,7 +90,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithoutPermissionCalledByOpPlayer() throws NoSuchMethodException {
+	void methodWithoutPermissionCalledByOpPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.isOp()).thenReturn(true);
@@ -104,7 +104,7 @@ public class PermissionMapperTest {
 	}
 
 	@Test
-	public void methodWithoutPermissionCalled() throws NoSuchMethodException {
+	void methodWithoutPermissionCalled() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");

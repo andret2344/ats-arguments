@@ -5,7 +5,7 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.Mapper;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Param;
@@ -34,12 +34,12 @@ import java.util.logging.Level;
 @Value
 @Getter(AccessLevel.NONE)
 public class MethodInvoker implements IMethodInvoker {
-	private static final Map<CommandSender, AnnotatedCommandExecutor> EXECUTORS = new HashMap<>();
+	private static final Map<CommandSender, AnnotatedCommandExecutor<JavaPlugin>> EXECUTORS = new HashMap<>();
 	JavaPlugin plugin;
 	Map<String, Mapper<?>> mappers;
 
 	@Override
-	public Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor) {
+	public Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
 		Object[] data = recalculateArguments(method, command);
 		return invoke(method, sender, executor, data);
 	}
@@ -79,13 +79,14 @@ public class MethodInvoker implements IMethodInvoker {
 		return Util.convert(c, value);
 	}
 
-	private <E extends AnnotatedCommandExecutor> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
+	@SuppressWarnings("unchecked")
+	private <E extends AnnotatedCommandExecutor<? extends JavaPlugin>> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
 		try {
 			if (!EXECUTORS.containsKey(sender)) {
 				Optional<Constructor<?>> optionalConstructor = findMatchingConstructor(executor);
 				if (optionalConstructor.isPresent()) {
 					Constructor<?> c = optionalConstructor.get();
-					EXECUTORS.put(sender, (AnnotatedCommandExecutor) c.newInstance(sender, plugin));
+					EXECUTORS.put(sender, (AnnotatedCommandExecutor<JavaPlugin>) c.newInstance(sender, plugin));
 				} else {
 					throw new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin");
 				}

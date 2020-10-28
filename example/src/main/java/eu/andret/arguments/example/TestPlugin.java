@@ -19,4 +19,8 @@ public class TestPlugin extends JavaPlugin {
 		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
 		command.setAutoTranslateColors(true);
 	}
+
+	public boolean isSuperSecretSetting() {
+		return false;
+	}
 }

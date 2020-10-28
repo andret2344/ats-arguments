@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
  * @since Apr 17, 2020
  */
 public interface IExecutorTypeMapper extends IMapper {
-
 	/**
 	 * @param method The method that will be analyzed.
 	 * @param sender The real command sender who performed command.

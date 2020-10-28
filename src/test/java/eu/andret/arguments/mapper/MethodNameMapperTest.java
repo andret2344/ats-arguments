@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodNameMapperTest {
+class MethodNameMapperTest {
 	private final IMethodNameMapper mapper = new MethodNameMapper();
 
 	@Test
-	public void staticAnnotatedMethodCalled() throws NoSuchMethodException {
+	void staticAnnotatedMethodCalled() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testStaticMethod");
@@ -32,7 +32,7 @@ public class MethodNameMapperTest {
 	}
 
 	@Test
-	public void methodWithExceededPositionCalled() throws NoSuchMethodException {
+	void methodWithExceededPositionCalled() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExceededPosition");
@@ -45,7 +45,7 @@ public class MethodNameMapperTest {
 	}
 
 	@Test
-	public void methodWithoutAnnotation() throws NoSuchMethodException {
+	void methodWithoutAnnotation() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutAnnotation");
@@ -58,7 +58,7 @@ public class MethodNameMapperTest {
 	}
 
 	@Test
-	public void method() throws NoSuchMethodException {
+	void method() throws NoSuchMethodException {
 		// given
 		String[] command = {"testMethod"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
@@ -71,7 +71,7 @@ public class MethodNameMapperTest {
 	}
 
 	@Test
-	public void methodWithAliases() throws NoSuchMethodException {
+	void methodWithAliases() throws NoSuchMethodException {
 		// given
 		String[] command = {"testAlias1"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithAliases");
@@ -84,7 +84,7 @@ public class MethodNameMapperTest {
 	}
 
 	@Test
-	public void methodWithCorrectPosition() throws NoSuchMethodException {
+	void methodWithCorrectPosition() throws NoSuchMethodException {
 		// given
 		String[] command = {"test", "testMethodWithCorrectPosition"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class);
