@@ -35,16 +35,11 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
 
-artifactory:
+publish:
   stage: deploy
-  before_script:
-    - curl -fL https://getcli.jfrog.io | sh
-    - ./jfrog rt config --url=$ARTIFACTORY_URL --user=$ARTIFACTORY_USER --password=$ARTIFACTORY_PASS
-    - ./jfrog rt c show
-    - sed -i 's,GRADLE_REPO_KEY,'"$GRADLE_REPO_KEY"',g' configuration.yaml
   script:
     - gradle clean
-    - gradle artifactoryPublish -Pusername=$ARTIFACTORY_USER -Ppassword=$ARTIFACTORY_PASS
+    - gradle publish
   only:
     - master
   when: manual
