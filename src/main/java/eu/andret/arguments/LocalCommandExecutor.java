@@ -54,7 +54,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 * Constructs the LocalCommandExecutor.
 	 *
 	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of
-	 * 		methods annotated * 		with {@link eu.andret.arguments.annotation.Argument}
+	 * 		methods annotated with {@link eu.andret.arguments.annotation.Argument}
 	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin
 	 * 		class.
 	 */
