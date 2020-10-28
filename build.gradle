@@ -100,7 +100,10 @@ publishing {
     publications {
         library(MavenPublication) {
             from components.java
-        }
+			groupId = project.group
+			version = project.version
+			artifactId = project.codeName
+		}
     }
     repositories {
         maven {
