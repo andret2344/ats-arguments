@@ -28,7 +28,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public String testing() {
 		// "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
 		if (plugin.isSuperSecretSetting()) {
-			return "I'm secretly testing";
+			return "I'm secretly testing!";
 		}
 		return "I'm testing!";
 	}
