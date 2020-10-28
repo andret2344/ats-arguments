@@ -12,6 +12,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +35,7 @@ public class AnnotatedCommandTest {
 
 		// then
 		assertSame(command, result);
+		verify(executor, times(1)).setOptions(any());
 	}
 
 	@Test
@@ -118,5 +120,20 @@ public class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(executor, times(1)).addMapper(eq("test"), any());
+	}
+
+	@Test
+	public void correctAutoTranslateColors() {
+		// given
+		PluginCommand command = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+
+		// when
+		annotatedCommand.setAutoTranslateColors(true);
+
+		// then
+		assertTrue(annotatedCommand.getOptions().isAutoTranslateColors());
 	}
 }
