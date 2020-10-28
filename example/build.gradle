@@ -57,6 +57,7 @@ spigot {
 	authors = ['Andret']
 	apiVersion = '1.15'
 
+	//noinspection GroovyAssignabilityCheck
 	commands {
 		test {
 			description = 'The main Help command.'

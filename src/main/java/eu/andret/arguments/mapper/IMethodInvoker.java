@@ -9,6 +9,8 @@ import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 /**
  * The interface to invoke the selected method.
  *

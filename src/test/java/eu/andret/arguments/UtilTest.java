@@ -45,8 +45,6 @@ class UtilTest {
 	@ParameterizedTest
 	@MethodSource("convertData")
 	void convert(String input, Class<?> targetClass, Object realValue) {
-		// given
-
 		// when
 		Object result = Util.convert(targetClass, input);
 
@@ -56,8 +54,6 @@ class UtilTest {
 
 	@Test
 	void convertUnsupportedType() {
-		// given
-
 		// when
 		Executable result = () -> Util.convert(Stream.class, "input");
 
@@ -68,8 +64,6 @@ class UtilTest {
 	@ParameterizedTest
 	@MethodSource("getRealClassData")
 	void getRealClass(String input, Class<?> targetClass, Object realValue) {
-		// given
-
 		// when
 		Class<?> realClass = Util.getRealClass(input);
 
