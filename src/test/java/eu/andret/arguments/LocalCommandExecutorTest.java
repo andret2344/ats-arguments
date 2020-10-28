@@ -9,6 +9,7 @@ import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.entity.ResponseType;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IMapper;
@@ -41,9 +42,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LocalCommandExecutorTest {
+class LocalCommandExecutorTest {
 	@Test
-	public void noCommandArguments() {
+	void noCommandArguments() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -61,7 +62,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void incorrectArgumentsWithoutListener() {
+	void incorrectArgumentsWithoutListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -84,7 +85,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void incorrectArgumentsWithListener() {
+	void incorrectArgumentsWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -110,7 +111,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithoutPermissionWithoutListener() {
+	void correctArgumentsWithoutPermissionWithoutListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -138,7 +139,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithoutPermissionWithListener() {
+	void correctArgumentsWithoutPermissionWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -169,7 +170,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithPermissionWithListener() {
+	void correctArgumentsWithPermissionWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -210,7 +211,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void addMapper() {
+	void addMapper() {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
@@ -227,7 +228,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void setOptions() throws NoSuchFieldException, IllegalAccessException {
+	void setOptions() throws NoSuchFieldException, IllegalAccessException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);

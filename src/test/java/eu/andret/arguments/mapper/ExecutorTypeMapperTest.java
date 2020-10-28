@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class ExecutorTypeMapperTest {
+class ExecutorTypeMapperTest {
 	private final IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 	@Test
-	public void methodWithExecutorTypePlayerCalledByPlayer() throws NoSuchMethodException {
+	void methodWithExecutorTypePlayerCalledByPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypePlayer");
@@ -34,7 +34,7 @@ public class ExecutorTypeMapperTest {
 	}
 
 	@Test
-	public void methodWithExecutorTypePlayerCalledByConsole() throws NoSuchMethodException {
+	void methodWithExecutorTypePlayerCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypePlayer");
@@ -47,7 +47,7 @@ public class ExecutorTypeMapperTest {
 	}
 
 	@Test
-	public void methodWithExecutorTypeConsoleCalledByPlayer() throws NoSuchMethodException {
+	void methodWithExecutorTypeConsoleCalledByPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeConsole");
@@ -60,7 +60,7 @@ public class ExecutorTypeMapperTest {
 	}
 
 	@Test
-	public void methodWithExecutorTypeConsoleCalledByConsole() throws NoSuchMethodException {
+	void methodWithExecutorTypeConsoleCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeConsole");
@@ -73,7 +73,7 @@ public class ExecutorTypeMapperTest {
 	}
 
 	@Test
-	public void methodWithExecutorTypeAllCalledByPlayer() throws NoSuchMethodException {
+	void methodWithExecutorTypeAllCalledByPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeAll");
@@ -86,7 +86,7 @@ public class ExecutorTypeMapperTest {
 	}
 
 	@Test
-	public void methodWithExecutorTypeAllCalledByConsole() throws NoSuchMethodException {
+	void methodWithExecutorTypeAllCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeAll");

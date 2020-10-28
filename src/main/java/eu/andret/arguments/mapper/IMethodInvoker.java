@@ -7,6 +7,7 @@ package eu.andret.arguments.mapper;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * The interface to invoke the selected method.
@@ -26,5 +27,5 @@ public interface IMethodInvoker extends IMapper {
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
-	Object invokeMethod(ExecutionCall method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor> executor);
+	Object invokeMethod(ExecutionCall method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor);
 }

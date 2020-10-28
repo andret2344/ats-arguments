@@ -20,14 +20,17 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 
 @BaseCommand(value = "test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public TestCommand(CommandSender sender, TestPlugin plugin) {
 		super(sender, plugin);
 	}
 
 	@Argument(permission = "me.testing")
 	public String testing() {
-		// "/test testing", requires permission "me.testing", sender gets "I'm testing"
+		// "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+		if (plugin.isSuperSecretSetting()) {
+			return "I'm secretly testing!";
+		}
 		return "I'm testing!";
 	}
 

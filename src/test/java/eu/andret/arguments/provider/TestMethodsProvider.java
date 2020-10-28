@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @BaseCommand("test")
-public class TestMethodsProvider extends AnnotatedCommandExecutor {
+public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(CommandSender sender, JavaPlugin plugin) {
 		super(sender, plugin);
 	}

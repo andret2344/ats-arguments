@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class LocalTabCompleterTest {
+class LocalTabCompleterTest {
 	@Test
-	public void multipleMethodsMatch() {
+	void multipleMethodsMatch() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -57,7 +57,7 @@ public class LocalTabCompleterTest {
 	}
 
 	@Test
-	public void aliasMatch() {
+	void aliasMatch() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -73,7 +73,7 @@ public class LocalTabCompleterTest {
 	}
 
 	@Test
-	public void noArgumentsNotMatch() {
+	void noArgumentsNotMatch() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -88,7 +88,7 @@ public class LocalTabCompleterTest {
 	}
 
 	@Test
-	public void manyArgumentsNotMatch() {
+	void manyArgumentsNotMatch() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -103,7 +103,7 @@ public class LocalTabCompleterTest {
 	}
 
 	@Test
-	public void toStringNotNUll() {
+	void toStringNotNUll() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);

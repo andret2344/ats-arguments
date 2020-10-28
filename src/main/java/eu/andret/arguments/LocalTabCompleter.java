@@ -12,6 +12,7 @@ import lombok.Value;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter(AccessLevel.NONE)
 class LocalTabCompleter implements TabCompleter {
-	Class<? extends AnnotatedCommandExecutor> commandExecutorClass;
+	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandExecutorClass;
 
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {

@@ -22,9 +22,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CommandManagerTest {
+class CommandManagerTest {
 	@Test
-	public void classWithNoAnnotation() {
+	void classWithNoAnnotation() {
 		// given
 		JavaPlugin javaPlugin = mock(JavaPlugin.class);
 
@@ -36,7 +36,7 @@ public class CommandManagerTest {
 	}
 
 	@Test
-	public void classWithWrongCommand() {
+	void classWithWrongCommand() {
 		// given
 		JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		when(javaPlugin.getCommand(anyString())).thenReturn(null);
@@ -49,7 +49,7 @@ public class CommandManagerTest {
 	}
 
 	@Test
-	public void classWithCorrectCommand() {
+	void classWithCorrectCommand() {
 		// given
 		JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		PluginCommand pluginCommand = mock(PluginCommand.class);
@@ -66,7 +66,7 @@ public class CommandManagerTest {
 	}
 
 	@Test
-	public void constructorCall() throws Throwable {
+	void constructorCall() throws Throwable {
 		// given
 		Constructor<CommandManager> constructor = CommandManager.class.getDeclaredConstructor();
 		constructor.setAccessible(true);

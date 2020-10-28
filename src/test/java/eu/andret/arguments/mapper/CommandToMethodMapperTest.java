@@ -5,11 +5,12 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.Mapper;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-public class CommandToMethodMapperTest {
+class CommandToMethodMapperTest {
 	@Mock
 	private IExecutionCallMapper executionCallMapper;
 	@Mock
@@ -46,14 +47,14 @@ public class CommandToMethodMapperTest {
 	private CommandToMethodMapper mapper;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		Mockito.mockitoSession()
 				.initMocks(this)
 				.startMocking()
 				.finishMocking();
 	}
 
-	public static Iterable<Object[]> data() {
+	static Iterable<Object[]> data() {
 		Object[][] objects = {
 				{false, false, false},
 				{false, false, true},
@@ -68,7 +69,7 @@ public class CommandToMethodMapperTest {
 	}
 
 	@Test
-	public void constructs() {
+	void constructs() {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 
@@ -82,9 +83,9 @@ public class CommandToMethodMapperTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
+	void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
 		// given
-		Class<? extends AnnotatedCommandExecutor> executor = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> executor = TestMethodsProvider.class;
 		Method method = executor.getDeclaredMethod("testMethod");
 		CommandSender sender = mock(CommandSender.class);
 		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));

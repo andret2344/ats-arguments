@@ -6,6 +6,7 @@ package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IDisplayTypeMapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
@@ -43,7 +44,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	private final IPermissionMapper permissionMapper = new PermissionMapper();
 	private final IResponseMapper responseMapper = new ResponseMapper();
 	private final IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
-	private final Class<? extends AnnotatedCommandExecutor> commandClass;
+	private final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	private final IMethodInvoker methodInvoker;
 	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
@@ -52,11 +53,12 @@ class LocalCommandExecutor implements CommandExecutor {
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
-	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of methods annotated
-	 * * 		with {@link eu.andret.arguments.annotation.Argument}
-	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin class.
+	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of
+	 * 		methods annotated * 		with {@link eu.andret.arguments.annotation.Argument}
+	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin
+	 * 		class.
 	 */
-	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor> commandClass, JavaPlugin plugin) {
+	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass, JavaPlugin plugin) {
 		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);
 	}
@@ -112,10 +114,10 @@ class LocalCommandExecutor implements CommandExecutor {
 				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
 	}
 
-	private void invokeMethod(Method method, CommandSender sender, String[] args) {
-		if (permissionMapper.mapPermission(method, sender)) {
+	private void invokeMethod(ExecutionCall method, CommandSender sender, String[] args) {
+		if (permissionMapper.mapPermission(method.getMethod(), sender)) {
 			Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-			responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType(), options);
+			responseMapper.mapResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}

@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.Mapper;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.mapper.IArgumentsMapper;

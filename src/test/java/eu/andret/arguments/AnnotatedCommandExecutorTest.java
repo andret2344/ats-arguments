@@ -12,15 +12,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class AnnotatedCommandExecutorTest {
+class AnnotatedCommandExecutorTest {
 	@Test
-	public void insanitiesWithCorrectData() {
+	void insanitiesWithCorrectData() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		JavaPlugin plugin = mock(JavaPlugin.class);
 
 		// when
-		AnnotatedCommandExecutor executor = new EmptyClass(sender, plugin);
+		AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
 
 		//then
 		assertEquals(sender, executor.sender);

@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.entity.Mapper;
 import lombok.Data;
 import lombok.Value;
 import org.bukkit.command.CommandSender;

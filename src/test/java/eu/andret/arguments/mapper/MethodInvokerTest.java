@@ -5,7 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.Mapper;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
@@ -32,14 +32,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MethodInvokerTest {
+class MethodInvokerTest {
 	@Test
-	public void invokeMethodWithNoArgs() throws ReflectiveOperationException {
+	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -51,12 +51,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodOneArg() throws ReflectiveOperationException {
+	void invokeMethodOneArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -68,12 +68,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodPosition() throws ReflectiveOperationException {
+	void invokeMethodPosition() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -85,12 +85,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
+	void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = MalformedClass.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
 		Method method = spy(commandClass.getDeclaredMethod("world"));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -103,12 +103,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
+	void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -121,7 +121,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithMismatchedParamNameArg() throws ReflectiveOperationException {
+	void invokeMethodWithMismatchedParamNameArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -131,7 +131,7 @@ public class MethodInvokerTest {
 		World world = mock(World.class);
 		when(getWorld.apply(eq("world"))).thenReturn(world);
 		HashMap<String, Mapper<?>> mappers = new HashMap<>();
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		ExecutionCall call = new ExecutionCall(method);
 		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
@@ -146,7 +146,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithMismatchedParamTypeArg() throws ReflectiveOperationException {
+	void invokeMethodWithMismatchedParamTypeArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -157,7 +157,7 @@ public class MethodInvokerTest {
 		when(getLocation.apply(eq("world"))).thenReturn(world);
 		HashMap<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation, Fallback.NEVER));
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
 		ExecutionCall call = new ExecutionCall(method);
@@ -172,12 +172,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithVarArg() throws ReflectiveOperationException {
+	void invokeMethodWithVarArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
 		ExecutionCall call = new ExecutionCall(method);
 
@@ -189,7 +189,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithParamArg() throws ReflectiveOperationException {
+	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -200,7 +200,7 @@ public class MethodInvokerTest {
 		when(getWorld.apply(eq("world"))).thenReturn(world);
 		HashMap<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, getWorld, Fallback.NEVER));
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		ExecutionCall call = new ExecutionCall(method);
 		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
@@ -214,12 +214,12 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithException() throws ReflectiveOperationException {
+	void invokeMethodWithException() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
 		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor> commandClass = TestMethodsProvider.class;
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
 		Logger logger = mock(Logger.class);
 		when(plugin.getLogger()).thenReturn(logger);

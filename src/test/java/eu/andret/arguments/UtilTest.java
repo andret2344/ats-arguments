@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UtilTest {
-	public static Collection<Object[]> convertData() {
+class UtilTest {
+	static Collection<Object[]> convertData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -31,7 +31,7 @@ public class UtilTest {
 		return Arrays.asList(objects);
 	}
 
-	public static Collection<Object[]> getRealClassData() {
+	static Collection<Object[]> getRealClassData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -44,7 +44,7 @@ public class UtilTest {
 
 	@ParameterizedTest
 	@MethodSource("convertData")
-	public void convert(String input, Class<?> targetClass, Object realValue) {
+	void convert(String input, Class<?> targetClass, Object realValue) {
 		// given
 
 		// when
@@ -55,7 +55,7 @@ public class UtilTest {
 	}
 
 	@Test
-	public void convertUnsupportedType() {
+	void convertUnsupportedType() {
 		// given
 
 		// when
@@ -67,7 +67,7 @@ public class UtilTest {
 
 	@ParameterizedTest
 	@MethodSource("getRealClassData")
-	public void getRealClass(String input, Class<?> targetClass, Object realValue) {
+	void getRealClass(String input, Class<?> targetClass, Object realValue) {
 		// given
 
 		// when
