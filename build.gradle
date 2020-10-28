@@ -24,9 +24,7 @@ plugins {
 	id 'de.jansauer.printcoverage' version '2.0.0'
 }
 
-apply plugin: 'maven-publish'
 apply plugin: 'io.franzbecker.gradle-lombok'
-apply plugin: 'jacoco'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -117,7 +115,6 @@ publishing {
         }
     }
 }
-
 
 jar {
 	setArchivesBaseName "${project.codeName}"
