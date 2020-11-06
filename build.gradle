@@ -93,7 +93,8 @@ publishing {
 	publications {
 		//noinspection GroovyAssignabilityCheck
 		library(MavenPublication) {
-            from components.javaartifact tasks.sourceJar
+			from components.java
+			artifact tasks.sourceJar
 			artifact tasks.packageJavadoc
 			groupId = project.group
 			version = project.version
@@ -110,9 +111,9 @@ publishing {
 			authentication {
 				//noinspection GroovyAssignabilityCheck
 				header(HttpHeaderAuthentication)
-            }
-        }
-    }
+			}
+		}
+	}
 }
 
 jar {
