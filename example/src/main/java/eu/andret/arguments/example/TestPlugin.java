@@ -6,6 +6,7 @@ package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.CommandManager;
+import eu.andret.arguments.annotation.Fallback;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +17,7 @@ public class TestPlugin extends JavaPlugin {
 		AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
 		command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
+		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
 		command.setAutoTranslateColors(true);
 	}
 

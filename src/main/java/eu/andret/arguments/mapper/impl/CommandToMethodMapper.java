@@ -5,8 +5,10 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.IArgumentsMapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IExecutionCallMapper;
 import eu.andret.arguments.mapper.IExecutorTypeMapper;
 import eu.andret.arguments.mapper.IMethodNameMapper;
 import lombok.AccessLevel;
@@ -31,20 +33,22 @@ import java.util.Optional;
 @Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
 	Map<String, Mapper<?>> mappers;
+	IExecutionCallMapper executionCallMapper;
 	IMethodNameMapper methodNameMapper;
 	IExecutorTypeMapper executorTypeMapper;
 	IArgumentsMapper argumentsMapper;
 
 	public CommandToMethodMapper(Map<String, Mapper<?>> mappers) {
-		this(mappers, new MethodNameMapper(), new ExecutorTypeMapper(), new ArgumentsMapper(mappers));
+		this(mappers, new ExecutionCallMapper(), new MethodNameMapper(), new ExecutorTypeMapper(), new ArgumentsMapper(mappers));
 	}
 
 	@Override
-	public Optional<Method> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender) {
+	public Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender) {
 		return Arrays.stream(methods)
-				.filter(method -> methodNameMapper.mapMethodName(method, command))
-				.filter(method -> executorTypeMapper.mapExecutorType(method, sender))
-				.filter(method -> argumentsMapper.mapArguments(method, command))
+				.map(method -> executionCallMapper.mapExecutionCall(method, methods))
+				.filter(executionCall -> methodNameMapper.mapMethodName(executionCall.getMethod(), command))
+				.filter(executionCall -> executorTypeMapper.mapExecutorType(executionCall.getMethod(), sender))
+				.filter(executionCall -> argumentsMapper.mapArguments(executionCall.getMethod(), command))
 				.findFirst();
 	}
 }

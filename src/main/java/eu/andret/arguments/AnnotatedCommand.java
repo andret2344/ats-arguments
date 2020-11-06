@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.entity.Mapper;
 import lombok.Data;
 import lombok.Value;
@@ -11,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Wrapper class for classical {@link org.bukkit.command.PluginCommand}.
@@ -92,24 +94,42 @@ public class AnnotatedCommand {
 	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link
-	 * eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
 	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
 	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
-	 * {@code clazz} object of String
+	 *        {@code clazz} object of String
+	 * @param fallbackCondition The {@link Predicate<T>} that will verify if fallback should
+	 * 		execute.
 	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
-	 * method's parameter
+	 * 		method's parameter
 	 */
-	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
-		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper))) {
+	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper, Predicate<Object> fallbackCondition) {
+		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException("Mapper with this id is already registered!");
 		}
+	}
+
+	/**
+	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
+	 * Fallback method will be never called.
+	 *
+	 * @param id The id of mapper that has to be unique. This is passed to {@link
+	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
+	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
+	 *        {@code clazz} object of String
+	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
+	 * 		method's parameter
+	 */
+	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
+		addArgumentMapper(id, clazz, mapper, Fallback.NEVER);
 	}
 
 	/**
 	 * The config method that changes the color translation behavior.
 	 *
 	 * @param autoTranslateColors If chat color sign {@code &} should be translated in responses
-	 * into real color, no.
+	 * 		into real color, no.
 	 */
 	public void setAutoTranslateColors(boolean autoTranslateColors) {
 		options.setAutoTranslateColors(autoTranslateColors);

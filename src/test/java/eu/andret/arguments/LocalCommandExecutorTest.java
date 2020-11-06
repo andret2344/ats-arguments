@@ -7,6 +7,8 @@ package eu.andret.arguments;
 import eu.andret.arguments.AnnotatedCommand.OnInsufficientPermissionsListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.entity.ResponseType;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
@@ -116,9 +118,10 @@ class LocalCommandExecutorTest {
 		ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
 		IPermissionMapper permissionMapper = mock(IPermissionMapper.class);
 		Method method = mock(Method.class);
+		ExecutionCall call = new ExecutionCall(method);
 		when(permissionMapper.mapPermission(eq(method), eq(sender))).thenReturn(false);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
-		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(method));
+		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(call));
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionMapper, "permissionMapper");
 		when(command.getName()).thenReturn("test");
@@ -143,9 +146,10 @@ class LocalCommandExecutorTest {
 		ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
 		IPermissionMapper permissionMapper = mock(IPermissionMapper.class);
 		Method method = mock(Method.class);
+		ExecutionCall call = new ExecutionCall(method);
 		when(permissionMapper.mapPermission(eq(method), eq(sender))).thenReturn(false);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
-		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(method));
+		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(call));
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionMapper, "permissionMapper");
 		when(command.getName()).thenReturn("test");
@@ -175,14 +179,15 @@ class LocalCommandExecutorTest {
 		IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
 		IResponseMapper responseMapper = mock(IResponseMapper.class);
 		Method method = mock(Method.class);
+		ExecutionCall call = new ExecutionCall(method);
 		Argument argument = mock(Argument.class);
 		when(method.getAnnotation(eq(Argument.class))).thenReturn(argument);
 		when(argument.responseType()).thenReturn(ResponseType.SENDER);
 		when(permissionMapper.mapPermission(eq(method), eq(sender))).thenReturn(true);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
 		Object value = mock(Object.class);
-		when(methodInvoker.invokeMethod(eq(method), any(String[].class), eq(sender), eq(TestMethodsProvider.class))).thenReturn(value);
-		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(method));
+		when(methodInvoker.invokeMethod(eq(call), any(String[].class), eq(sender), eq(TestMethodsProvider.class))).thenReturn(value);
+		when(methodMapper.mapCommandToMethod(any(), any(), any())).thenReturn(Optional.of(call));
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionMapper, "permissionMapper");
 		injectMapper(executor, methodInvoker, "methodInvoker");
@@ -211,9 +216,9 @@ class LocalCommandExecutorTest {
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
 
 		// when
-		boolean result1 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld));
-		boolean result2 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld));
-		boolean result3 = executor.addMapper("test3", new Mapper<>(World.class, Bukkit::getWorld));
+		boolean result1 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		boolean result2 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		boolean result3 = executor.addMapper("test3", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 
 		// then
 		assertTrue(result1);

@@ -5,13 +5,17 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 
 /**
  * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
@@ -39,17 +42,23 @@ public class MethodInvoker implements IMethodInvoker {
 	Map<String, Mapper<?>> mappers;
 
 	@Override
-	public Object invokeMethod(Method method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
-		Object[] data = recalculateArguments(method, command);
-		return invoke(method, sender, executor, data);
+	public Object invokeMethod(ExecutionCall method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
+		try {
+			Object[] data = recalculateArguments(method.getMethod(), command);
+			return invoke(method.getMethod(), sender, executor, data);
+		} catch (FallbackException ex) {
+			Object[] data = recalculateArguments(method.getFallbackMethod(), command);
+			return invoke(method.getFallbackMethod(), sender, executor, data);
+		}
 	}
 
 	private Object[] recalculateArguments(Method method, String... args) {
 		Argument argument = method.getAnnotation(Argument.class);
+		Fallback fallback = method.getAnnotation(Fallback.class);
 		Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
 		for (int i = 0; i < method.getParameterCount(); i++) {
-			if (i == argument.position()) {
+			if (fallback == null && i == argument.position()) {
 				skip++;
 			}
 			Param param = method.getParameters()[i].getAnnotation(Param.class);
@@ -73,29 +82,24 @@ public class MethodInvoker implements IMethodInvoker {
 		if (param != null && mappers.containsKey(param.value())) {
 			Mapper<?> mapper = mappers.get(param.value());
 			if (mapper.getClazz().equals(c)) {
-				return c.cast(mapper.getFunction().apply(value));
+				Object o = mapper.getFunction().apply(value);
+				if (mapper.getFallbackCondition().test(o)) {
+					throw new FallbackException("Fallback Condition failed");
+				}
+				return c.cast(o);
 			}
 		}
 		return Util.convert(c, value);
 	}
 
 	@SuppressWarnings("unchecked")
+	@SneakyThrows
 	private <E extends AnnotatedCommandExecutor<? extends JavaPlugin>> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
-		try {
-			if (!EXECUTORS.containsKey(sender)) {
-				Optional<Constructor<?>> optionalConstructor = findMatchingConstructor(executor);
-				if (optionalConstructor.isPresent()) {
-					Constructor<?> c = optionalConstructor.get();
-					EXECUTORS.put(sender, (AnnotatedCommandExecutor<JavaPlugin>) c.newInstance(sender, plugin));
-				} else {
-					throw new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin");
-				}
-			}
-			return method.invoke(EXECUTORS.get(sender), data);
-		} catch (ReflectiveOperationException e) {
-			plugin.getLogger().log(Level.SEVERE, e, String::new);
+		if (!EXECUTORS.containsKey(sender)) {
+			Constructor<?> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin"));
+			EXECUTORS.put(sender, (AnnotatedCommandExecutor<JavaPlugin>) c.newInstance(sender, plugin));
 		}
-		return null;
+		return method.invoke(EXECUTORS.get(sender), data);
 	}
 
 	private Optional<Constructor<?>> findMatchingConstructor(Class<?> executor) {

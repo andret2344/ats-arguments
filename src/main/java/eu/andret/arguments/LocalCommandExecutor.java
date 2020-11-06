@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IDisplayTypeMapper;
@@ -24,7 +25,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -114,10 +114,10 @@ class LocalCommandExecutor implements CommandExecutor {
 				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
 	}
 
-	private void invokeMethod(Method method, CommandSender sender, String[] args) {
-		if (permissionMapper.mapPermission(method, sender)) {
+	private void invokeMethod(ExecutionCall method, CommandSender sender, String[] args) {
+		if (permissionMapper.mapPermission(method.getMethod(), sender)) {
 			Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-			responseMapper.mapResponse(sender, result, method.getAnnotation(Argument.class).responseType(), options);
+			responseMapper.mapResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}
