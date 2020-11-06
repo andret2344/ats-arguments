@@ -7,6 +7,7 @@ package eu.andret.arguments.provider;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
+import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.DisplayType;
 import eu.andret.arguments.entity.ExecutorType;
@@ -83,8 +84,12 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public void testMethodWithArray(String[] text) {
 	}
 
+	@Fallback
+	public void testMethodWithParam(String world) {
+	}
+
 	@Argument
-	public void testMethodWithParam(@Param("testWorldMapper") World block) {
+	public void testMethodWithParam(@Param("testWorldMapper") World world) {
 	}
 
 	@Argument

@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.entity;
 
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.function.Function;
@@ -22,5 +23,6 @@ import java.util.function.Predicate;
 public class Mapper<T> {
 	Class<T> clazz;
 	Function<String, T> function;
+	@NonNull
 	Predicate<Object> fallbackCondition;
 }

@@ -5,9 +5,9 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.provider.MalformedClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -48,6 +49,30 @@ class MethodInvokerTest {
 
 		// then
 		verify(method, times(1)).invoke(eq(new TestMethodsProvider(sender, plugin)));
+	}
+
+	@Test
+	void invokeFallbackMethodWith() throws ReflectiveOperationException {
+		// given
+		JavaPlugin plugin = mock(JavaPlugin.class);
+		CommandSender sender = mock(CommandSender.class);
+		abstract class LocalFunction implements Function<String, World> {
+		}
+		Function<String, World> getWorld = mock(LocalFunction.class);
+		HashMap<String, Mapper<?>> mappers = new HashMap<>();
+		mappers.put("testWorldMapper", new Mapper<>(World.class, getWorld, Fallback.ALWAYS));
+		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
+		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		Method methodWorld = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		Method methodString = spy(commandClass.getDeclaredMethod("testMethodWithParam", String.class));
+		ExecutionCall call = new ExecutionCall(methodWorld, methodString);
+
+		// when
+		invoker.invokeMethod(call, new String[]{"testMethod", "test"}, sender, commandClass);
+
+		// then
+		verify(methodWorld, times(0)).invoke(any());
+		verify(methodString, times(1)).invoke(eq(new TestMethodsProvider(sender, plugin)), eq("testMethod"));
 	}
 
 	@Test
