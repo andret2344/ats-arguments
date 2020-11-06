@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 To set up the library in your project, you have to do following steps:

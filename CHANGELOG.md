@@ -2,7 +2,8 @@
 
 ## 0.1.1
 * Changed not working `showIfNoPerms` into `displayType` `@Argument` element.
-* Added possibility to automatically translate color codes 
+* Added possibility to automatically translate color codes .
+* Added `@Fallback` method allowing accessing non-parsed via `@Param` annotation values. 
 
 ## 0.1.0
 * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
