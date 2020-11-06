@@ -31,9 +31,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MethodInvokerTest {
+class MethodInvokerTest {
 	@Test
-	public void invokeMethodWithNoArgs() throws ReflectiveOperationException {
+	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -49,7 +49,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodOneArg() throws ReflectiveOperationException {
+	void invokeMethodOneArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -65,7 +65,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodPosition() throws ReflectiveOperationException {
+	void invokeMethodPosition() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -81,7 +81,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
+	void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -98,7 +98,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
+	void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -115,7 +115,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithMismatchedParamNameArg() throws ReflectiveOperationException {
+	void invokeMethodWithMismatchedParamNameArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -140,7 +140,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithMismatchedParamTypeArg() throws ReflectiveOperationException {
+	void invokeMethodWithMismatchedParamTypeArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -165,7 +165,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithVarArg() throws ReflectiveOperationException {
+	void invokeMethodWithVarArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -181,7 +181,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithParamArg() throws ReflectiveOperationException {
+	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -206,7 +206,7 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	public void invokeMethodWithException() throws ReflectiveOperationException {
+	void invokeMethodWithException() throws ReflectiveOperationException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		CommandSender sender = mock(CommandSender.class);

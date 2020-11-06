@@ -12,12 +12,11 @@ import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-public class MethodToDescriptionMapperTest {
+class MethodToDescriptionMapperTest {
 	private final IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 
 	@Test
-	public void testMappingPureMethod() throws NoSuchMethodException {
+	void testMappingPureMethod() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
@@ -29,7 +28,7 @@ public class MethodToDescriptionMapperTest {
 	}
 
 	@Test
-	public void testMappingMethodWithAlias() throws NoSuchMethodException {
+	void testMappingMethodWithAlias() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithAliases");
 
@@ -41,7 +40,7 @@ public class MethodToDescriptionMapperTest {
 	}
 
 	@Test
-	public void testMappingMethodWithArgument() throws NoSuchMethodException {
+	void testMappingMethodWithArgument() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
 
@@ -53,7 +52,7 @@ public class MethodToDescriptionMapperTest {
 	}
 
 	@Test
-	public void testMappingMethodWithArgumentAndPosition() throws NoSuchMethodException {
+	void testMappingMethodWithArgumentAndPosition() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class);
 
@@ -65,7 +64,7 @@ public class MethodToDescriptionMapperTest {
 	}
 
 	@Test
-	public void testMappingMethodWithVararg() throws NoSuchMethodException {
+	void testMappingMethodWithVararg() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -77,7 +76,7 @@ public class MethodToDescriptionMapperTest {
 	}
 
 	@Test
-	public void testMappingMethodWithDescription() throws NoSuchMethodException {
+	void testMappingMethodWithDescription() throws NoSuchMethodException {
 		// given
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithDescription");
 

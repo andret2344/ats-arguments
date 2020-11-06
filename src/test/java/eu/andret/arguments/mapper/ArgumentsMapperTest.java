@@ -23,10 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-
-public class ArgumentsMapperTest {
+class ArgumentsMapperTest {
 	@Test
-	public void methodWithoutArguments() throws NoSuchMethodException {
+	void methodWithoutArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -40,7 +39,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithArgumentsWithoutCommandArguments() throws NoSuchMethodException {
+	void methodWithArgumentsWithoutCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -54,7 +53,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithoutArgumentsWithCommandArguments() throws NoSuchMethodException {
+	void methodWithoutArgumentsWithCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -68,7 +67,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithArgumentsWithCommandArguments() throws NoSuchMethodException {
+	void methodWithArgumentsWithCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -82,7 +81,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithDifferentArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithDifferentArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -96,7 +95,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithDifferentArgumentsWithNonMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithDifferentArgumentsWithNonMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -110,7 +109,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithArray() throws NoSuchMethodException {
+	void methodWithArray() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -124,7 +123,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
@@ -139,7 +138,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -153,7 +152,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithVarArgsWithNonMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithVarArgsWithNonMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
@@ -167,7 +166,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
@@ -182,7 +181,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
@@ -197,7 +196,7 @@ public class ArgumentsMapperTest {
 	}
 
 	@Test
-	public void methodWithMissingParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
+	void methodWithMissingParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);

@@ -21,9 +21,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AnnotatedCommandTest {
+class AnnotatedCommandTest {
 	@Test
-	public void correctCommandReturned() {
+	void correctCommandReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -36,7 +36,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void correctListenersSetup() {
+	void correctListenersSetup() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -55,7 +55,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void correctExecutorReturned() {
+	void correctExecutorReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -70,7 +70,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void correctCompleterReturned() {
+	void correctCompleterReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -85,7 +85,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void correctAddMapper() {
+	void correctAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -101,7 +101,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void incorrectAddMapper() {
+	void incorrectAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -118,7 +118,7 @@ public class AnnotatedCommandTest {
 	}
 
 	@Test
-	public void toStringTest() {
+	void toStringTest() {
 		// given
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(null);
 

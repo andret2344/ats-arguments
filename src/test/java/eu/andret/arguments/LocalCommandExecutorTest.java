@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,9 +36,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LocalCommandExecutorTest {
+class LocalCommandExecutorTest {
 	@Test
-	public void noCommandArguments() {
+	void noCommandArguments() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -57,7 +56,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void incorrectArgumentsWithoutListener() {
+	void incorrectArgumentsWithoutListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -80,7 +79,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void incorrectArgumentsWithListener() {
+	void incorrectArgumentsWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -106,7 +105,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithoutPermissionWithoutListener() {
+	void correctArgumentsWithoutPermissionWithoutListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -133,7 +132,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithoutPermissionWithListener() {
+	void correctArgumentsWithoutPermissionWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -163,7 +162,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void correctArgumentsWithPermissionWithListener() {
+	void correctArgumentsWithPermissionWithListener() {
 		// given
 		CommandSender sender = mock(CommandSender.class);
 		Command command = mock(Command.class);
@@ -203,7 +202,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	public void addMapper() {
+	void addMapper() {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
@@ -223,11 +222,8 @@ public class LocalCommandExecutorTest {
 		try {
 			Field field = executor.getClass().getDeclaredField(mapperName);
 			field.setAccessible(true);
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 			field.set(executor, mapper);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 	}

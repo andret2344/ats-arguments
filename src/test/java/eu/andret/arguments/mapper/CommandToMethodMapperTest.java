@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-public class CommandToMethodMapperTest {
+class CommandToMethodMapperTest {
 	@Mock
 	private IMethodNameMapper methodNameMapper;
 	@Mock
@@ -43,14 +43,14 @@ public class CommandToMethodMapperTest {
 	private CommandToMethodMapper mapper;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		Mockito.mockitoSession()
 				.initMocks(this)
 				.startMocking()
 				.finishMocking();
 	}
 
-	public static Iterable<Object[]> data() {
+	static Iterable<Object[]> data() {
 		Object[][] objects = {
 				{false, false, false},
 				{false, false, true},
@@ -65,7 +65,7 @@ public class CommandToMethodMapperTest {
 	}
 
 	@Test
-	public void constructs() {
+	void constructs() {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
 
@@ -79,7 +79,7 @@ public class CommandToMethodMapperTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	public void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
+	void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
 		// given
 		Class<? extends AnnotatedCommandExecutor> executor = TestMethodsProvider.class;
 		Method method = executor.getDeclaredMethod("testMethod");
