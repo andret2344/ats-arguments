@@ -33,7 +33,7 @@ repositories {
 `build.gradle`:
 ```groovy
 dependencies {
-    compile group: 'eu.andret', name: 'ats-arguments', version: '0.1.0'
+    implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1'
     // other dependencies
 }
 ```
@@ -43,7 +43,7 @@ dependencies {
     <dependency>
         <groupId>eu.andret</groupId>
         <artifactId>ats-arguments</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
     <!-- other dependencies -->
 </dependencies>
@@ -61,7 +61,7 @@ plugins {
 
 shadowJar {
     relocate "eu.andret.arguments", "eu.andret.YOURPLUGINNAME.arguments"
-    configurations = [project.configurations.compile]
+    configurations = [project.configurations.implementation]
 }
 
 build.dependsOn(shadowJar)
@@ -144,11 +144,12 @@ Ok, but what exactly can you do?
 
 The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings you can use, but first, look at rules that apply:
 
-- The name of the method (case insensitive) is a command argument.
-- Return value will be send automatically, unless changed (`void` or `null` return types don't send anything)
+- The name of the method (case-insensitive) is a command argument.
+- Return value will be sent automatically, unless changed (`void` return type or `null` return value don't send anything)
 - Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments into method ones.
   - Exception is to create a `Mapper` and use the `@Param` annotation.
-- Method cannot have array, only vararg is possible, rules as the point above.
+  - When using `@Param` and parsing failed, you can access the raw value using `@Fallback` annotation.
+- Method cannot have an array, only vararg is possible, rules as the point above.
 - There can be multiple methods with the same name, missing arguments are treated as obsolete.
 - Library automatically uses tab completion.
 - In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
@@ -179,7 +180,9 @@ Another annotation `@Param` has following table:
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The mapper id to find exact registered mapper. |
 
-At the end, you can use a few listeners to indicate certain behavior. All listeners needs to be set up on `AnnotatedCommand`.
+There is also `@Fallback` annotation available that have has no elements.
+
+At the end, you can use a few listeners to indicate certain behavior. All listeners need to be set up on `AnnotatedCommand`.
 ```java
 public class TestPlugin extends JavaPlugin {
     @Override 
@@ -201,7 +204,7 @@ Command can also have mappers. Mappers are used to automate changes from String 
 Then you can use `@Param(value = "id")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
 
 There is also possible to sets simple things up.
-* `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should sutomatically translate colors from `'&'` to `'§'`.
+* `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
 
 ## Example usage
 `TestPlugin.java`:
@@ -212,7 +215,7 @@ public class TestPlugin extends JavaPlugin {
         AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
+        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
         command.setAutoTranslateColors(true);
     }
 }
@@ -249,13 +252,15 @@ public class TestCommand extends AnnotatedCommandExecutor {
         GameManager.getGame(gameName).start();
         return gameName + " started"; 
     }
+
+    @Fallback
+    public String player(String player) {
+        // "/test player Andret2344", sender gets: "Who do you mean?"
+        return "Who do you mean?";
+    }
     
     @Argument
     public String player(@Param("basicPlayerMapper") Player player) {
-        if (player == null) {
-            // "/test player Andret2344", sender gets: "Who do you mean?"
-            return "Who do you mean?";
-        }
         // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
         return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
     }
