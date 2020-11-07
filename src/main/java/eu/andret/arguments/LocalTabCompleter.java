@@ -5,13 +5,13 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.annotation.Completer;
 import eu.andret.arguments.mapper.IMethodNameMapper;
+import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import eu.andret.arguments.mapper.impl.MethodNameMapper;
+import eu.andret.arguments.mapper.impl.MethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,9 +44,13 @@ class LocalTabCompleter implements TabCompleter {
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	Map<String, Supplier<Collection<String>>> completerMap = new HashMap<>();
 	IMethodNameMapper methodNameMapper = new MethodNameMapper();
+	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(completerMap);
 
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+		if (args.length == 0) {
+			return Collections.emptyList();
+		}
 		if (args.length == 1) {
 			return Stream.concat(
 					Stream.of(commandClass.getDeclaredMethods())
@@ -60,8 +64,9 @@ class LocalTabCompleter implements TabCompleter {
 		}
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
+				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.filter(m -> methodNameMapper.mapMethodName(m, args))
-				.map(m -> methodToSuggestions(m, args))
+				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 	}
@@ -72,33 +77,5 @@ class LocalTabCompleter implements TabCompleter {
 		}
 		completerMap.put(id, supplier);
 		return true;
-	}
-
-	@NotNull
-	@NonNull
-	private Collection<String> methodToSuggestions(Method m, String[] args) {
-		if (args.length - 1 > m.getParameterCount()) {
-			Parameter parameter = m.getParameters()[m.getParameterCount() - 1];
-			if (parameter.isVarArgs()) {
-				return extractSuggestions(parameter);
-			}
-			return Collections.emptyList();
-		}
-		Parameter parameter = m.getParameters()[args.length - 2];
-		return extractSuggestions(parameter);
-	}
-
-	@NotNull
-	@NonNull
-	private Collection<String> extractSuggestions(Parameter parameter) {
-		if (!parameter.isAnnotationPresent(Completer.class)) {
-			return Collections.emptyList();
-		}
-		Completer completer = parameter.getAnnotation(Completer.class);
-		String value = completer.value();
-		if (!completerMap.containsKey(value)) {
-			return Collections.emptyList();
-		}
-		return completerMap.get(value).get();
 	}
 }
