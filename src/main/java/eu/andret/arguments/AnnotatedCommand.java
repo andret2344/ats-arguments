@@ -11,8 +11,10 @@ import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Wrapper class for classical {@link org.bukkit.command.PluginCommand}.
@@ -23,12 +25,6 @@ import java.util.function.Predicate;
 @Value
 public class AnnotatedCommand {
 	PluginCommand command;
-	Options options = new Options();
-
-	AnnotatedCommand(PluginCommand command) {
-		this.command = command;
-		getLocalCommandExecutor().setOptions(options);
-	}
 
 	/**
 	 * The Options to manipulate the behavior
@@ -126,12 +122,29 @@ public class AnnotatedCommand {
 	}
 
 	/**
+	 * Adds the completer that allows to suggest values on command writing.
+	 *
+	 * @param id The id of completer that has to be unique. This is passed to {@link
+	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
+	 * 		completer.
+	 * @param supplier The {@link java.util.function.Supplier} that will produce list of matching
+	 * 		values.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated id.
+	 */
+	public void addArgumentCompleter(String id, Supplier<Collection<String>> supplier) {
+		if (!getLocalTabCompleter().addCompleter(id, supplier)) {
+			throw new IllegalArgumentException("Completer with this id is already registered!");
+		}
+	}
+
+	/**
 	 * The config method that changes the color translation behavior.
 	 *
 	 * @param autoTranslateColors If chat color sign {@code &} should be translated in responses
 	 * 		into real color, no.
 	 */
 	public void setAutoTranslateColors(boolean autoTranslateColors) {
-		options.setAutoTranslateColors(autoTranslateColors);
+		getLocalCommandExecutor().getOptions().setAutoTranslateColors(autoTranslateColors);
 	}
 }

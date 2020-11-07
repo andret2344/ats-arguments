@@ -7,6 +7,7 @@ package eu.andret.arguments.example;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
+import eu.andret.arguments.annotation.Completer;
 import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.DisplayType;
@@ -56,7 +57,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("basicPlayerMapper") Player... players) {
+	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
 		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
 		OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
