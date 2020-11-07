@@ -47,7 +47,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") Player player) {
+	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -85,7 +85,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument
 	public String colored(@Completer("booleanCompleter") boolean value) {
-		// Response will be automatically coloured/
+		// Response will be automatically coloured.
 		if (value) {
 			return "&6You have found something. &dBye!";
 		}
