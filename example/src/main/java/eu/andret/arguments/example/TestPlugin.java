@@ -12,6 +12,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class TestPlugin extends JavaPlugin {
@@ -25,6 +26,7 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(HumanEntity::getName)
 				.collect(Collectors.toList()));
+		command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
 		command.setAutoTranslateColors(true);
 	}
 

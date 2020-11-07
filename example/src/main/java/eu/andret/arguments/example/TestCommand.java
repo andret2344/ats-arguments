@@ -58,7 +58,6 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument(executorType = ExecutorType.PLAYER)
 	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
-		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
 		OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -85,8 +84,11 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String colored() {
-		// Response will be automatically coloured due to "&4" and "&b"
+	public String colored(@Completer("booleanCompleter") boolean value) {
+		// Response will be automatically coloured/
+		if (value) {
+			return "&6You have found something. &dBye!";
+		}
 		return "&4Nothing to look at here. &bBye!";
 	}
 }

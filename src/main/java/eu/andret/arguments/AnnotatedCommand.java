@@ -139,6 +139,23 @@ public class AnnotatedCommand {
 	}
 
 	/**
+	 * Adds the completer that allows to suggest values on command writing.
+	 *
+	 * @param id The id of completer that has to be unique. This is passed to {@link
+	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
+	 * 		completer.
+	 * @param collection The {@link java.util.Collection} that will be used as list of matching
+	 * 		values.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated id.
+	 */
+	public void addArgumentCompleter(String id, Collection<String> collection) {
+		if (!getLocalTabCompleter().addCompleter(id, () -> collection)) {
+			throw new IllegalArgumentException("Completer with this id is already registered!");
+		}
+	}
+
+	/**
 	 * The config method that changes the color translation behavior.
 	 *
 	 * @param autoTranslateColors If chat color sign {@code &} should be translated in responses
