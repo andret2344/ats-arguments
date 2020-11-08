@@ -30,13 +30,11 @@ import java.util.function.Function;
 @Value
 @Getter(AccessLevel.NONE)
 public class MethodToCompletionMapper implements IMethodToCompletionMapper {
-	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
 	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap;
+	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
 
-	@NotNull
-	@NonNull
 	@Override
-	public Collection<String> mapCommandToCompletion(@NonNull @NotNull Method m, @NonNull @NotNull String[] args, @NonNull @NotNull CommandSender sender) {
+	public Collection<String> mapCommandToCompletion(Method m, String[] args, CommandSender sender) {
 		if (args.length <= 1 || m.getParameterCount() == 0) {
 			return Collections.emptyList();
 		}

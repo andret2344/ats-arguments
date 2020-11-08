@@ -42,10 +42,10 @@ import java.util.stream.Stream;
 @Getter(AccessLevel.NONE)
 class LocalTabCompleter implements TabCompleter {
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
 	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
+	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
 	IMethodNameMapper methodNameMapper = new MethodNameMapper();
-	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(argumentCompleterMap, typeCompleterMap);
+	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
 
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {

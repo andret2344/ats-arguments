@@ -57,7 +57,7 @@ class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(19)).sendMessage(eq("/test testString"));
+		verify(sender, times(25)).sendMessage(eq("/test testString"));
 	}
 
 	@Test
