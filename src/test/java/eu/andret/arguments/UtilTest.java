@@ -31,7 +31,7 @@ class UtilTest {
 		return Arrays.asList(objects);
 	}
 
-	static Collection<Object[]> getRealClassData() {
+	static Collection<Object[]> realClassData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -62,7 +62,7 @@ class UtilTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("getRealClassData")
+	@MethodSource("realClassData")
 	void getRealClass(String input, Class<?> targetClass, Object realValue) {
 		// when
 		Class<?> realClass = Util.getRealClass(input);

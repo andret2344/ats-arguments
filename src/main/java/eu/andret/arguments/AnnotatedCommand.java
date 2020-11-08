@@ -123,6 +123,46 @@ public class AnnotatedCommand {
 	}
 
 	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param function The {@link Function} that will be used to create the list of matching
+	 * 		values.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
+		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
+			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
+		}
+	}
+
+	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param supplier The {@link Supplier} that will be used to create the list of matching
+	 * 		values.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Supplier<Collection<String>> supplier) {
+		addTypeCompleter(clazz, sender -> supplier.get());
+	}
+
+	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param collection The {@link Collection} that will be the list of matching values.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Collection<String> collection) {
+		addTypeCompleter(clazz, () -> collection);
+	}
+
+	/**
 	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
@@ -165,46 +205,6 @@ public class AnnotatedCommand {
 	 */
 	public void addArgumentCompleter(String id, Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
-	}
-
-	/**
-	 * Adds the type completer that allows to suggest values on command writing.
-	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
-	 * @param function The {@link Function} that will be used to create the list of matching
-	 * 		values.
-	 *
-	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
-	 */
-	public void addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
-		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
-		}
-	}
-
-	/**
-	 * Adds the type completer that allows to suggest values on command writing.
-	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
-	 * @param supplier The {@link Supplier} that will be used to create the list of matching
-	 * 		values.
-	 *
-	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
-	 */
-	public void addTypeCompleter(Class<?> clazz, Supplier<Collection<String>> supplier) {
-		addTypeCompleter(clazz, sender -> supplier.get());
-	}
-
-	/**
-	 * Adds the type completer that allows to suggest values on command writing.
-	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
-	 * @param collection The {@link Collection} that will be the list of matching values.
-	 *
-	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
-	 */
-	public void addTypeCompleter(Class<?> clazz, Collection<String> collection) {
-		addTypeCompleter(clazz, () -> collection);
 	}
 
 	/**

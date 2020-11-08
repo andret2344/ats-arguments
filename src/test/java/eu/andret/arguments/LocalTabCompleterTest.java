@@ -101,18 +101,4 @@ class LocalTabCompleterTest {
 		assertNotNull(result);
 		assertTrue(result.isEmpty());
 	}
-
-	@Test
-	void toStringNotNull() {
-		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
-
-		// when
-		String result = tabCompleter.toString();
-
-		// then
-		assertNotNull(result);
-	}
 }
