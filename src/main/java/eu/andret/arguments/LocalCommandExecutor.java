@@ -19,6 +19,10 @@ import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.PermissionMapper;
 import eu.andret.arguments.mapper.impl.ResponseMapper;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,28 +41,32 @@ import java.util.Optional;
  * @author Andret
  * @since May 18, 2020
  */
+@Value
+@Getter(AccessLevel.NONE)
 class LocalCommandExecutor implements CommandExecutor {
-	private final Map<String, Mapper<?>> mappers = new HashMap<>();
-	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
-	private final IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
-	private final IPermissionMapper permissionMapper = new PermissionMapper();
-	private final IResponseMapper responseMapper = new ResponseMapper();
-	private final IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
-	private final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	private final IMethodInvoker methodInvoker;
-	private AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
-	private AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
-	private AnnotatedCommand.Options options = new AnnotatedCommand.Options();
+	Map<String, Mapper<?>> mappers = new HashMap<>();
+	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
+	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
+	IPermissionMapper permissionMapper = new PermissionMapper();
+	IResponseMapper responseMapper = new ResponseMapper();
+	IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
+	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
+	IMethodInvoker methodInvoker;
+	@NonFinal
+	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
+	@NonFinal
+	AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
+	@Getter(AccessLevel.PACKAGE)
+	AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 	/**
 	 * Constructs the LocalCommandExecutor.
 	 *
 	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of
-	 * 		methods annotated with {@link eu.andret.arguments.annotation.Argument}
-	 * @param plugin The {@link org.bukkit.plugin.java.JavaPlugin} superclass of main plugin
-	 * 		class.
+	 * 		methods annotated with {@link Argument}
+	 * @param plugin The {@link JavaPlugin} superclass of main plugin class.
 	 */
-	LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass, JavaPlugin plugin) {
+	<E extends JavaPlugin> LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<E>> commandClass, E plugin) {
 		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);
 	}
@@ -76,14 +84,6 @@ class LocalCommandExecutor implements CommandExecutor {
 					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender)
 					.ifPresentOrElse(method -> invokeMethod(method, sender, args), () -> noneMethodFound(sender));
 		}
-		return true;
-	}
-
-	public <E> boolean addMapper(String id, Mapper<E> mapper) {
-		if (mappers.containsKey(id)) {
-			return false;
-		}
-		mappers.put(id, mapper);
 		return true;
 	}
 
@@ -105,8 +105,12 @@ class LocalCommandExecutor implements CommandExecutor {
 		onInsufficientPermissionsListener = listener;
 	}
 
-	void setOptions(AnnotatedCommand.Options options) {
-		this.options = options;
+	<E> boolean addMapper(String id, Mapper<E> mapper) {
+		if (mappers.containsKey(id)) {
+			return false;
+		}
+		mappers.put(id, mapper);
+		return true;
 	}
 
 	private void noneMethodFound(CommandSender sender) {

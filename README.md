@@ -181,6 +181,13 @@ Another annotation `@Param` has following table:
 
 There is also `@Fallback` annotation available that have has no elements.
 
+And the `@Completer` annotation:
+| setting | type | values |  description |
+| ------- | ---- | ------ |  ----------- |
+| value | `String` | any string | The completer id to find exact registered completer. |
+
+If there is a completer configured you'd like to skip once, you can use `@Ignore` annotation on method's argument.
+
 At the end, you can use a few listeners to indicate certain behavior. All listeners need to be set up on `AnnotatedCommand`.
 ```java
 public class TestPlugin extends JavaPlugin {
@@ -204,8 +211,10 @@ Then you can use `@Param(value = "id")` as an `@Argument` method parameter's ann
 
 In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error handler". Wrong value is described when adding mapper, as fallback condition (never called by default)
 
-There is also possible to sets simple things up.
-* `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
+There is also possibility to access `AnnotatedCommand.Options` object that allows a simple configuration.
+* `annotatedCommand.getOptions().setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
+
+If you want to get better completions, you can use the `@Completer` on the `@Argument` annotated method parameter. 
 
 ## Example usage
 `TestPlugin.java`:
@@ -217,8 +226,18 @@ public class TestPlugin extends JavaPlugin {
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
         command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
-        command.setAutoTranslateColors(true);
+        command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
+        command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
+                .stream()
+                .map(HumanEntity::getName)
+                .collect(Collectors.toList()));
+        command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
+        command.getOptions().setAutoTranslateColors(true);
     }
+
+    public boolean isSuperSecretSetting() {
+		return false;
+	}
 }
 ```
 `TestCommand.java`:
@@ -231,7 +250,10 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
     @Argument(permission = "me.testing")
     public String testing() {
-        // "/test testing", requires permission "me.testing", sender gets "I'm testing"
+        // "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+        if (plugin.isSuperSecretSetting()) {
+            return "I'm secretly testing!";
+        }
         return "I'm testing!";
     }
     
@@ -261,13 +283,13 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     }
     
     @Argument
-    public String player(@Param("basicPlayerMapper") Player player) {
+    public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
         // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
         return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
     }
     
     @Argument(executorType = ExecutorType.PLAYER)
-    public String distance(@Param("basicPlayerMapper") Player... players) {
+    public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
         OptionalDouble min = Arrays.stream(players)
                 .filter(Objects::nonNull)
                 .mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -296,9 +318,23 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String colored() {
-		// Response will be automatically coloured due to "&4" and "&b"
-        return "&4Nothing to look at here. &bBye!"; 
+	public String colored(boolean value) {
+		// automatic suggestions with "true" and "false" will appear.
+		// Response will be automatically colored.
+		if (value) {
+			return "&6You have found something. &dBye!";
+		}
+		return "&4Nothing to look at here. &bBye!";
+	}
+
+	@Argument
+	public String ignored(@Ignore boolean value) {
+		// No suggestions will appear.
+		// Response will be automatically coloured.
+		if (value) {
+			return "&6I'm ignored.";
+		}
+		return "&6I'm ignored too.";
 	}
 }
 ```

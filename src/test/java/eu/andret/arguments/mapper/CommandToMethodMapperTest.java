@@ -12,7 +12,6 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
@@ -21,12 +20,10 @@ import org.mockito.Mockito;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -66,19 +63,6 @@ class CommandToMethodMapperTest {
 				{true, true, true},
 		};
 		return Arrays.asList(objects);
-	}
-
-	@Test
-	void constructs() {
-		// given
-		Map<String, Mapper<?>> mappers = new HashMap<>();
-
-		// when
-		ICommandToMethodMapper mapper = new CommandToMethodMapper(mappers);
-
-		// then
-		assertNotNull(mapper);
-		assertNotNull(mapper.toString());
 	}
 
 	@ParameterizedTest

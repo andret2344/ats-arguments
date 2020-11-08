@@ -16,8 +16,6 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MethodToDescriptionMapperTest {
-	private final IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
-
 	static Collection<Object[]> getMappingData() {
 		Object[][] objects = {
 				{"testMethod", "testMethod", null},
@@ -36,6 +34,7 @@ class MethodToDescriptionMapperTest {
 		// given
 		Class<?>[] args = clazz == null ? new Class<?>[0] : new Class<?>[]{clazz};
 		Method method = TestMethodsProvider.class.getDeclaredMethod(input, args);
+		IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 
 		// when
 		String result = mapper.mapMethodToDescription(method, "test");

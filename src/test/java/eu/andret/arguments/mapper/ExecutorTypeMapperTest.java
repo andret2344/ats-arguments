@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class ExecutorTypeMapperTest {
-	private final IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 	@Test
 	void methodWithExecutorTypePlayerCalledByPlayer() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypePlayer");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);
@@ -38,6 +38,7 @@ class ExecutorTypeMapperTest {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypePlayer");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);
@@ -51,6 +52,7 @@ class ExecutorTypeMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeConsole");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);
@@ -64,6 +66,7 @@ class ExecutorTypeMapperTest {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeConsole");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);
@@ -77,6 +80,7 @@ class ExecutorTypeMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeAll");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);
@@ -90,6 +94,7 @@ class ExecutorTypeMapperTest {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExecutorTypeAll");
+		IExecutorTypeMapper mapper = new ExecutorTypeMapper();
 
 		// when
 		boolean result = mapper.mapExecutorType(method, commandSender);

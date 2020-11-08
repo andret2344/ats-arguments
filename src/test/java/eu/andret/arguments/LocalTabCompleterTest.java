@@ -5,15 +5,19 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -31,7 +35,7 @@ class LocalTabCompleterTest {
 
 		// then
 		assertNotNull(result);
-		assertEquals(20, result.size());
+		assertEquals(26, result.size());
 		assertTrue(result.containsAll(Arrays.asList(
 				"testMethod",
 				"testMethodWithCorrectPosition",
@@ -52,7 +56,13 @@ class LocalTabCompleterTest {
 				"testMethodWithException",
 				"testMethodDisplayedAlways",
 				"testMethodDisplayedConditionally",
-				"testMethodDisplayedNever"
+				"testMethodDisplayedNever",
+				"testMethodWithTypeCompletion",
+				"testMethodWithIgnoredTypeCompletion",
+				"testMethodWithMismatchedTypeCompletion",
+				"testMethodWithArgumentCompletion",
+				"testMethodWithVarArgArgumentCompletion",
+				"testMethodWithMismatchedArgumentCompletion"
 		)));
 	}
 
@@ -103,17 +113,34 @@ class LocalTabCompleterTest {
 	}
 
 	@Test
-	void toStringNotNUll() {
+	void addTypeCompleter() {
 		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
+		LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
 
 		// when
-		String result = tabCompleter.toString();
+		boolean result1 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
+		boolean result2 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
+		boolean result3 = completer.addTypeCompleter(World.class, sender -> new ArrayList<>());
 
 		// then
-		assertNotNull(result);
-		assertEquals("LocalTabCompleter(commandExecutorClass=class eu.andret.arguments.provider.TestMethodsProvider)", result);
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
+	}
+
+	@Test
+	void addArgumentCompleter() {
+		// given
+		LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
+
+		// when
+		boolean result1 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
+		boolean result2 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
+		boolean result3 = completer.addArgumentCompleter("world", sender -> new ArrayList<>());
+
+		// then
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
 	}
 }

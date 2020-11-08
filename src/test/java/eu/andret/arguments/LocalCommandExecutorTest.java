@@ -57,7 +57,7 @@ class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(19)).sendMessage(eq("/test testString"));
+		verify(sender, times(25)).sendMessage(eq("/test testString"));
 	}
 
 	@Test
@@ -227,19 +227,16 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void setOptions() throws NoSuchFieldException, IllegalAccessException {
+	void setOptions() {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
 
 		// when
-		executor.setOptions(new AnnotatedCommand.Options());
+		AnnotatedCommand.Options executorOptions = executor.getOptions();
 
 		// then
-		Field field = executor.getClass().getDeclaredField("options");
-		field.setAccessible(true);
-		AnnotatedCommand.Options options = (AnnotatedCommand.Options) field.get(executor);
-		assertNotNull(options);
+		assertNotNull(executorOptions);
 	}
 
 	private void injectMapper(LocalCommandExecutor executor, IMapper mapper, String mapperName) {

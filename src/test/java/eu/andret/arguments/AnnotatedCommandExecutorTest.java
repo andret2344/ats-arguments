@@ -23,9 +23,7 @@ class AnnotatedCommandExecutorTest {
 		AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
 
 		//then
-		assertEquals(sender, executor.sender);
 		assertEquals(sender, executor.getSender());
-		assertEquals(plugin, executor.plugin);
 		assertEquals(plugin, executor.getPlugin());
 	}
 }
