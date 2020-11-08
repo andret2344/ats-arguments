@@ -8,22 +8,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
 
 /**
- * This annotation should be put to the argument of method inside class that extends the {@link
- * eu.andret.arguments.AnnotatedCommandExecutor}. It allows to find {@link Completer} registered to
- * {@link eu.andret.arguments.AnnotatedCommand}.
+ * The annotation that allows to ignore type completion created by {@link
+ * eu.andret.arguments.AnnotatedCommand#addTypeCompleter(Class, Function)} method.
  *
  * @author Andret
- * @since Nov 07, 2020
+ * @since Nov 08, 2020
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Completer {
-	/**
-	 * The id of registered completer..
-	 *
-	 * @return The id.
-	 */
-	String value();
+public @interface Ignore {
 }

@@ -9,6 +9,7 @@ import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
 import eu.andret.arguments.annotation.Completer;
 import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.annotation.Ignore;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.DisplayType;
 import eu.andret.arguments.entity.ExecutorType;
@@ -84,11 +85,22 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String colored(@Completer("booleanCompleter") boolean value) {
-		// Response will be automatically coloured.
+	public String colored(boolean value) {
+		// automatic suggestions with "true" and "false" will appear.
+		// Response will be automatically colored.
 		if (value) {
 			return "&6You have found something. &dBye!";
 		}
 		return "&4Nothing to look at here. &bBye!";
+	}
+
+	@Argument
+	public String ignored(@Ignore boolean value) {
+		// No suggestions will appear.
+		// Response will be automatically coloured.
+		if (value) {
+			return "&6I'm ignored.";
+		}
+		return "&6I'm ignored too.";
 	}
 }

@@ -1,6 +1,11 @@
+/*
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.mapper;
 
 import lombok.NonNull;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -15,5 +20,5 @@ import java.util.Collection;
 public interface IMethodToCompletionMapper extends IMapper {
 	@NotNull
 	@NonNull
-	Collection<String> mapCommandToCompletion(Method m, String[] args);
+	Collection<String> mapCommandToCompletion(@NonNull @NotNull Method m, @NonNull @NotNull String[] args, @NonNull @NotNull CommandSender sender);
 }

@@ -1,11 +1,17 @@
+/*
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.annotation.Completer;
+import eu.andret.arguments.annotation.Ignore;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -13,7 +19,7 @@ import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * An implementation for {@link eu.andret.arguments.mapper.IMethodToCompletionMapper}.
@@ -24,36 +30,46 @@ import java.util.function.Supplier;
 @Value
 @Getter(AccessLevel.NONE)
 public class MethodToCompletionMapper implements IMethodToCompletionMapper {
-	Map<String, Supplier<Collection<String>>> completerMap;
+	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
+	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap;
 
 	@NotNull
 	@NonNull
 	@Override
-	public Collection<String> mapCommandToCompletion(Method m, String[] args) {
+	public Collection<String> mapCommandToCompletion(@NonNull @NotNull Method m, @NonNull @NotNull String[] args, @NonNull @NotNull CommandSender sender) {
 		if (args.length <= 1 || m.getParameterCount() == 0) {
 			return Collections.emptyList();
 		}
 		if (args.length - 1 <= m.getParameterCount()) {
-			return extractSuggestions(m.getParameters()[args.length - 2]);
+			return extractSuggestions(m.getParameters()[args.length - 2]).apply(sender);
 		}
 		Parameter parameter = m.getParameters()[m.getParameterCount() - 1];
 		if (!parameter.isVarArgs()) {
 			return Collections.emptyList();
 		}
-		return extractSuggestions(parameter);
+		return extractSuggestions(parameter).apply(sender);
 	}
 
 	@NotNull
 	@NonNull
-	private Collection<String> extractSuggestions(Parameter parameter) {
+	private Function<CommandSender, Collection<String>> extractSuggestions(Parameter parameter) {
+		if (parameter.isAnnotationPresent(Ignore.class)) {
+			return sender -> Collections.emptyList();
+		}
 		if (!parameter.isAnnotationPresent(Completer.class)) {
-			return Collections.emptyList();
+			return getTypeSuggestion(parameter);
 		}
-		Completer completer = parameter.getAnnotation(Completer.class);
-		String value = completer.value();
-		if (!completerMap.containsKey(value)) {
-			return Collections.emptyList();
+		String value = parameter.getAnnotation(Completer.class).value();
+		if (!argumentCompleterMap.containsKey(value)) {
+			return getTypeSuggestion(parameter);
 		}
-		return completerMap.get(value).get();
+		return argumentCompleterMap.get(value);
+	}
+
+	private Function<CommandSender, Collection<String>> getTypeSuggestion(Parameter parameter) {
+		if (typeCompleterMap.containsKey(parameter.getType())) {
+			return typeCompleterMap.get(parameter.getType());
+		}
+		return sender -> Collections.emptyList();
 	}
 }

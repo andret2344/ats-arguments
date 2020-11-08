@@ -22,11 +22,11 @@ public class TestPlugin extends JavaPlugin {
 		command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
 		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
+		command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
 		command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
 				.stream()
 				.map(HumanEntity::getName)
 				.collect(Collectors.toList()));
-		command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
 		command.setAutoTranslateColors(true);
 	}
 

@@ -122,7 +122,24 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Adds the completer that allows to suggest values on command writing.
+	 * Adds the argument completer that allows to suggest values on command writing.
+	 *
+	 * @param id The id of completer that has to be unique. This is passed to {@link
+	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
+	 * 		completer.
+	 * @param function The {@link java.util.function.Function} that will produce list of matching
+	 * 		values on basis of the sender.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated id.
+	 */
+	public void addArgumentCompleter(String id, Function<CommandSender, Collection<String>> function) {
+		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
+			throw new IllegalArgumentException("Completer with id \"" + id + "\" is already registered!");
+		}
+	}
+
+	/**
+	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
 	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
@@ -133,13 +150,11 @@ public class AnnotatedCommand {
 	 * @throws java.lang.IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(String id, Supplier<Collection<String>> supplier) {
-		if (!getLocalTabCompleter().addCompleter(id, supplier)) {
-			throw new IllegalArgumentException("Completer with this id is already registered!");
-		}
+		addArgumentCompleter(id, sender -> supplier.get());
 	}
 
 	/**
-	 * Adds the completer that allows to suggest values on command writing.
+	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
 	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
@@ -150,9 +165,48 @@ public class AnnotatedCommand {
 	 * @throws java.lang.IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(String id, Collection<String> collection) {
-		if (!getLocalTabCompleter().addCompleter(id, () -> collection)) {
-			throw new IllegalArgumentException("Completer with this id is already registered!");
+		addArgumentCompleter(id, () -> collection);
+	}
+
+	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The clazz that will be matched to completer.
+	 * @param function The {@link java.util.function.Function} that will be used to create the
+	 * 		list of matching values.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated clazz.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
+		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
+			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
 		}
+	}
+
+	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The clazz that will be matched to completer.
+	 * @param supplier The {@link java.util.function.Supplier} that will be used to create the
+	 * 		list of matching values.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated clazz.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Supplier<Collection<String>> supplier) {
+		addTypeCompleter(clazz, sender -> supplier.get());
+	}
+
+	/**
+	 * Adds the type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The clazz that will be matched to completer.
+	 * @param collection The {@link java.util.Collection} that will be the list of matching
+	 * 		values.
+	 *
+	 * @throws java.lang.IllegalArgumentException if tried to register duplicated clazz.
+	 */
+	public void addTypeCompleter(Class<?> clazz, Collection<String> collection) {
+		addTypeCompleter(clazz, () -> collection);
 	}
 
 	/**

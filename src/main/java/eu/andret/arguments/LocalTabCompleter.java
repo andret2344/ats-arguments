@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,9 +42,10 @@ import java.util.stream.Stream;
 @Getter(AccessLevel.NONE)
 class LocalTabCompleter implements TabCompleter {
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	Map<String, Supplier<Collection<String>>> completerMap = new HashMap<>();
+	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
+	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
 	IMethodNameMapper methodNameMapper = new MethodNameMapper();
-	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(completerMap);
+	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(argumentCompleterMap, typeCompleterMap);
 
 	@Override
 	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
@@ -66,16 +67,24 @@ class LocalTabCompleter implements TabCompleter {
 		return Arrays.stream(commandClass.getDeclaredMethods())
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
 				.filter(m -> methodNameMapper.mapMethodName(m, args))
-				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args))
+				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 	}
 
-	boolean addCompleter(String id, Supplier<Collection<String>> supplier) {
-		if (completerMap.containsKey(id)) {
+	boolean addArgumentCompleter(String id, Function<CommandSender, Collection<String>> function) {
+		if (argumentCompleterMap.containsKey(id)) {
 			return false;
 		}
-		completerMap.put(id, supplier);
+		argumentCompleterMap.put(id, function);
+		return true;
+	}
+
+	boolean addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
+		if (typeCompleterMap.containsKey(clazz)) {
+			return false;
+		}
+		typeCompleterMap.put(clazz, function);
 		return true;
 	}
 }

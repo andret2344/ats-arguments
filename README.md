@@ -7,7 +7,7 @@ Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git l
 ## Dependency setup
 To set up the library in your project, you have to do following steps:
 
-- Add `https://repo.andret.eu/andret-tools-system` as a repository
+- Add `https://gitlab.com/api/v4/projects/12063927/packages/maven` as a repository
 
 `build.gradle`:
 ```groovy
@@ -186,6 +186,8 @@ And the `@Completer` annotation:
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The completer id to find exact registered completer. |
 
+If there is a completer configured you'd like to skip once, you can use `@Ignore` annotation on method's argument.
+
 At the end, you can use a few listeners to indicate certain behavior. All listeners need to be set up on `AnnotatedCommand`.
 ```java
 public class TestPlugin extends JavaPlugin {
@@ -314,13 +316,24 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 		// Argument will be displayed when "/test" will be executed under no conditions
 	}
 
-    @Argument
-    public String colored(@Completer("booleanCompleter") boolean value) {
-        // Response will be automatically coloured.
-        if (value) {
-            return "&6You have found something. &dBye!";
-        }
-        return "&4Nothing to look at here. &bBye!";
-    }
+	@Argument
+	public String colored(boolean value) {
+		// automatic suggestions with "true" and "false" will appear.
+		// Response will be automatically colored.
+		if (value) {
+			return "&6You have found something. &dBye!";
+		}
+		return "&4Nothing to look at here. &bBye!";
+	}
+
+	@Argument
+	public String ignored(@Ignore boolean value) {
+		// No suggestions will appear.
+		// Response will be automatically coloured.
+		if (value) {
+			return "&6I'm ignored.";
+		}
+		return "&6I'm ignored too.";
+	}
 }
 ```
