@@ -69,7 +69,7 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Sets on unknown sub command execution listener.
+	 * Sets unknown sub command execution listener.
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
 	 */
@@ -78,7 +78,7 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Sets on insufficient permissions' listener.
+	 * Sets insufficient permissions' listener.
 	 *
 	 * @param listener The {@link OnInsufficientPermissionsListener}.
 	 */
@@ -87,13 +87,14 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
+	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link
+	 * String}.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link
 	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz}
-	 * 		object of String
+	 * 		object of {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should
 	 * 		execute.
 	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
@@ -106,8 +107,8 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting String.
-	 * Fallback method will be never called.
+	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link
+	 * String}. {@link Fallback} method will be never called.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link
 	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
@@ -169,11 +170,11 @@ public class AnnotatedCommand {
 	/**
 	 * Adds the type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The clazz that will be matched to completer.
+	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param function The {@link Function} that will be used to create the list of matching
 	 * 		values.
 	 *
-	 * @throws IllegalArgumentException if tried to register duplicated clazz.
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
@@ -184,11 +185,11 @@ public class AnnotatedCommand {
 	/**
 	 * Adds the type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The clazz that will be matched to completer.
+	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param supplier The {@link Supplier} that will be used to create the list of matching
 	 * 		values.
 	 *
-	 * @throws IllegalArgumentException if tried to register duplicated clazz.
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(Class<?> clazz, Supplier<Collection<String>> supplier) {
 		addTypeCompleter(clazz, sender -> supplier.get());
@@ -207,12 +208,11 @@ public class AnnotatedCommand {
 	}
 
 	/**
-	 * The config method that changes the color translation behavior.
+	 * The accessor method method that allows configuration.
 	 *
-	 * @param autoTranslateColors If chat color sign {@code &} should be translated in responses
-	 * 		into real color.
+	 * @return The {@link AnnotatedCommand.Options} instance that allows to configure behavior.
 	 */
-	public void setAutoTranslateColors(boolean autoTranslateColors) {
-		getLocalCommandExecutor().getOptions().setAutoTranslateColors(autoTranslateColors);
+	public AnnotatedCommand.Options getOptions() {
+		return getLocalCommandExecutor().getOptions();
 	}
 }

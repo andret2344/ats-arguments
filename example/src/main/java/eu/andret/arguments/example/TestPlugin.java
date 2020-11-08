@@ -27,7 +27,7 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(HumanEntity::getName)
 				.collect(Collectors.toList()));
-		command.setAutoTranslateColors(true);
+		command.getOptions().setAutoTranslateColors(true);
 	}
 
 	public boolean isSuperSecretSetting() {

@@ -211,8 +211,8 @@ Then you can use `@Param(value = "id")` as an `@Argument` method parameter's ann
 
 In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error handler". Wrong value is described when adding mapper, as fallback condition (never called by default)
 
-There is also possible to sets simple things up.
-* `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
+There is also possibility to access `AnnotatedCommand.Options` object that allows a simple configuration.
+* `annotatedCommand.getOptions().setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
 
 If you want to get better completions, you can use the `@Completer` on the `@Argument` annotated method parameter. 
 
@@ -226,12 +226,13 @@ public class TestPlugin extends JavaPlugin {
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
         command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
+        command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
         command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
                 .stream()
                 .map(HumanEntity::getName)
                 .collect(Collectors.toList()));
         command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
-        command.setAutoTranslateColors(true);
+        command.getOptions().setAutoTranslateColors(true);
     }
 
     public boolean isSuperSecretSetting() {
