@@ -83,7 +83,7 @@ javadoc {
 		setMemberLevel JavadocMemberLevel.PUBLIC
 		setAuthor true
 
-		links 'https://docs.oracle.com/en/java/javase/14/docs/api/'
+		links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
 	}
 }
 
@@ -125,7 +125,7 @@ publishing {
 }
 
 jar {
-	setArchivesBaseName "${project.codeName}"
+	setArchivesBaseName project.codeName
 }
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {

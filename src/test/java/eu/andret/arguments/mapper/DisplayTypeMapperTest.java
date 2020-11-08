@@ -36,7 +36,6 @@ class DisplayTypeMapperTest {
 				.finishMocking();
 	}
 
-
 	@Test
 	void methodAlwaysDisplayed() throws NoSuchMethodException {
 		// given

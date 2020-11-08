@@ -14,6 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * The utility class for {@link Class} mappings.
+ *
+ * @author Andret
+ * @since Apr 28, 2019
+ */
 @UtilityClass
 @Value
 @Getter(AccessLevel.NONE)

@@ -5,8 +5,8 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
