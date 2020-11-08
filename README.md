@@ -101,7 +101,7 @@ build.dependsOn(shadowJar)
 To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and calling it's constructor. This class also needs to be annotated with `@BaseCommand`.
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
@@ -123,7 +123,7 @@ That's it, the basic setup is done. However, you have to remember to register th
 Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`-annotated class, annotating it with `@Argument`:
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
@@ -202,6 +202,8 @@ Command can also have mappers. Mappers are used to automate changes from String 
 
 Then you can use `@Param(value = "id")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
 
+In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error handler". Wrong value is described when adding mapper, as fallback condition (never called by default)
+
 There is also possible to sets simple things up.
 * `annotatedCommand.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
 
@@ -222,7 +224,7 @@ public class TestPlugin extends JavaPlugin {
 `TestCommand.java`:
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
