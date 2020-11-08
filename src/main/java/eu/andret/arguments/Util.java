@@ -42,12 +42,14 @@ public class Util {
 	}
 
 	/**
-	 * Method that tries to convert value in string into class type provides.
+	 * Method that tries to convert value in {@link String} into {@link Class} type provides.
 	 *
 	 * @param clazz The {@link Class} which type variable is trying to be made
-	 * @param value The string containing possible to convert value, eg. "1", "false" or "0.009".
+	 * @param value The {@link String} containing possible to convert value, eg. {@code "1"},
+	 *        {@code "false"} or {@code "0.009"}.
 	 *
-	 * @return The converted value, or not if no possible assignment found, or is an array.
+	 * @return The {@link Object} with converted value, or not if no possible assignment found, or
+	 * 		is an array.
 	 */
 	public Object convert(Class<?> clazz, String value) {
 		return convertFunctions.entrySet()
@@ -60,12 +62,12 @@ public class Util {
 	}
 
 	/**
-	 * Method that will determine the actual class by the content of String.
+	 * Method that will determine the actual class by the content of {@link String}.
 	 *
-	 * @param value The value that need to be parsed. Accepts only int, double, boolean and
-	 * 		String. Not matching any of them will result as String.
+	 * @param value The value that need to be parsed. Accepts only int, double, boolean and {@link
+	 *        String}. Not matching any of them will result as {@link String}.
 	 *
-	 * @return the class, which value inside the string arguments matches
+	 * @return The {@link Class}, which value inside the {@link String} arguments matches
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Class<?> getRealClass(String value) {

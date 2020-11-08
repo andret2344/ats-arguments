@@ -61,7 +61,6 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: ['example/**'])
 		}))
 	}
-
 }
 
 jacocoTestCoverageVerification {
