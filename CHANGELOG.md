@@ -1,9 +1,11 @@
 # atsArguments changelog
 
 ## 0.1.1
-* Changed not working `showIfNoPerms` into `displayType` `@Argument` element.
-* Added possibility to automatically translate color codes .
+* Changed not working `showIfNoPerms` into `displayType` in `@Argument` annotation.
+* Added possibility to automatically translate color codes.
 * Added `@Fallback` method allowing accessing non-parsed via `@Param` annotation values. 
+* Added `@Completer` annotation to improve tab completion.
+* Added `@Ignore` annotation to skip configured tab completion.
 
 ## 0.1.0
 * Added `@Param` annotation working with `annotatedCommand.addArgumentMapper()` method.
