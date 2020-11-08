@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -7,8 +7,6 @@ package eu.andret.arguments.mapper;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**

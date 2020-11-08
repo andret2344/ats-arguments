@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -18,7 +18,7 @@ public interface IArgumentsMapper extends IMapper {
 	 * @param command The array of {@link java.lang.String} with arguments passed with command.
 	 *
 	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments,
-	 * {@code false} otherwise.
+	 *        {@code false} otherwise.
 	 */
 	boolean mapArguments(Method method, String[] command);
 }

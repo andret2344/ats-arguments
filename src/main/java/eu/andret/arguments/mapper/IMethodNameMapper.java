@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -20,7 +20,7 @@ public interface IMethodNameMapper extends IMapper {
 	 * @param command The command arguments.
 	 *
 	 * @return {@code true} if method's name matches argument at correct position, {@code false}
-	 * otherwise.
+	 * 		otherwise.
 	 */
 	boolean mapMethodName(Method method, String[] command);
 }

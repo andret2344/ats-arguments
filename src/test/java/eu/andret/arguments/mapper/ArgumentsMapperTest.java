@@ -1,11 +1,11 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.impl.ArgumentsMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Bukkit;

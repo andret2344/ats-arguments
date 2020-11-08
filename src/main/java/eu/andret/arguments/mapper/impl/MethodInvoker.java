@@ -1,17 +1,17 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.Fallback;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
 import lombok.Getter;
