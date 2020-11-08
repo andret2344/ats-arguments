@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -20,10 +20,10 @@ public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param methods Methods annotated with {@link eu.andret.arguments.annotation.Argument}.
 	 * @param command The arguments array that followed up base command.
-	 * @param sender The {@link CommandSender} of the command.
+	 * @param sender The {@link org.bukkit.command.CommandSender} of the command.
 	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link
-	 *        Optional#empty()} if none found.
+	 *        java.util.Optional#empty()} if none found.
 	 */
 	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender);
 }

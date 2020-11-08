@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -12,9 +12,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Optional;
 
-/**
- * An implementation for {@link IResponseMapper}.
- */
 public class ResponseMapper implements IResponseMapper {
 	@Override
 	public void mapResponse(CommandSender sender, Object result, ResponseType responseType, AnnotatedCommand.Options options) {

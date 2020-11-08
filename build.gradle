@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
@@ -61,6 +61,7 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: ['example/**'])
 		}))
 	}
+
 }
 
 jacocoTestCoverageVerification {
@@ -82,7 +83,7 @@ javadoc {
 		setMemberLevel JavadocMemberLevel.PUBLIC
 		setAuthor true
 
-		links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+		links 'https://docs.oracle.com/en/java/javase/14/docs/api/'
 	}
 }
 
@@ -124,7 +125,7 @@ publishing {
 }
 
 jar {
-	setArchivesBaseName project.codeName
+	setArchivesBaseName "${project.codeName}"
 }
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {

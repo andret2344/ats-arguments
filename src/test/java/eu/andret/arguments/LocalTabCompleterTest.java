@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -103,7 +103,7 @@ class LocalTabCompleterTest {
 	}
 
 	@Test
-	void toStringNotNull() {
+	void toStringNotNUll() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -114,5 +114,6 @@ class LocalTabCompleterTest {
 
 		// then
 		assertNotNull(result);
+		assertEquals("LocalTabCompleter(commandExecutorClass=class eu.andret.arguments.provider.TestMethodsProvider)", result);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -227,16 +227,19 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void setOptions() {
+	void setOptions() throws NoSuchFieldException, IllegalAccessException {
 		// given
 		JavaPlugin plugin = mock(JavaPlugin.class);
 		LocalCommandExecutor executor = new LocalCommandExecutor(TestMethodsProvider.class, plugin);
 
 		// when
-		AnnotatedCommand.Options executorOptions = executor.getOptions();
+		executor.setOptions(new AnnotatedCommand.Options());
 
 		// then
-		assertNotNull(executorOptions);
+		Field field = executor.getClass().getDeclaredField("options");
+		field.setAccessible(true);
+		AnnotatedCommand.Options options = (AnnotatedCommand.Options) field.get(executor);
+		assertNotNull(options);
 	}
 
 	private void injectMapper(LocalCommandExecutor executor, IMapper mapper, String mapperName) {

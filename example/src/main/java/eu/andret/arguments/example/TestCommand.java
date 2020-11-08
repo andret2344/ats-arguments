@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
@@ -7,9 +7,7 @@ package eu.andret.arguments.example;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
-import eu.andret.arguments.annotation.Completer;
 import eu.andret.arguments.annotation.Fallback;
-import eu.andret.arguments.annotation.Ignore;
 import eu.andret.arguments.annotation.Param;
 import eu.andret.arguments.entity.DisplayType;
 import eu.andret.arguments.entity.ExecutorType;
@@ -48,7 +46,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
+	public String player(@Param("basicPlayerMapper") Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -58,7 +56,8 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
+	public String distance(@Param("basicPlayerMapper") Player... players) {
+		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
 		OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -85,22 +84,8 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String colored(boolean value) {
-		// automatic suggestions with "true" and "false" will appear.
-		// Response will be automatically colored.
-		if (value) {
-			return "&6You have found something. &dBye!";
-		}
+	public String colored() {
+		// Response will be automatically coloured due to "&4" and "&b"
 		return "&4Nothing to look at here. &bBye!";
-	}
-
-	@Argument
-	public String ignored(@Ignore boolean value) {
-		// No suggestions will appear.
-		// Response will be automatically coloured.
-		if (value) {
-			return "&6I'm ignored.";
-		}
-		return "&6I'm ignored too.";
 	}
 }

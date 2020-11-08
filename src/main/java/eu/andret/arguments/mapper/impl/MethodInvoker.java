@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * An implementation of {@link IMethodInvoker}.
+ * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
  *
  * @author Andret
  * @since Apr 17, 2020

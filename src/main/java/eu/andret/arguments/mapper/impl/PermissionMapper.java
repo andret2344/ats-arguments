@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -13,7 +13,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import java.lang.reflect.Method;
 
 /**
- * An implementation for {@link IPermissionMapper}.
+ * An implementation for {@link eu.andret.arguments.mapper.IPermissionMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

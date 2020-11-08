@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -14,12 +14,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-/**
- * The utility class for {@link Class} mappings.
- *
- * @author Andret
- * @since Apr 28, 2019
- */
 @UtilityClass
 @Value
 @Getter(AccessLevel.NONE)
@@ -42,14 +36,12 @@ public class Util {
 	}
 
 	/**
-	 * Method that tries to convert value in {@link String} into {@link Class} type provides.
+	 * Method that tries to convert value in string into class type provides.
 	 *
-	 * @param clazz The {@link Class} which type variable is trying to be made
-	 * @param value The {@link String} containing possible to convert value, eg. {@code "1"},
-	 *        {@code "false"} or {@code "0.009"}.
+	 * @param clazz The {@link java.lang.Class} which type variable is trying to be made
+	 * @param value The string containing possible to convert value, eg. "1", "false" or "0.009".
 	 *
-	 * @return The {@link Object} with converted value, or not if no possible assignment found, or
-	 * 		is an array.
+	 * @return The converted value, or not if no possible assignment found, or is an array.
 	 */
 	public Object convert(Class<?> clazz, String value) {
 		return convertFunctions.entrySet()
@@ -62,14 +54,13 @@ public class Util {
 	}
 
 	/**
-	 * Method that will determine the actual class by the content of {@link String}.
+	 * Method that will determine the actual class by the content of String.
 	 *
-	 * @param value The value that need to be parsed. Accepts only int, double, boolean and {@link
-	 *        String}. Not matching any of them will result as {@link String}.
+	 * @param value The value that need to be parsed. Accepts only int, double, boolean and
+	 * 		String. Not matching any of them will result as String.
 	 *
-	 * @return The {@link Class}, which value inside the {@link String} arguments matches
+	 * @return the class, which value inside the string arguments matches
 	 */
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Class<?> getRealClass(String value) {
 		return realClassPredicates.entrySet()
 				.stream()

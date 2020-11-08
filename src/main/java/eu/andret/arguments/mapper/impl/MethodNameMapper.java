@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * An implementation of {@link IMethodNameMapper}.
+ * An implementation of {@link eu.andret.arguments.mapper.IMethodNameMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

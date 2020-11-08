@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -35,6 +35,7 @@ class AnnotatedCommandTest {
 
 		// then
 		assertSame(command, result);
+		verify(executor, times(1)).setOptions(any());
 	}
 
 	@Test
@@ -127,13 +128,12 @@ class AnnotatedCommandTest {
 		PluginCommand command = mock(PluginCommand.class);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
-		annotatedCommand.getOptions().setAutoTranslateColors(true);
+		annotatedCommand.setAutoTranslateColors(true);
 
 		// then
-		assertTrue(annotatedCommand.getLocalCommandExecutor().getOptions().isAutoTranslateColors());
+		assertTrue(annotatedCommand.getOptions().isAutoTranslateColors());
 	}
 }

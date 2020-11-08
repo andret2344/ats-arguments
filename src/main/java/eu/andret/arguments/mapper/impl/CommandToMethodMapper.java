@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Implementation of {@link ICommandToMethodMapper}.
+ * Implementation of {@link eu.andret.arguments.mapper.ICommandToMethodMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018=2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020 Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -18,10 +18,10 @@ public interface IResponseMapper extends IMapper {
 	/**
 	 * The mapper function that maps response to exact behavior
 	 *
-	 * @param sender The {@link CommandSender} who performed the command.
+	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
 	 * @param result The result returned from called method.
-	 * @param responseType The {@link ResponseType}.
-	 * @param options The {@link AnnotatedCommand.Options}.
+	 * @param responseType The {@link eu.andret.arguments.entity.ResponseType}.
+	 * @param options The {@link eu.andret.arguments.AnnotatedCommand.Options}.
 	 */
 	void mapResponse(CommandSender sender, Object result, ResponseType responseType, AnnotatedCommand.Options options);
 }
