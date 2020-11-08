@@ -103,7 +103,7 @@ class LocalTabCompleterTest {
 	}
 
 	@Test
-	void toStringNotNUll() {
+	void toStringNotNull() {
 		// given
 		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
 		CommandSender sender = mock(CommandSender.class);
@@ -114,6 +114,5 @@ class LocalTabCompleterTest {
 
 		// then
 		assertNotNull(result);
-		assertEquals("LocalTabCompleter(commandExecutorClass=class eu.andret.arguments.provider.TestMethodsProvider)", result);
 	}
 }

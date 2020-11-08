@@ -35,7 +35,6 @@ class AnnotatedCommandTest {
 
 		// then
 		assertSame(command, result);
-		verify(executor, times(1)).setOptions(any());
 	}
 
 	@Test
@@ -128,12 +127,13 @@ class AnnotatedCommandTest {
 		PluginCommand command = mock(PluginCommand.class);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
-		annotatedCommand.setAutoTranslateColors(true);
+		annotatedCommand.getOptions().setAutoTranslateColors(true);
 
 		// then
-		assertTrue(annotatedCommand.getOptions().isAutoTranslateColors());
+		assertTrue(annotatedCommand.getLocalCommandExecutor().getOptions().isAutoTranslateColors());
 	}
 }
