@@ -23,6 +23,7 @@ public class CommandManager {
 	 * @param commandClass The class extending {@link eu.andret.arguments.AnnotatedCommandExecutor}
 	 * @param plugin The class extending {@link org.bukkit.plugin.java.JavaPlugin} as main class
 	 * 		of plugin
+	 * @param <T> The main plugin class that extends {@link org.bukkit.plugin.java.JavaPlugin}.
 	 *
 	 * @return AnnotatedCommand
 	 */

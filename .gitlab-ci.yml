@@ -44,13 +44,11 @@ publish:
     - master
   when: manual
 
-pages:
+javadoc:
   stage: deploy
-  dependencies:
-    - junit
   script:
-    - mkdir public
-    - mv build/reports/jacoco/test/html/* public
+    - gradle javadoc
+    - mv build/docs/javadoc/ public/
   artifacts:
     paths:
       - public
