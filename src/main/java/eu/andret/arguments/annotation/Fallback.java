@@ -12,8 +12,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * The interface to decide which method should execute in case when {@link Argument} annotated command param passes its
- * fallback predicate.
+ * The interface to decide which method should execute in case when {@link Argument} annotated
+ * command param passes its fallback predicate.
  *
  * @author Andret
  * @since Jun 10, 2020

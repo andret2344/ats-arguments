@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 
 /**
- * An implementation of {@link eu.andret.arguments.mapper.IExecutorTypeMapper}.
+ * An implementation of {@link IExecutorTypeMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

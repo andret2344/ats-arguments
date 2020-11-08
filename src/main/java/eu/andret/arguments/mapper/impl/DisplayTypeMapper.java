@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import java.lang.reflect.Method;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IDisplayTypeMapper}.
+ * An implementation for {@link IDisplayTypeMapper}.
  *
  * @author Andret
  * @since May 08, 2020

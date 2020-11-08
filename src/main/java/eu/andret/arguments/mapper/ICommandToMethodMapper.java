@@ -20,10 +20,10 @@ public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param methods Methods annotated with {@link eu.andret.arguments.annotation.Argument}.
 	 * @param command The arguments array that followed up base command.
-	 * @param sender The {@link org.bukkit.command.CommandSender} of the command.
+	 * @param sender The {@link CommandSender} of the command.
 	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link
-	 *        java.util.Optional#empty()} if none found.
+	 *        Optional#empty()} if none found.
 	 */
 	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender);
 }

@@ -14,11 +14,11 @@ import java.lang.reflect.Method;
  */
 public interface IArgumentsMapper extends IMapper {
 	/**
-	 * @param method The {@link java.lang.reflect.Method} that will be analyzed.
-	 * @param command The array of {@link java.lang.String} with arguments passed with command.
+	 * @param method The {@link Method} that will be analyzed.
+	 * @param command The array of {@link String} with arguments passed with command.
 	 *
 	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments,
-	 * {@code false} otherwise.
+	 *        {@code false} otherwise.
 	 */
 	boolean mapArguments(Method method, String[] command);
 }

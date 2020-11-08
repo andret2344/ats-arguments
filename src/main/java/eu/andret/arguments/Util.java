@@ -38,7 +38,7 @@ public class Util {
 	/**
 	 * Method that tries to convert value in string into class type provides.
 	 *
-	 * @param clazz The {@link java.lang.Class} which type variable is trying to be made
+	 * @param clazz The {@link Class} which type variable is trying to be made
 	 * @param value The string containing possible to convert value, eg. "1", "false" or "0.009".
 	 *
 	 * @return The converted value, or not if no possible assignment found, or is an array.
@@ -51,17 +51,17 @@ public class Util {
 				.map(Map.Entry::getValue)
 				.map(predicate -> predicate.apply(value))
 				.orElseThrow(() -> new UnsupportedOperationException("Use primitive type or String!"));
-
 	}
 
 	/**
 	 * Method that will determine the actual class by the content of String.
 	 *
-	 * @param value The value that need to be parsed. Accepts only int, double, boolean and String.
-	 * Not matching any of them will result as String.
+	 * @param value The value that need to be parsed. Accepts only int, double, boolean and
+	 * 		String. Not matching any of them will result as String.
 	 *
 	 * @return the class, which value inside the string arguments matches
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Class<?> getRealClass(String value) {
 		return realClassPredicates.entrySet()
 				.stream()

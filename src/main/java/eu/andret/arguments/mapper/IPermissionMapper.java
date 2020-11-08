@@ -18,9 +18,11 @@ public interface IPermissionMapper extends IMapper {
 	/**
 	 * Maps the argument permissions.
 	 *
-	 * @param method The {@link java.lang.reflect.Method} to be analyzed.
-	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
-	 * @return {@code true} if sender has permission to execute the command or is op, {@code false} otherwise.
+	 * @param method The {@link Method} to be analyzed.
+	 * @param sender The {@link CommandSender} who performed the command.
+	 *
+	 * @return {@code true} if sender has permission to execute the command or is op, {@code false}
+	 * 		otherwise.
 	 */
 	boolean mapPermission(Method method, CommandSender sender);
 }

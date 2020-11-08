@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IMethodToCompletionMapper}.
+ * An implementation for {@link IMethodToCompletionMapper}.
  *
  * @author Andret
  * @since Nov 07, 2020

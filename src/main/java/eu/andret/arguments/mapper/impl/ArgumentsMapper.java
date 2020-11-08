@@ -4,9 +4,9 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.IArgumentsMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IArgumentsMapper}.
+ * An implementation for {@link IArgumentsMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

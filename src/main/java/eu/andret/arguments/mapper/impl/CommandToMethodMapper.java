@@ -4,8 +4,8 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.IArgumentsMapper;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IExecutionCallMapper;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Implementation of {@link eu.andret.arguments.mapper.ICommandToMethodMapper}.
+ * Implementation of {@link ICommandToMethodMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

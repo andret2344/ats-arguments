@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * An implementation of {@link eu.andret.arguments.mapper.IMethodNameMapper}.
+ * An implementation of {@link IMethodNameMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

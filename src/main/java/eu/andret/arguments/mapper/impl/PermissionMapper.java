@@ -13,7 +13,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import java.lang.reflect.Method;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IPermissionMapper}.
+ * An implementation for {@link IPermissionMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

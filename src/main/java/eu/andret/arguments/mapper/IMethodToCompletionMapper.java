@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * An interface to map {@link java.lang.reflect.Method} to its completion suggestions.
+ * An interface to map {@link Method} to its completion suggestions.
  *
  * @author Andret
  * @since Nov 07, 2020

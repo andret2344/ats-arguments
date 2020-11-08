@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IMethodToDescriptionMapper}.
+ * An implementation for {@link IMethodToDescriptionMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020

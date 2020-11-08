@@ -16,11 +16,11 @@ public interface IMethodNameMapper extends IMapper {
 	/**
 	 * The method that maps method to right command argument.
 	 *
-	 * @param method The {@link java.lang.reflect.Method} that will be mapped.
+	 * @param method The {@link Method} that will be mapped.
 	 * @param command The command arguments.
 	 *
 	 * @return {@code true} if method's name matches argument at correct position, {@code false}
-	 * otherwise.
+	 * 		otherwise.
 	 */
 	boolean mapMethodName(Method method, String[] command);
 }
