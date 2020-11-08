@@ -13,7 +13,7 @@ To set up the library in your project, you have to do following steps:
 ```groovy
 repositories {
     mavenCentral()
-    maven { url "https://gitlab.com/api/v4/projects/12063927/packages/maven" }
+    maven { url 'https://gitlab.com/api/v4/projects/12063927/packages/maven' }
     // other repositories
 }
 ```
@@ -53,13 +53,13 @@ dependencies {
 `build.gradle`:
 ```groovy
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 //...
 
 shadowJar {
-    relocate "eu.andret.arguments", "eu.andret.YOURPLUGINNAME.arguments"
+    relocate 'eu.andret.arguments', 'eu.andret.YOURPLUGINNAME.arguments'
     configurations = [project.configurations.implementation]
 }
 
