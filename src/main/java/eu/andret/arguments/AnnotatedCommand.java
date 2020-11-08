@@ -94,7 +94,7 @@ public class AnnotatedCommand {
 	 * @param clazz The {@link java.lang.Class} that will be returned from mapper function,
 	 * @param mapper The {@link java.util.function.Function} that has the logic how to create the
 	 *        {@code clazz} object of String
-	 * @param fallbackCondition The {@link Predicate<T>} that will verify if fallback should
+	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should
 	 * 		execute.
 	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
 	 * 		method's parameter
