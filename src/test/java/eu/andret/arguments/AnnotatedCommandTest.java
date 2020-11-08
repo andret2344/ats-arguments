@@ -131,7 +131,7 @@ class AnnotatedCommandTest {
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
-		annotatedCommand.setAutoTranslateColors(true);
+		annotatedCommand.getOptions().setAutoTranslateColors(true);
 
 		// then
 		assertTrue(annotatedCommand.getLocalCommandExecutor().getOptions().isAutoTranslateColors());
