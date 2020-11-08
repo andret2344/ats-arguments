@@ -1,10 +1,5 @@
 #project folders
 /.gradle/
 /.idea/
-/gradle/
 /build/
-
-#project files
-/gradlew
-/gradlew.bat
-/ats-arguments.iml
+/example/build/

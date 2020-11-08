@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -16,13 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MethodNameMapperTest {
-	private final IMethodNameMapper mapper = new MethodNameMapper();
-
 	@Test
 	void staticAnnotatedMethodCalled() throws NoSuchMethodException {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testStaticMethod");
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		Executable result = () -> mapper.mapMethodName(method, command);
@@ -36,6 +35,7 @@ class MethodNameMapperTest {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExceededPosition");
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		Executable result = () -> mapper.mapMethodName(method, command);
@@ -49,6 +49,7 @@ class MethodNameMapperTest {
 		// given
 		String[] command = {};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutAnnotation");
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		boolean result = mapper.mapMethodName(method, command);
@@ -62,6 +63,7 @@ class MethodNameMapperTest {
 		// given
 		String[] command = {"testMethod"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		boolean result = mapper.mapMethodName(method, command);
@@ -75,6 +77,7 @@ class MethodNameMapperTest {
 		// given
 		String[] command = {"testAlias1"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithAliases");
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		boolean result = mapper.mapMethodName(method, command);
@@ -88,6 +91,7 @@ class MethodNameMapperTest {
 		// given
 		String[] command = {"test", "testMethodWithCorrectPosition"};
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class);
+		IMethodNameMapper mapper = new MethodNameMapper();
 
 		// when
 		boolean result = mapper.mapMethodName(method, command);

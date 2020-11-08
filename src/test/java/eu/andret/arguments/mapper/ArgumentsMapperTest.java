@@ -1,10 +1,11 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.Mapper;
+import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.impl.ArgumentsMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Bukkit;
@@ -126,7 +127,7 @@ class ArgumentsMapperTest {
 	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
@@ -169,7 +170,7 @@ class ArgumentsMapperTest {
 	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
@@ -184,7 +185,7 @@ class ArgumentsMapperTest {
 	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld));
+		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		IArgumentsMapper mapper = new ArgumentsMapper(mappers);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -203,7 +204,7 @@ class ArgumentsMapperTest {
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		LocalFunction getLocation = mock(LocalFunction.class);
-		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation));
+		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation, Fallback.NEVER));
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when

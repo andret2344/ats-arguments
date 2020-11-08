@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -53,6 +53,8 @@ class CommandManagerTest {
 		// given
 		JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		PluginCommand pluginCommand = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(pluginCommand.getExecutor()).thenReturn(executor);
 		when(javaPlugin.getCommand(anyString())).thenReturn(pluginCommand);
 
 		// when

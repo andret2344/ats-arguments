@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -51,14 +51,13 @@ public class Util {
 				.map(Map.Entry::getValue)
 				.map(predicate -> predicate.apply(value))
 				.orElseThrow(() -> new UnsupportedOperationException("Use primitive type or String!"));
-
 	}
 
 	/**
 	 * Method that will determine the actual class by the content of String.
 	 *
-	 * @param value The value that need to be parsed. Accepts only int, double, boolean and String.
-	 * Not matching any of them will result as String.
+	 * @param value The value that need to be parsed. Accepts only int, double, boolean and
+	 * 		String. Not matching any of them will result as String.
 	 *
 	 * @return the class, which value inside the string arguments matches
 	 */

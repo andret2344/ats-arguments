@@ -1,20 +1,25 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.provider;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.ExecutorType;
 import eu.andret.arguments.annotation.Argument;
 import eu.andret.arguments.annotation.BaseCommand;
+import eu.andret.arguments.annotation.Completer;
+import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.annotation.Ignore;
 import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.entity.DisplayType;
+import eu.andret.arguments.entity.ExecutorType;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @BaseCommand("test")
-public class TestMethodsProvider extends AnnotatedCommandExecutor {
+public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(CommandSender sender, JavaPlugin plugin) {
 		super(sender, plugin);
 	}
@@ -82,8 +87,12 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	public void testMethodWithArray(String[] text) {
 	}
 
+	@Fallback
+	public void testMethodWithParam(String world) {
+	}
+
 	@Argument
-	public void testMethodWithParam(@Param("testWorldMapper") World block) {
+	public void testMethodWithParam(@Param("testWorldMapper") World world) {
 	}
 
 	@Argument
@@ -93,5 +102,41 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor {
 	@Argument
 	public void testMethodWithException() {
 		throw new IllegalArgumentException();
+	}
+
+	@Argument(displayType = DisplayType.ALWAYS)
+	public void testMethodDisplayedAlways() {
+	}
+
+	@Argument(displayType = DisplayType.IF_PERMS)
+	public void testMethodDisplayedConditionally() {
+	}
+
+	@Argument(displayType = DisplayType.NONE)
+	public void testMethodDisplayedNever() {
+	}
+
+	@Argument
+	public void testMethodWithTypeCompletion(boolean value) {
+	}
+
+	@Argument
+	public void testMethodWithIgnoredTypeCompletion(@Ignore boolean value) {
+	}
+
+	@Argument
+	public void testMethodWithMismatchedTypeCompletion(Player value) {
+	}
+
+	@Argument
+	public void testMethodWithArgumentCompletion(@Completer("testWorldCompleter") World world) {
+	}
+
+	@Argument
+	public void testMethodWithVarArgArgumentCompletion(@Completer("testWorldCompleter") World... worlds) {
+	}
+
+	@Argument
+	public void testMethodWithMismatchedArgumentCompletion(@Completer("mismatch") World world) {
 	}
 }

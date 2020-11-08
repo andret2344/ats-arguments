@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -20,12 +20,10 @@ class AnnotatedCommandExecutorTest {
 		JavaPlugin plugin = mock(JavaPlugin.class);
 
 		// when
-		AnnotatedCommandExecutor executor = new EmptyClass(sender, plugin);
+		AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
 
 		//then
-		assertEquals(sender, executor.sender);
 		assertEquals(sender, executor.getSender());
-		assertEquals(plugin, executor.plugin);
 		assertEquals(plugin, executor.getPlugin());
 	}
 }

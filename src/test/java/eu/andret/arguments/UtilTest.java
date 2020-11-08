@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -31,7 +31,7 @@ class UtilTest {
 		return Arrays.asList(objects);
 	}
 
-	static Collection<Object[]> getRealClassData() {
+	static Collection<Object[]> realClassData() {
 		Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
@@ -45,8 +45,6 @@ class UtilTest {
 	@ParameterizedTest
 	@MethodSource("convertData")
 	void convert(String input, Class<?> targetClass, Object realValue) {
-		// given
-
 		// when
 		Object result = Util.convert(targetClass, input);
 
@@ -56,8 +54,6 @@ class UtilTest {
 
 	@Test
 	void convertUnsupportedType() {
-		// given
-
 		// when
 		Executable result = () -> Util.convert(Stream.class, "input");
 
@@ -66,10 +62,8 @@ class UtilTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource("getRealClassData")
+	@MethodSource("realClassData")
 	void getRealClass(String input, Class<?> targetClass, Object realValue) {
-		// given
-
 		// when
 		Class<?> realClass = Util.getRealClass(input);
 

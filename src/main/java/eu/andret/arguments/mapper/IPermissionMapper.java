@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -21,8 +21,8 @@ public interface IPermissionMapper extends IMapper {
 	 * @param method The {@link java.lang.reflect.Method} to be analyzed.
 	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
 	 *
-	 * @return <code>true</code> if sender has permission to execute the command or is op,
-	 * <code>false</code> otherwise.
+	 * @return {@code true} if sender has permission to execute the command or is op, {@code false}
+	 * 		otherwise.
 	 */
 	boolean mapPermission(Method method, CommandSender sender);
 }

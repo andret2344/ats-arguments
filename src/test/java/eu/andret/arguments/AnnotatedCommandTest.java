@@ -1,20 +1,24 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -26,6 +30,8 @@ class AnnotatedCommandTest {
 	void correctCommandReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
 		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
@@ -39,9 +45,9 @@ class AnnotatedCommandTest {
 	void correctListenersSetup() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> {
@@ -58,9 +64,9 @@ class AnnotatedCommandTest {
 	void correctExecutorReturned() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
 		// when
 		CommandExecutor result = annotatedCommand.getLocalCommandExecutor();
@@ -88,9 +94,9 @@ class AnnotatedCommandTest {
 	void correctAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(true);
 
 		// when
@@ -104,9 +110,9 @@ class AnnotatedCommandTest {
 	void incorrectAddMapper() {
 		// given
 		PluginCommand command = mock(PluginCommand.class);
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(false);
 
 		// when
@@ -118,14 +124,92 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void toStringTest() {
+	void correctAddTypeCompleter() {
 		// given
-		AnnotatedCommand annotatedCommand = new AnnotatedCommand(null);
+		PluginCommand command = mock(PluginCommand.class);
+		LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
+		ArrayList<String> list = new ArrayList<>();
+		list.add("one");
+		list.add("two");
 
 		// when
-		String result = annotatedCommand.toString();
+		annotatedCommand.addTypeCompleter(World.class, list);
 
 		// then
-		assertEquals("AnnotatedCommand(command=null)", result);
+		verify(completer, times(1))
+				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null).equals(list)));
+	}
+
+	@Test
+	void incorrectAddTypeCompleter() {
+		// given
+		PluginCommand command = mock(PluginCommand.class);
+		LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(false);
+
+		// when
+		Executable result = () -> annotatedCommand.addTypeCompleter(World.class, new ArrayList<>());
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(completer, times(1)).addTypeCompleter(eq(World.class), any());
+	}
+
+	@Test
+	void correctAddArgumentCompleter() {
+		// given
+		PluginCommand command = mock(PluginCommand.class);
+		LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
+		ArrayList<String> list = new ArrayList<>();
+		list.add("one");
+		list.add("two");
+
+		// when
+		annotatedCommand.addArgumentCompleter("testPlayerMapper", list);
+
+		// then
+		verify(completer, times(1))
+				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null).equals(list)));
+	}
+
+	@Test
+	void incorrectAddArgumentCompleter() {
+		// given
+		PluginCommand command = mock(PluginCommand.class);
+		LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(false);
+
+		// when
+		Executable result = () -> annotatedCommand.addArgumentCompleter("testPlayerMapper", new ArrayList<>());
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(completer, times(1)).addArgumentCompleter(eq("testPlayerMapper"), any());
+	}
+
+	@Test
+	void correctAutoTranslateColors() {
+		// given
+		PluginCommand command = mock(PluginCommand.class);
+		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
+		AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+
+		// when
+		annotatedCommand.getOptions().setAutoTranslateColors(true);
+
+		// then
+		assertTrue(annotatedCommand.getLocalCommandExecutor().getOptions().isAutoTranslateColors());
 	}
 }

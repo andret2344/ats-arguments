@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
@@ -51,11 +51,17 @@ compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:depreca
 
 test {
 	useJUnitPlatform()
-	finalizedBy jacocoTestReport, printCoverage
+	finalizedBy jacocoTestCoverageVerification, printCoverage
 }
 
 jacocoTestReport {
 	reports.xml.enabled true
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: ['example/**'])
+		}))
+	}
+
 }
 
 jacocoTestCoverageVerification {
@@ -64,6 +70,7 @@ jacocoTestCoverageVerification {
 			limit {
 				minimum = 1.0
 			}
+			excludes = ['example*', 'eu.andret.arguments.example.*']
 		}
 	}
 }

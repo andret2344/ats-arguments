@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.provider;
@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @Value
 @BaseCommand("malformed")
 @EqualsAndHashCode(callSuper = true)
-public class MalformedClass extends AnnotatedCommandExecutor {
+public class MalformedClass extends AnnotatedCommandExecutor<JavaPlugin> {
 	String world;
 
 	public MalformedClass(CommandSender sender, JavaPlugin plugin, String world) {

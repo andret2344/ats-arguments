@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -19,13 +19,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class PermissionMapperTest {
-	private final IPermissionMapper mapper = new PermissionMapper();
-
 	@Test
 	void methodWithPermissionCalledByConsole() throws NoSuchMethodException {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithPermission");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -40,6 +39,7 @@ class PermissionMapperTest {
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.isOp()).thenReturn(true);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithPermission");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -54,6 +54,7 @@ class PermissionMapperTest {
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(true);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithPermission");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -68,6 +69,7 @@ class PermissionMapperTest {
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.hasPermission("ats.test.method")).thenReturn(false);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithPermission");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -81,6 +83,7 @@ class PermissionMapperTest {
 		// given
 		CommandSender commandSender = mock(ConsoleCommandSender.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -95,6 +98,7 @@ class PermissionMapperTest {
 		CommandSender commandSender = mock(Player.class);
 		when(commandSender.isOp()).thenReturn(true);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);
@@ -108,6 +112,7 @@ class PermissionMapperTest {
 		// given
 		CommandSender commandSender = mock(Player.class);
 		Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
+		IPermissionMapper mapper = new PermissionMapper();
 
 		// when
 		boolean result = mapper.mapPermission(method, commandSender);

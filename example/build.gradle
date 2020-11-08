@@ -1,24 +1,23 @@
+/*
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 buildscript {
 	repositories {
 		jcenter()
-		maven { url "https://plugins.gradle.org/m2/" }
+		maven { url 'https://plugins.gradle.org/m2/' }
 	}
-	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
-	}
+	dependencies { classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1' }
 }
 
 plugins {
-	id 'java'
-	id 'idea'
-	id "com.github.johnrengelman.shadow" version "5.2.0"
-	id 'kr.entree.spigradle' version "1.2.1"
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
+	id 'kr.entree.spigradle' version '2.2.3'
 }
 
+apply plugin: 'idea'
+apply plugin: 'java'
 apply plugin: 'com.github.johnrengelman.shadow'
-
-group = pluginGroup
-version = pluginVersion
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -31,8 +30,10 @@ repositories {
 
 dependencies {
 	implementation rootProject
-	compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+	compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.16.4-R0.1-SNAPSHOT'
 }
+
+compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
 
 shadowJar {
 	dependencies {
@@ -40,16 +41,13 @@ shadowJar {
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.compilerArgs << '-Xlint:unchecked' << '-parameters' << '-g'
-	options.deprecation = true
+build {
+	dependsOn shadowJar
 }
-
-build.dependsOn(shadowJar)
 
 spigot {
 	authors = ['Andret']
-	apiVersion = '1.15'
+	apiVersion = '1.16'
 
 	commands {
 		test {

@@ -2,18 +2,18 @@
 
 ## License
 
-Copyright Andret (c) 2020. Copying and modifying allowed only keeping git link reference.
+Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 To set up the library in your project, you have to do following steps:
 
-- Add `https://repo.andret.eu/andret-tools-system` as a repository
+- Add `https://gitlab.com/api/v4/projects/12063927/packages/maven` as a repository
 
 `build.gradle`:
 ```groovy
 repositories {
     mavenCentral()
-    maven { url 'https://repo.andret.eu/andret-tools-system' }
+    maven { url 'https://gitlab.com/api/v4/projects/12063927/packages/maven' }
     // other repositories
 }
 ```
@@ -21,8 +21,7 @@ repositories {
 ```xml
 <repositories>
     <repository>
-        <id>andret-tools-system</id>
-        <url>https://repo.andret.eu/andret-tools-system</url>
+        <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
     </repository>
     <!-- other repositories -->
 </repositories>
@@ -33,7 +32,7 @@ repositories {
 `build.gradle`:
 ```groovy
 dependencies {
-    compile group: 'eu.andret', name: 'ats-arguments', version: '0.1.0'
+    implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1'
     // other dependencies
 }
 ```
@@ -43,7 +42,7 @@ dependencies {
     <dependency>
         <groupId>eu.andret</groupId>
         <artifactId>ats-arguments</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </dependency>
     <!-- other dependencies -->
 </dependencies>
@@ -54,14 +53,14 @@ dependencies {
 `build.gradle`:
 ```groovy
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 //...
 
 shadowJar {
-    relocate "eu.andret.arguments", "eu.andret.YOURPLUGINNAME.arguments"
-    configurations = [project.configurations.compile]
+    relocate 'eu.andret.arguments', 'eu.andret.YOURPLUGINNAME.arguments'
+    configurations = [project.configurations.implementation]
 }
 
 build.dependsOn(shadowJar)
@@ -102,7 +101,7 @@ build.dependsOn(shadowJar)
 To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and calling it's constructor. This class also needs to be annotated with `@BaseCommand`.
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
@@ -124,7 +123,7 @@ That's it, the basic setup is done. However, you have to remember to register th
 Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`-annotated class, annotating it with `@Argument`:
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
@@ -144,11 +143,12 @@ Ok, but what exactly can you do?
 
 The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings you can use, but first, look at rules that apply:
 
-- The name of the method (case insensitive) is a command argument.
-- Return value will be send automatically, unless changed (`void` or `null` return types don't send anything)
+- The name of the method (case-insensitive) is a command argument.
+- Return value will be sent automatically, unless changed (`void` return type or `null` return value don't send anything)
 - Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments into method ones.
   - Exception is to create a `Mapper` and use the `@Param` annotation.
-- Method cannot have array, only vararg is possible, rules as the point above.
+  - When using `@Param` and parsing failed, you can access the raw value using `@Fallback` annotation.
+- Method cannot have an array, only vararg is possible, rules as the point above.
 - There can be multiple methods with the same name, missing arguments are treated as obsolete.
 - Library automatically uses tab completion.
 - In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
@@ -164,7 +164,7 @@ Now, let's see what can we set up using `@Argument`:
 | description | `String` | Any String. | `""` | The description of command that will show up in help. |
 | aliases | `String[]` | Array of any non-colliding strings. | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
 | position | `int` | Any non-negative int lower or equal to methods arguments count. | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
-| showIfNoPerms | `boolean` | Well, any boolean actually. | `true` | If this argument should be visible in generic help message. |
+| displayType | `DisplayType` | `ALWAYS`, `IF_PERMS`, `NONE` | `ALWAYS` | Describes when argument in help message should be visible. |
 
 To be formal, here's the table for `@BaseCommand`:
 
@@ -179,7 +179,16 @@ Another annotation `@Param` has following table:
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The mapper id to find exact registered mapper. |
 
-At the end, you can use a few listeners to indicate certain behavior. All listeners needs to be set up on `AnnotatedCommand`.
+There is also `@Fallback` annotation available that have has no elements.
+
+And the `@Completer` annotation:
+| setting | type | values |  description |
+| ------- | ---- | ------ |  ----------- |
+| value | `String` | any string | The completer id to find exact registered completer. |
+
+If there is a completer configured you'd like to skip once, you can use `@Ignore` annotation on method's argument.
+
+At the end, you can use a few listeners to indicate certain behavior. All listeners need to be set up on `AnnotatedCommand`.
 ```java
 public class TestPlugin extends JavaPlugin {
     @Override 
@@ -200,6 +209,13 @@ Command can also have mappers. Mappers are used to automate changes from String 
 
 Then you can use `@Param(value = "id")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
 
+In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error handler". Wrong value is described when adding mapper, as fallback condition (never called by default)
+
+There is also possibility to access `AnnotatedCommand.Options` object that allows a simple configuration.
+* `annotatedCommand.getOptions().setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
+
+If you want to get better completions, you can use the `@Completer` on the `@Argument` annotated method parameter. 
+
 ## Example usage
 `TestPlugin.java`:
 ```java
@@ -209,21 +225,35 @@ public class TestPlugin extends JavaPlugin {
         AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
         command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
         command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer);
+        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
+        command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
+        command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
+                .stream()
+                .map(HumanEntity::getName)
+                .collect(Collectors.toList()));
+        command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
+        command.getOptions().setAutoTranslateColors(true);
     }
+
+    public boolean isSuperSecretSetting() {
+		return false;
+	}
 }
 ```
 `TestCommand.java`:
 ```java
 @BaseCommand("test")
-public class TestCommand extends AnnotatedCommandExecutor {
+public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     public TestCommand(CommandSender sender, TestPlugin plugin) {
         super(sender, plugin);
     }
 
     @Argument(permission = "me.testing")
     public String testing() {
-        // "/test testing", requires permission "me.testing", sender gets "I'm testing"
+        // "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+        if (plugin.isSuperSecretSetting()) {
+            return "I'm secretly testing!";
+        }
         return "I'm testing!";
     }
     
@@ -245,28 +275,66 @@ public class TestCommand extends AnnotatedCommandExecutor {
         GameManager.getGame(gameName).start();
         return gameName + " started"; 
     }
+
+    @Fallback
+    public String player(String player) {
+        // "/test player Andret2344", sender gets: "Who do you mean?"
+        return "Who do you mean?";
+    }
     
     @Argument
-    public String player(@Param("basicPlayerMapper") Player player) {
-        if (player == null) {
-            // "/test player Andret2344", sender gets: "Who do you mean?"
-            return "Who do you mean?";
-        }
+    public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
         // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
         return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
     }
     
     @Argument(executorType = ExecutorType.PLAYER)
-    public String distance(@Param("basicPlayerMapper") Player... players) {
-        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844
+    public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
         OptionalDouble min = Arrays.stream(players)
                 .filter(Objects::nonNull)
                 .mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
                 .min();
         if (min.isPresent()) {
+            // "/test player Andret2344 deyanix", sender gets: "The shortest distance is 53.23634. Guess whom it is!"
             return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
         } 
+        // "/test player Andret2344 deyanix", sender gets: "No min distance could be found :("
         return "No min distance could be found :(";
     }
+
+	@Argument(displayType = DisplayType.NONE)
+	public void notDisplayed() {
+		// Argument won't be displayed when "/test" will be executed
+	}
+
+	@Argument(displayType = DisplayType.IF_PERMS, permission = "eu.andret.test.conditions")
+	public void conditionallyDisplayed() {
+		// Argument will be displayed when "/test" will be executed only if sender has permissions
+	}
+
+	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
+	public void alwaysDisplayed() {
+		// Argument will be displayed when "/test" will be executed under no conditions
+	}
+
+	@Argument
+	public String colored(boolean value) {
+		// automatic suggestions with "true" and "false" will appear.
+		// Response will be automatically colored.
+		if (value) {
+			return "&6You have found something. &dBye!";
+		}
+		return "&4Nothing to look at here. &bBye!";
+	}
+
+	@Argument
+	public String ignored(@Ignore boolean value) {
+		// No suggestions will appear.
+		// Response will be automatically coloured.
+		if (value) {
+			return "&6I'm ignored.";
+		}
+		return "&6I'm ignored too.";
+	}
 }
 ```
