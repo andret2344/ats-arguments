@@ -1,22 +1,45 @@
+#
+# Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+#
 image: gradle:jdk11
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod a+x gradlew
 
 stages:
   - prepare
+  - build
   - test
   - deploy
 
-compile:
+wrapper:
   stage: prepare
   script:
-    - gradle compileJava
+    - gradle wrapper
+
+compile:
+  stage: build
+  dependencies:
+    - wrapper
+  script:
+    - ./gradlew assemble
   artifacts:
     paths:
       - build/classes/**
+      - build/libs/*.jar
 
 delombok:
-  stage: prepare
+  stage: build
+  dependencies:
+    - wrapper
   script:
-    - gradle delombok
+    - ./gradlew delombok
   artifacts:
     paths:
       - build/delombok/**
@@ -26,20 +49,18 @@ junit:
   dependencies:
     - compile
   script:
-    - gradle test printCoverage
+    - ./gradlew check
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   when: on_success
   artifacts:
-    paths:
-      - build/reports/jacoco/
     reports:
       junit: build/test-results/test/**.xml
 
 publish:
   stage: deploy
   script:
-    - gradle clean
-    - gradle publish
+    - ./gradlew clean
+    - ./gradlew publish
   only:
     - master
   when: manual
@@ -47,10 +68,11 @@ publish:
 javadoc:
   stage: deploy
   script:
-    - gradle javadoc
+    - ./gradlew javadoc
+  after_script:
     - mv build/docs/javadoc/ public/
   artifacts:
     paths:
-      - public
+      - public/**
   only:
     - master
