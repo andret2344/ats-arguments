@@ -47,7 +47,7 @@ public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 			if (params[i].getType().isArray()) {
 				message.append("...");
 			}
-			message.append((">"));
+			message.append(">");
 		}
 		if (params.length == a.position()) {
 			message.append(" ").append(method.getName());

@@ -13,7 +13,7 @@ package eu.andret.arguments.entity;
  */
 public enum DisplayType {
 	/**
-	 * Argument will be shown always
+	 * Argument will be shown always.
 	 */
 	ALWAYS,
 	/**
@@ -21,7 +21,7 @@ public enum DisplayType {
 	 */
 	IF_PERMS,
 	/**
-	 * Argument won't be shown
+	 * Argument will not be shown.
 	 */
 	NONE
 }

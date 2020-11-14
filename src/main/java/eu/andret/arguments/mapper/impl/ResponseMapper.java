@@ -12,6 +12,9 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Optional;
 
+/**
+ * Implementation for {@link eu.andret.arguments.mapper.IResponseMapper}.
+ */
 public class ResponseMapper implements IResponseMapper {
 	@Override
 	public void mapResponse(CommandSender sender, Object result, ResponseType responseType, AnnotatedCommand.Options options) {

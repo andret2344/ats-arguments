@@ -34,14 +34,14 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
 
 	@Override
-	public Collection<String> mapCommandToCompletion(Method m, String[] args, CommandSender sender) {
-		if (args.length <= 1 || m.getParameterCount() == 0) {
+	public Collection<String> mapCommandToCompletion(Method method, String[] args, CommandSender sender) {
+		if (args.length <= 1 || method.getParameterCount() == 0) {
 			return Collections.emptyList();
 		}
-		if (args.length - 1 <= m.getParameterCount()) {
-			return extractSuggestions(m.getParameters()[args.length - 2]).apply(sender);
+		if (args.length - 1 <= method.getParameterCount()) {
+			return extractSuggestions(method.getParameters()[args.length - 2]).apply(sender);
 		}
-		Parameter parameter = m.getParameters()[m.getParameterCount() - 1];
+		Parameter parameter = method.getParameters()[method.getParameterCount() - 1];
 		if (!parameter.isVarArgs()) {
 			return Collections.emptyList();
 		}

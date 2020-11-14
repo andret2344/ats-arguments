@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Argument {
 	/**
-	 * The position of argument that's matches the method's n.ame
+	 * The position of argument that's matches the method's name.
 	 *
 	 * @return The position.
 	 */
@@ -71,7 +71,7 @@ public @interface Argument {
 	String[] aliases() default {};
 
 	/**
-	 * Under what circumstances sender should see an argument in help
+	 * Under what circumstances sender should see an argument in help.
 	 *
 	 * @return The display type.
 	 */

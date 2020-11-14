@@ -27,7 +27,7 @@ public class AnnotatedCommand {
 	PluginCommand command;
 
 	/**
-	 * The Options to manipulate the behavior
+	 * The Options to manipulate the behavior.
 	 */
 	@Data
 	public static class Options {
