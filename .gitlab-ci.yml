@@ -13,6 +13,7 @@ before_script:
 
 stages:
   - prepare
+  - build
   - test
   - deploy
 
@@ -20,9 +21,13 @@ wrapper:
   stage: prepare
   script:
     - gradle wrapper
+  after_script:
+    - chmod u+x ./gradlew
 
 compile:
-  stage: prepare
+  stage: build
+  dependencies:
+    - wrapper
   script:
     - ./gradlew assemble
   artifacts:
@@ -31,7 +36,9 @@ compile:
       - build/libs/*.jar
 
 delombok:
-  stage: prepare
+  stage: build
+  dependencies:
+    - wrapper
   script:
     - ./gradlew delombok
   artifacts:
