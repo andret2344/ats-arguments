@@ -10,8 +10,7 @@ cache:
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
-  - ls -laF
-  - chmod a+x .gradle
+  - chmod a+x gradlew
 
 stages:
   - prepare

@@ -5,10 +5,6 @@
 #
 
 #
-# Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
-#
-
-#
 # Copyright 2015 the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
