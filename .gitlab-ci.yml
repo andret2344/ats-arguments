@@ -10,6 +10,7 @@ cache:
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod u+x .gradle -R
 
 stages:
   - prepare
@@ -21,8 +22,6 @@ wrapper:
   stage: prepare
   script:
     - gradle wrapper
-  after_script:
-    - chmod u+x ./gradlew
 
 compile:
   stage: build
