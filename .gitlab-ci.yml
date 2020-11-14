@@ -49,7 +49,7 @@ junit:
   dependencies:
     - compile
   script:
-    - ./gradlew check
+    - ./gradlew check -x checkstyleTest
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   when: on_success
   artifacts:
@@ -58,6 +58,8 @@ junit:
 
 checkstyle:
   stage: verify
+  dependencies:
+    - compile
   script:
     - ./gradlew checkstyleMain
 
