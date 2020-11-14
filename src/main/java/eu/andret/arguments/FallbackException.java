@@ -13,6 +13,11 @@ package eu.andret.arguments;
 public class FallbackException extends RuntimeException {
 	private static final long serialVersionUID = -4641609660635621400L;
 
+	/**
+	 * Constructor for the exception.
+	 *
+	 * @param message The exception message.
+	 */
 	public FallbackException(String message) {
 		super(message);
 	}

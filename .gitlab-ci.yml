@@ -15,7 +15,7 @@ before_script:
 stages:
   - prepare
   - build
-  - test
+  - verify
   - deploy
 
 wrapper:
@@ -45,16 +45,23 @@ delombok:
       - build/delombok/**
 
 junit:
-  stage: test
+  stage: verify
   dependencies:
     - compile
   script:
-    - ./gradlew check
+    - ./gradlew test
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   when: on_success
   artifacts:
     reports:
       junit: build/test-results/test/**.xml
+
+checkstyle:
+  stage: verify
+  dependencies:
+    - compile
+  script:
+    - ./gradlew checkstyleMain
 
 publish:
   stage: deploy
@@ -76,3 +83,4 @@ javadoc:
       - public/**
   only:
     - master
+  when: manual

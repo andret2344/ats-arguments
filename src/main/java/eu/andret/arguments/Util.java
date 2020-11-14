@@ -14,6 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Simple utility class for type mappings.
+ *
+ * @author Andret
+ * @since Apr 28, 2020
+ */
 @UtilityClass
 @Value
 @Getter(AccessLevel.NONE)
@@ -61,6 +67,7 @@ public class Util {
 	 *
 	 * @return the class, which value inside the string arguments matches
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public Class<?> getRealClass(String value) {
 		return realClassPredicates.entrySet()
 				.stream()

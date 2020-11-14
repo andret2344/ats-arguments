@@ -59,13 +59,6 @@ class LocalCommandExecutor implements CommandExecutor {
 	@Getter(AccessLevel.PACKAGE)
 	AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
-	/**
-	 * Constructs the LocalCommandExecutor.
-	 *
-	 * @param commandClass The {@link AnnotatedCommandExecutor} that will be analyzed in search of
-	 * 		methods annotated with {@link Argument}
-	 * @param plugin The {@link JavaPlugin} superclass of main plugin class.
-	 */
 	<E extends JavaPlugin> LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<E>> commandClass, E plugin) {
 		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);

@@ -38,6 +38,11 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	IExecutorTypeMapper executorTypeMapper;
 	IArgumentsMapper argumentsMapper;
 
+	/**
+	 * Constructor that initializes fields.
+	 *
+	 * @param mappers The map of {@link eu.andret.arguments.entity.Mapper}.
+	 */
 	public CommandToMethodMapper(Map<String, Mapper<?>> mappers) {
 		this(mappers, new ExecutionCallMapper(), new MethodNameMapper(), new ExecutorTypeMapper(), new ArgumentsMapper(mappers));
 	}

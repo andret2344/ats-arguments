@@ -16,7 +16,7 @@ import org.bukkit.command.CommandSender;
  */
 public interface IResponseMapper extends IMapper {
 	/**
-	 * The mapper function that maps response to exact behavior
+	 * The mapper function that maps response to exact behavior.
 	 *
 	 * @param sender The {@link org.bukkit.command.CommandSender} who performed the command.
 	 * @param result The result returned from called method.
