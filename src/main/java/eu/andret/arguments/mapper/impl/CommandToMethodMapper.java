@@ -1,16 +1,19 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
-import eu.andret.arguments.mapper.IArgumentsMapper;
+import eu.andret.arguments.filter.IArgumentsFilter;
+import eu.andret.arguments.filter.IExecutorTypeFilter;
+import eu.andret.arguments.filter.IMethodNameFilter;
+import eu.andret.arguments.filter.impl.ArgumentsFilter;
+import eu.andret.arguments.filter.impl.ExecutorTypeFilter;
+import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IExecutionCallMapper;
-import eu.andret.arguments.mapper.IExecutorTypeMapper;
-import eu.andret.arguments.mapper.IMethodNameMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Implementation of {@link eu.andret.arguments.mapper.ICommandToMethodMapper}.
+ * Implementation of {@link ICommandToMethodMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020
@@ -34,26 +37,26 @@ import java.util.Optional;
 public class CommandToMethodMapper implements ICommandToMethodMapper {
 	Map<String, Mapper<?>> mappers;
 	IExecutionCallMapper executionCallMapper;
-	IMethodNameMapper methodNameMapper;
-	IExecutorTypeMapper executorTypeMapper;
-	IArgumentsMapper argumentsMapper;
+	IMethodNameFilter methodNameFilter;
+	IExecutorTypeFilter executorTypeFilter;
+	IArgumentsFilter argumentsFilter;
 
 	/**
 	 * Constructor that initializes fields.
 	 *
-	 * @param mappers The map of {@link eu.andret.arguments.entity.Mapper}.
+	 * @param mappers The map of {@link Mapper}.
 	 */
-	public CommandToMethodMapper(Map<String, Mapper<?>> mappers) {
-		this(mappers, new ExecutionCallMapper(), new MethodNameMapper(), new ExecutorTypeMapper(), new ArgumentsMapper(mappers));
+	public CommandToMethodMapper(final Map<String, Mapper<?>> mappers) {
+		this(mappers, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappers));
 	}
 
 	@Override
-	public Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender) {
+	public Optional<ExecutionCall> mapCommandToMethod(final Method[] methods, final String[] command, final CommandSender sender) {
 		return Arrays.stream(methods)
 				.map(method -> executionCallMapper.mapExecutionCall(method, methods))
-				.filter(executionCall -> methodNameMapper.mapMethodName(executionCall.getMethod(), command))
-				.filter(executionCall -> executorTypeMapper.mapExecutorType(executionCall.getMethod(), sender))
-				.filter(executionCall -> argumentsMapper.mapArguments(executionCall.getMethod(), command))
+				.filter(executionCall -> methodNameFilter.filterMethodName(executionCall.getMethod(), command))
+				.filter(executionCall -> executorTypeFilter.filterExecutorType(executionCall.getMethod(), sender))
+				.filter(executionCall -> argumentsFilter.filter(executionCall.getMethod(), command))
 				.findFirst();
 	}
 }

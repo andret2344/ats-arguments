@@ -1,24 +1,24 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
-import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.consumer.IResponseConsumer;
+import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.filter.IDisplayTypeFilter;
+import eu.andret.arguments.filter.IPermissionFilter;
+import eu.andret.arguments.filter.impl.DisplayTypeFilter;
+import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
-import eu.andret.arguments.mapper.IDisplayTypeMapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
-import eu.andret.arguments.mapper.IPermissionMapper;
-import eu.andret.arguments.mapper.IResponseMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
-import eu.andret.arguments.mapper.impl.DisplayTypeMapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
-import eu.andret.arguments.mapper.impl.PermissionMapper;
-import eu.andret.arguments.mapper.impl.ResponseMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
@@ -47,9 +47,9 @@ class LocalCommandExecutor implements CommandExecutor {
 	Map<String, Mapper<?>> mappers = new HashMap<>();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
-	IPermissionMapper permissionMapper = new PermissionMapper();
-	IResponseMapper responseMapper = new ResponseMapper();
-	IDisplayTypeMapper displayTypeMapper = new DisplayTypeMapper(permissionMapper);
+	IPermissionFilter permissionFilter = new PermissionFilter();
+	IResponseConsumer responseConsumer = new ResponseConsumer();
+	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	IMethodInvoker methodInvoker;
 	@NonFinal
@@ -59,13 +59,13 @@ class LocalCommandExecutor implements CommandExecutor {
 	@Getter(AccessLevel.PACKAGE)
 	AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
-	<E extends JavaPlugin> LocalCommandExecutor(Class<? extends AnnotatedCommandExecutor<E>> commandClass, E plugin) {
+	<E extends JavaPlugin> LocalCommandExecutor(final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin) {
 		this.commandClass = commandClass;
 		methodInvoker = new MethodInvoker(plugin, mappers);
 	}
 
 	@Override
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String label, @NotNull final String[] args) {
 		if (args.length == 0) {
 			Arrays.stream(commandClass.getDeclaredMethods())
 					.filter(method -> !Modifier.isStatic(method.getModifiers()))
@@ -85,7 +85,7 @@ class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnUnknownSubCommandExecutionListener}
 	 */
-	public void setOnUnknownSubCommandExecutionListener(AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(final AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
@@ -94,11 +94,11 @@ class LocalCommandExecutor implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnInsufficientPermissionsListener}
 	 */
-	public void setOnInsufficientPermissionsListener(AnnotatedCommand.OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(final AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 
-	<E> boolean addMapper(String id, Mapper<E> mapper) {
+	<E> boolean addMapper(final String id, final Mapper<E> mapper) {
 		if (mappers.containsKey(id)) {
 			return false;
 		}
@@ -106,15 +106,15 @@ class LocalCommandExecutor implements CommandExecutor {
 		return true;
 	}
 
-	private void noneMethodFound(CommandSender sender) {
+	private void noneMethodFound(final CommandSender sender) {
 		Optional.ofNullable(onUnknownSubCommandExecutionListener)
 				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
 	}
 
-	private void invokeMethod(ExecutionCall method, CommandSender sender, String[] args) {
-		if (permissionMapper.mapPermission(method.getMethod(), sender)) {
-			Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
-			responseMapper.mapResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
+	private void invokeMethod(final ExecutionCall method, final CommandSender sender, final String[] args) {
+		if (permissionFilter.filterPermission(method.getMethod(), sender)) {
+			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
+			responseConsumer.consumeResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}

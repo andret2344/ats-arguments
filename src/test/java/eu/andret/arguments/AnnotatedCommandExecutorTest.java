@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -16,11 +16,11 @@ class AnnotatedCommandExecutorTest {
 	@Test
 	void insanitiesWithCorrectData() {
 		// given
-		CommandSender sender = mock(CommandSender.class);
-		JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
 
 		// when
-		AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
+		final AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
 
 		//then
 		assertEquals(sender, executor.getSender());

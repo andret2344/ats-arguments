@@ -1,28 +1,24 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.api.annotation.Argument;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * The command executor that is superclass for command class instead of {@link
- * org.bukkit.command.CommandExecutor}. It requires all methods annotated with {@link
- * eu.andret.arguments.annotation.Argument} to be non-static. Subclass should be passed as first
- * argument of {@link eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
- * org.bukkit.plugin.java.JavaPlugin)}
+ * The command executor that is superclass for command class instead of {@link CommandExecutor}. It
+ * requires all methods annotated with {@link Argument} to be non-static. Subclass should be passed
+ * as first argument of {@link CommandManager#registerCommand(Class, JavaPlugin)}
  *
- * @param <T> The {@link org.bukkit.plugin.java.JavaPlugin} that will be administrating commands.
+ * @param <T> The {@link JavaPlugin} that will be administrating commands.
  *
  * @author Andret
- * @see org.bukkit.command.CommandExecutor
- * @see eu.andret.arguments.annotation.Argument
- * @see eu.andret.arguments.LocalCommandExecutor#LocalCommandExecutor(Class,
- *        org.bukkit.plugin.java.JavaPlugin)
  * @since May 18, 2019
  */
 @Value

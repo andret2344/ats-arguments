@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilTest {
 	static Collection<Object[]> convertData() {
-		Object[][] objects = {
+		final Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
 				{"12.34", double.class, 12.34},
@@ -32,7 +32,7 @@ class UtilTest {
 	}
 
 	static Collection<Object[]> realClassData() {
-		Object[][] objects = {
+		final Object[][] objects = {
 				{"123", int.class, 123},
 				{"false", boolean.class, false},
 				{"true", boolean.class, true},
@@ -44,9 +44,9 @@ class UtilTest {
 
 	@ParameterizedTest
 	@MethodSource("convertData")
-	void convert(String input, Class<?> targetClass, Object realValue) {
+	void convert(final String input, final Class<?> targetClass, final Object realValue) {
 		// when
-		Object result = Util.convert(targetClass, input);
+		final Object result = Util.convert(targetClass, input);
 
 		// then
 		assertEquals(realValue, result);
@@ -55,7 +55,7 @@ class UtilTest {
 	@Test
 	void convertUnsupportedType() {
 		// when
-		Executable result = () -> Util.convert(Stream.class, "input");
+		final Executable result = () -> Util.convert(Stream.class, "input");
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);
@@ -63,9 +63,9 @@ class UtilTest {
 
 	@ParameterizedTest
 	@MethodSource("realClassData")
-	void getRealClass(String input, Class<?> targetClass, Object realValue) {
+	void getRealClass(final String input, final Class<?> targetClass, final Object realValue) {
 		// when
-		Class<?> realClass = Util.getRealClass(input);
+		final Class<?> realClass = Util.getRealClass(input);
 
 		// then
 		assertTrue(targetClass.isAssignableFrom(realClass), String.format("Class %s is not assignable from %s", targetClass, realClass));

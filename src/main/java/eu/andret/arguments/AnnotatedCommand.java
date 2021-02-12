@@ -1,10 +1,13 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
-import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Param;
 import eu.andret.arguments.entity.Mapper;
 import lombok.Data;
 import lombok.Value;
@@ -60,11 +63,11 @@ public class AnnotatedCommand {
 		void insufficientPermissions(CommandSender sender);
 	}
 
-	LocalCommandExecutor getLocalCommandExecutor() {
+	private LocalCommandExecutor getLocalCommandExecutor() {
 		return (LocalCommandExecutor) command.getExecutor();
 	}
 
-	LocalTabCompleter getLocalTabCompleter() {
+	private LocalTabCompleter getLocalTabCompleter() {
 		return (LocalTabCompleter) command.getTabCompleter();
 	}
 
@@ -73,7 +76,7 @@ public class AnnotatedCommand {
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
 	 */
-	public void setOnUnknownSubCommandExecutionListener(OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(final OnUnknownSubCommandExecutionListener listener) {
 		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
 	}
 
@@ -82,7 +85,7 @@ public class AnnotatedCommand {
 	 *
 	 * @param listener The {@link OnInsufficientPermissionsListener}.
 	 */
-	public void setOnInsufficientPermissionsListener(OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(final OnInsufficientPermissionsListener listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
 	}
 
@@ -90,17 +93,16 @@ public class AnnotatedCommand {
 	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link
 	 * String}.
 	 *
-	 * @param id The id of mapper that has to be unique. This is passed to {@link
-	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 * @param id The id of mapper that has to be unique. This is passed to {@link Param#value()}
+	 * 		to precisely select the created mapper.
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz}
 	 * 		object of {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should
 	 * 		execute.
-	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
-	 * 		method's parameter
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
 	 */
-	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper, Predicate<Object> fallbackCondition) {
+	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addMapper(id, new Mapper<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException("Mapper with this id is already registered!");
 		}
@@ -110,15 +112,14 @@ public class AnnotatedCommand {
 	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link
 	 * String}. {@link Fallback} method will be never called.
 	 *
-	 * @param id The id of mapper that has to be unique. This is passed to {@link
-	 *        eu.andret.arguments.annotation.Param#value()} to precisely select the created mapper.
+	 * @param id The id of mapper that has to be unique. This is passed to {@link Param#value()}
+	 * 		to precisely select the created mapper.
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz}
 	 * 		object of String
-	 * @param <T> The argument type that can be usd as the @{@link eu.andret.arguments.annotation.Argument}
-	 * 		method's parameter
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
 	 */
-	public <T> void addArgumentMapper(String id, Class<T> clazz, Function<String, T> mapper) {
+	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper) {
 		addArgumentMapper(id, clazz, mapper, Fallback.NEVER);
 	}
 
@@ -131,7 +132,7 @@ public class AnnotatedCommand {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
+	public void addTypeCompleter(final Class<?> clazz, final Function<CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
 			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
 		}
@@ -146,7 +147,7 @@ public class AnnotatedCommand {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(Class<?> clazz, Supplier<Collection<String>> supplier) {
+	public void addTypeCompleter(final Class<?> clazz, final Supplier<Collection<String>> supplier) {
 		addTypeCompleter(clazz, sender -> supplier.get());
 	}
 
@@ -158,7 +159,7 @@ public class AnnotatedCommand {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(Class<?> clazz, Collection<String> collection) {
+	public void addTypeCompleter(final Class<?> clazz, final Collection<String> collection) {
 		addTypeCompleter(clazz, () -> collection);
 	}
 
@@ -166,14 +167,13 @@ public class AnnotatedCommand {
 	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
-	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
-	 * 		completer.
+	 *        Completer#value()} to precisely select the created completer.
 	 * @param function The {@link Function} that will produce list of matching values on basis of
 	 * 		the sender.
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(String id, Function<CommandSender, Collection<String>> function) {
+	public void addArgumentCompleter(final String id, final Function<CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
 			throw new IllegalArgumentException("Completer with id \"" + id + "\" is already registered!");
 		}
@@ -183,13 +183,12 @@ public class AnnotatedCommand {
 	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
-	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
-	 * 		completer.
+	 *        Completer#value()} to precisely select the created completer.
 	 * @param supplier The {@link Supplier} that will produce list of matching values.
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(String id, Supplier<Collection<String>> supplier) {
+	public void addArgumentCompleter(final String id, final Supplier<Collection<String>> supplier) {
 		addArgumentCompleter(id, sender -> supplier.get());
 	}
 
@@ -197,13 +196,12 @@ public class AnnotatedCommand {
 	 * Adds the argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link
-	 *        eu.andret.arguments.annotation.Completer#value()} to precisely select the created
-	 * 		completer.
+	 *        Completer#value()} to precisely select the created completer.
 	 * @param collection The {@link Collection} that will be used as list of matching values.
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(String id, Collection<String> collection) {
+	public void addArgumentCompleter(final String id, final Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
 	}
 

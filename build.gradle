@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
@@ -49,6 +49,9 @@ dependencies {
 
 compileJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
 compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:deprecation' << '-Xlint:unchecked'
+
+checkstyleMain.exclude('example/**.java')
+checkstyleTest.exclude('**')
 
 test {
 	useJUnitPlatform()

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -7,9 +7,9 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
-import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.annotation.Fallback;
-import eu.andret.arguments.annotation.Param;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Param;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.IMethodInvoker;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * An implementation of {@link eu.andret.arguments.mapper.IMethodInvoker}.
+ * An implementation of {@link IMethodInvoker}.
  *
  * @author Andret
  * @since Apr 17, 2020
@@ -42,30 +42,30 @@ public class MethodInvoker implements IMethodInvoker {
 	Map<String, Mapper<?>> mappers;
 
 	@Override
-	public Object invokeMethod(ExecutionCall method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
+	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender, final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
 		try {
-			Object[] data = recalculateArguments(method.getMethod(), command);
-			return invoke(method.getMethod(), sender, executor, data);
-		} catch (FallbackException ex) {
-			Object[] data = recalculateArguments(method.getFallbackMethod(), command);
-			return invoke(method.getFallbackMethod(), sender, executor, data);
+			final Object[] data = recalculateArguments(call.getMethod(), command);
+			return invoke(call.getMethod(), sender, executor, data);
+		} catch (final FallbackException ex) {
+			final Object[] data = recalculateArguments(call.getFallbackMethod(), command);
+			return invoke(call.getFallbackMethod(), sender, executor, data);
 		}
 	}
 
-	private Object[] recalculateArguments(Method method, String... args) {
-		Argument argument = method.getAnnotation(Argument.class);
-		Fallback fallback = method.getAnnotation(Fallback.class);
-		Object[] data = new Object[method.getParameterCount()];
+	private Object[] recalculateArguments(final Method method, final String... args) {
+		final Argument argument = method.getAnnotation(Argument.class);
+		final Fallback fallback = method.getAnnotation(Fallback.class);
+		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
 		for (int i = 0; i < method.getParameterCount(); i++) {
 			if (fallback == null && i == argument.position()) {
 				skip++;
 			}
-			Param param = method.getParameters()[i].getAnnotation(Param.class);
+			final Param param = method.getParameters()[i].getAnnotation(Param.class);
 			if (method.getParameters()[i].isVarArgs()) {
-				Class<?> type = method.getParameters()[i].getType().getComponentType();
-				int length = args.length - i + skip - 2;
-				Object array = Array.newInstance(type, length);
+				final Class<?> type = method.getParameters()[i].getType().getComponentType();
+				final int length = args.length - i + skip - 2;
+				final Object array = Array.newInstance(type, length);
 				for (int j = 0; j < length; j++) {
 					Array.set(array, j, convert(param, type, args[j + i + skip]));
 				}
@@ -78,31 +78,33 @@ public class MethodInvoker implements IMethodInvoker {
 		return data;
 	}
 
-	private Object convert(Param param, Class<?> c, String value) {
-		if (param != null && mappers.containsKey(param.value())) {
-			Mapper<?> mapper = mappers.get(param.value());
-			if (mapper.getClazz().equals(c)) {
-				Object o = mapper.getFunction().apply(value);
-				if (mapper.getFallbackCondition().test(o)) {
-					throw new FallbackException("Fallback Condition failed");
-				}
-				return c.cast(o);
-			}
+	private Object convert(final Param param, final Class<?> c, final String value) {
+		final Optional<? extends Mapper<?>> mapper = Optional.ofNullable(param)
+				.map(Param::value)
+				.filter(mappers::containsKey)
+				.map(mappers::get)
+				.filter(m -> m.getClazz().equals(c));
+		if (mapper.isEmpty()) {
+			return Util.convert(c, value);
 		}
-		return Util.convert(c, value);
+		final Object result = mapper.get().getFunction().apply(value);
+		if (mapper.get().getFallbackCondition().test(result)) {
+			throw new FallbackException("Fallback Condition failed");
+		}
+		return c.cast(result);
 	}
 
 	@SuppressWarnings("unchecked")
 	@SneakyThrows
-	private <E extends AnnotatedCommandExecutor<? extends JavaPlugin>> Object invoke(Method method, CommandSender sender, Class<E> executor, Object... data) {
+	private <E extends AnnotatedCommandExecutor<? extends JavaPlugin>> Object invoke(final Method method, final CommandSender sender, final Class<E> executor, final Object... data) {
 		if (!EXECUTORS.containsKey(sender)) {
-			Constructor<?> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin"));
+			final Constructor<?> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin"));
 			EXECUTORS.put(sender, (AnnotatedCommandExecutor<JavaPlugin>) c.newInstance(sender, plugin));
 		}
 		return method.invoke(EXECUTORS.get(sender), data);
 	}
 
-	private Optional<Constructor<?>> findMatchingConstructor(Class<?> executor) {
+	private Optional<Constructor<?>> findMatchingConstructor(final Class<?> executor) {
 		return Arrays.stream(executor.getDeclaredConstructors())
 				.filter(c -> c.getParameterCount() == 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))

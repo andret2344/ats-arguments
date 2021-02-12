@@ -1,13 +1,13 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
-import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.mapper.IMethodNameMapper;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.filter.IMethodNameFilter;
+import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
-import eu.andret.arguments.mapper.impl.MethodNameMapper;
 import eu.andret.arguments.mapper.impl.MethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,11 +44,11 @@ class LocalTabCompleter implements TabCompleter {
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
 	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-	IMethodNameMapper methodNameMapper = new MethodNameMapper();
+	IMethodNameFilter methodNameMapper = new MethodNameFilter();
 	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
 
 	@Override
-	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+	public List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String alias, final String[] args) {
 		if (args.length == 0) {
 			return Collections.emptyList();
 		}
@@ -66,13 +66,13 @@ class LocalTabCompleter implements TabCompleter {
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
-				.filter(m -> methodNameMapper.mapMethodName(m, args))
+				.filter(m -> methodNameMapper.filterMethodName(m, args))
 				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 	}
 
-	boolean addArgumentCompleter(String id, Function<CommandSender, Collection<String>> function) {
+	boolean addArgumentCompleter(final String id, final Function<CommandSender, Collection<String>> function) {
 		if (argumentCompleterMap.containsKey(id)) {
 			return false;
 		}
@@ -80,7 +80,7 @@ class LocalTabCompleter implements TabCompleter {
 		return true;
 	}
 
-	boolean addTypeCompleter(Class<?> clazz, Function<CommandSender, Collection<String>> function) {
+	boolean addTypeCompleter(final Class<?> clazz, final Function<CommandSender, Collection<String>> function) {
 		if (typeCompleterMap.containsKey(clazz)) {
 			return false;
 		}

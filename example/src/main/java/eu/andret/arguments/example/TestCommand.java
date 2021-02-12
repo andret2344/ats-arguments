@@ -1,19 +1,19 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.annotation.BaseCommand;
-import eu.andret.arguments.annotation.Completer;
-import eu.andret.arguments.annotation.Fallback;
-import eu.andret.arguments.annotation.Ignore;
-import eu.andret.arguments.annotation.Param;
-import eu.andret.arguments.entity.DisplayType;
-import eu.andret.arguments.entity.ExecutorType;
-import eu.andret.arguments.entity.ResponseType;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
+import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Ignore;
+import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.entity.DisplayType;
+import eu.andret.arguments.api.entity.ExecutorType;
+import eu.andret.arguments.api.entity.ResponseType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,7 +23,7 @@ import java.util.OptionalDouble;
 
 @BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-	public TestCommand(CommandSender sender, TestPlugin plugin) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
 	}
 
@@ -37,18 +37,18 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(responseType = ResponseType.BROADCAST)
-	public String broadcast(String... message) {
+	public String broadcast(final String... message) {
 		// "/test broadcast Welcome to the new server!", everyone on server gets "Welcome to the new server"
 		return String.join(" ", message);
 	}
 
 	@Fallback
-	public String player(String player) {
+	public String player(final String player) {
 		return "The " + player + " is offline!";
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
+	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -58,8 +58,8 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
-		OptionalDouble min = Arrays.stream(players)
+	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
+		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
 				.min();
@@ -85,7 +85,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String colored(boolean value) {
+	public String colored(final boolean value) {
 		// automatic suggestions with "true" and "false" will appear.
 		// Response will be automatically colored.
 		if (value) {
@@ -95,7 +95,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String ignored(@Ignore boolean value) {
+	public String ignored(@Ignore final boolean value) {
 		// No suggestions will appear.
 		// Response will be automatically coloured.
 		if (value) {

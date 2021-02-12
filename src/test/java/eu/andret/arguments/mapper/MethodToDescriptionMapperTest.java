@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MethodToDescriptionMapperTest {
 	static Collection<Object[]> getMappingData() {
-		Object[][] objects = {
+		final Object[][] objects = {
 				{"testMethod", "testMethod", null},
 				{"testMethodWithAliases", "<testMethodWithAliases|testAlias1>", null},
 				{"testMethodWithDescription", "testMethodWithDescription - test description", null},
@@ -30,14 +30,14 @@ class MethodToDescriptionMapperTest {
 
 	@ParameterizedTest
 	@MethodSource("getMappingData")
-	void testMappingMethod(String input, String output, Class<?> clazz) throws NoSuchMethodException {
+	void testMappingMethod(final String input, final String output, final Class<?> clazz) throws NoSuchMethodException {
 		// given
-		Class<?>[] args = clazz == null ? new Class<?>[0] : new Class<?>[]{clazz};
-		Method method = TestMethodsProvider.class.getDeclaredMethod(input, args);
-		IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
+		final Class<?>[] args = clazz == null ? new Class<?>[0] : new Class<?>[]{clazz};
+		final Method method = TestMethodsProvider.class.getDeclaredMethod(input, args);
+		final IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 
 		// when
-		String result = mapper.mapMethodToDescription(method, "test");
+		final String result = mapper.mapMethodToDescription(method, "test");
 
 		// then
 		assertEquals("/test " + output, result);
