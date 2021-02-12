@@ -14,15 +14,16 @@ To set up the library in your project, you have to do following steps:
 
 ```groovy
 repositories {
-    mavenCentral()
-    maven { url 'https://gitlab.com/api/v4/projects/12063927/packages/maven' }
-    // other repositories
+	mavenCentral()
+	maven { url 'https://gitlab.com/api/v4/projects/12063927/packages/maven' }
+	// other repositories
 }
 ```
 
 `pom.xml`:
 
 ```xml
+
 <repositories>
     <repository>
         <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
@@ -37,19 +38,20 @@ repositories {
 
 ```groovy
 dependencies {
-    implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1'
-    // other dependencies
+	implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1.1'
+	// other dependencies
 }
 ```
 
 `pom.xml`:
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>eu.andret</groupId>
         <artifactId>ats-arguments</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.1.1</version>
     </dependency>
     <!-- other dependencies -->
 </dependencies>
@@ -62,14 +64,14 @@ dependencies {
 
 ```groovy
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 //...
 
 shadowJar {
-    relocate 'eu.andret.arguments', 'eu.andret.YOUR_PLUGIN_NAME.arguments'
-    configurations = [project.configurations.implementation]
+	relocate 'eu.andret.arguments', 'eu.andret.YOUR_PLUGIN_NAME.arguments'
+	configurations = [project.configurations.implementation]
 }
 
 build.dependsOn(shadowJar)
@@ -78,6 +80,7 @@ build.dependsOn(shadowJar)
 `pom.xml`:
 
 ```xml
+
 <build>
     <plugins>
         <plugin>
@@ -114,11 +117,12 @@ To be able to use this library, there has to be a class extending `AnnotatedComm
 calling its constructor. This class also needs to be annotated with `@BaseCommand`.
 
 ```java
+
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-    public TestCommand(CommandSender sender, TestPlugin plugin) {
-        super(sender, plugin);
-    }
+	public TestCommand(CommandSender sender, TestPlugin plugin) {
+		super(sender, plugin);
+	}
 }
 ```
 
@@ -127,11 +131,11 @@ this class:
 
 ```java
 public class TestPlugin extends JavaPlugin {
-    @Override 
-    public void onEnable() {
-        AnnotatedCommand annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
-        // other initial setup logic
-    }
+	@Override
+	public void onEnable() {
+		AnnotatedCommand annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
+		// other initial setup logic
+	}
 }
 ```
 
@@ -142,16 +146,17 @@ Now, to use this library in proper way, simply write any non-static method in yo
 -annotated class, annotating it with `@Argument`:
 
 ```java
+
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-    public TestCommand(CommandSender sender, TestPlugin plugin) {
-        super(sender, plugin);
-    }
+	public TestCommand(CommandSender sender, TestPlugin plugin) {
+		super(sender, plugin);
+	}
 
-    @Argument
-    public void testing() {
-        System.out.print("I'm testing!");
-    }
+	@Argument
+	public void testing() {
+		System.out.print("I'm testing!");
+	}
 }
 ```
 
@@ -305,22 +310,22 @@ via `annotatedCommand.getOptions()`. This object that allows the simple configur
 
 ```java
 public class TestPlugin extends JavaPlugin {
-    @Override
-    public void onEnable() {
-        AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
-        command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
-        command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-        command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
-        command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
-        command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
-                .stream()
-                .map(HumanEntity::getName)
-                .collect(Collectors.toList()));
-        command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
-        command.getOptions().setAutoTranslateColors(true);
-    }
+	@Override
+	public void onEnable() {
+		AnnotatedCommand command = CommandManager.registerCommand(TestCommand.class, this);
+		command.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
+		command.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
+		command.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
+		command.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
+		command.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()
+				.stream()
+				.map(HumanEntity::getName)
+				.collect(Collectors.toList()));
+		command.addArgumentCompleter("booleanCompleter", Arrays.asList("true", "false"));
+		command.getOptions().setAutoTranslateColors(true);
+	}
 
-    public boolean isSuperSecretSetting() {
+	public boolean isSuperSecretSetting() {
 		return false;
 	}
 }
@@ -329,65 +334,66 @@ public class TestPlugin extends JavaPlugin {
 `TestCommand.java`:
 
 ```java
+
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-    public TestCommand(CommandSender sender, TestPlugin plugin) {
-        super(sender, plugin);
-    }
+	public TestCommand(CommandSender sender, TestPlugin plugin) {
+		super(sender, plugin);
+	}
 
-    @Argument(permission = "me.testing")
-    public String testing() {
-        // "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
-        if (plugin.isSuperSecretSetting()) {
-            return "I'm secretly testing!";
-        }
-        return "I'm testing!";
-    }
-    
-    @Argument(executorType = ExecutorType.CONSOLE)
-    public String administration(int level) { 
-        // "/test administration 3", only console can perform this command, sender (console) gets "Level set to 3"
-        return "Level set to " + level; 
-    }
-    
-    @Argument(responseType = ResponseType.BROADCAST)
-    public String broadcast(String[] message) { 
-        // "/test broadcast Welcome to the new server", everyone on server gets "Welcome to the new server"  
-        return String.join(" ", message); 
-    }
-    
-    @Argument(position = 1)
-    public String start(String gameName) {
-        // "/test game start" (instead of "/test start game") 
-        GameManager.getGame(gameName).start();
-        return gameName + " started"; 
-    }
+	@Argument(permission = "me.testing")
+	public String testing() {
+		// "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+		if (plugin.isSuperSecretSetting()) {
+			return "I'm secretly testing!";
+		}
+		return "I'm testing!";
+	}
 
-    @Fallback
-    public String player(String player) {
-        // "/test player Andret2344", sender gets: "Who do you mean?"
-        return "Who do you mean?";
-    }
-    
-    @Argument
-    public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
-        // "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
-        return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
-    }
-    
-    @Argument(executorType = ExecutorType.PLAYER)
-    public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
-        OptionalDouble min = Arrays.stream(players)
-                .filter(Objects::nonNull)
-                .mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
-                .min();
-        if (min.isPresent()) {
-            // "/test player Andret2344 test", sender gets: "The shortest distance is 53.23634. Guess whom it is!"
-            return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
-        } 
-        // "/test player Andret2344 test", sender gets: "No min distance could be found :("
-        return "No min distance could be found :(";
-    }
+	@Argument(executorType = ExecutorType.CONSOLE)
+	public String administration(int level) {
+		// "/test administration 3", only console can perform this command, sender (console) gets "Level set to 3"
+		return "Level set to " + level;
+	}
+
+	@Argument(responseType = ResponseType.BROADCAST)
+	public String broadcast(String[] message) {
+		// "/test broadcast Welcome to the new server", everyone on server gets "Welcome to the new server"  
+		return String.join(" ", message);
+	}
+
+	@Argument(position = 1)
+	public String start(String gameName) {
+		// "/test game start" (instead of "/test start game") 
+		GameManager.getGame(gameName).start();
+		return gameName + " started";
+	}
+
+	@Fallback
+	public String player(String player) {
+		// "/test player Andret2344", sender gets: "Who do you mean?"
+		return "Who do you mean?";
+	}
+
+	@Argument
+	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player player) {
+		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
+		return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
+	}
+
+	@Argument(executorType = ExecutorType.PLAYER)
+	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") Player... players) {
+		OptionalDouble min = Arrays.stream(players)
+				.filter(Objects::nonNull)
+				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
+				.min();
+		if (min.isPresent()) {
+			// "/test player Andret2344 test", sender gets: "The shortest distance is 53.23634. Guess whom it is!"
+			return "The shortest distance is " + min.getAsDouble() + ". Guess whom it is!";
+		}
+		// "/test player Andret2344 test", sender gets: "No min distance could be found :("
+		return "No min distance could be found :(";
+	}
 
 	@Argument(displayType = DisplayType.NONE)
 	public void notDisplayed() {
