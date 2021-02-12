@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -7,6 +7,9 @@ package eu.andret.arguments.mapper;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.filter.IArgumentsFilter;
+import eu.andret.arguments.filter.IExecutorTypeFilter;
+import eu.andret.arguments.filter.IMethodNameFilter;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
@@ -33,11 +36,11 @@ class CommandToMethodMapperTest {
 	@Mock
 	private IExecutionCallMapper executionCallMapper;
 	@Mock
-	private IMethodNameMapper methodNameMapper;
+	private IMethodNameFilter methodNameMapper;
 	@Mock
-	private IExecutorTypeMapper executorTypeMapper;
+	private IExecutorTypeFilter executorTypeMapper;
 	@Mock
-	private IArgumentsMapper argumentsMapper;
+	private IArgumentsFilter argumentsMapper;
 	@Mock
 	private Map<String, Mapper<?>> mappers;
 	@InjectMocks
@@ -52,7 +55,7 @@ class CommandToMethodMapperTest {
 	}
 
 	static Iterable<Object[]> data() {
-		Object[][] objects = {
+		final Object[][] objects = {
 				{false, false, false},
 				{false, false, true},
 				{false, true, false},
@@ -67,18 +70,18 @@ class CommandToMethodMapperTest {
 
 	@ParameterizedTest
 	@MethodSource("data")
-	void methodCalled(boolean methodNameMapperResult, boolean executorTypeMapperResult, boolean argumentsMapperResult) throws NoSuchMethodException {
+	void methodCalled(final boolean methodNameMapperResult, final boolean executorTypeMapperResult, final boolean argumentsMapperResult) throws NoSuchMethodException {
 		// given
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> executor = TestMethodsProvider.class;
-		Method method = executor.getDeclaredMethod("testMethod");
-		CommandSender sender = mock(CommandSender.class);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> executor = TestMethodsProvider.class;
+		final Method method = executor.getDeclaredMethod("testMethod");
+		final CommandSender sender = mock(CommandSender.class);
 		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));
-		lenient().when(methodNameMapper.mapMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
-		lenient().when(executorTypeMapper.mapExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
-		lenient().when(argumentsMapper.mapArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
+		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
+		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
+		lenient().when(argumentsMapper.filter(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
+		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {

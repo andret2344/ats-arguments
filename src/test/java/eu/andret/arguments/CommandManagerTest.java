@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -26,10 +26,10 @@ class CommandManagerTest {
 	@Test
 	void classWithNoAnnotation() {
 		// given
-		JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 
 		// when
-		Executable result = () -> CommandManager.registerCommand(EmptyClass.class, javaPlugin);
+		final Executable result = () -> CommandManager.registerCommand(EmptyClass.class, javaPlugin);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);
@@ -38,11 +38,11 @@ class CommandManagerTest {
 	@Test
 	void classWithWrongCommand() {
 		// given
-		JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		when(javaPlugin.getCommand(anyString())).thenReturn(null);
 
 		// when
-		Executable result = () -> CommandManager.registerCommand(TestMethodsProvider.class, javaPlugin);
+		final Executable result = () -> CommandManager.registerCommand(TestMethodsProvider.class, javaPlugin);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);
@@ -51,9 +51,9 @@ class CommandManagerTest {
 	@Test
 	void classWithCorrectCommand() {
 		// given
-		JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		PluginCommand pluginCommand = mock(PluginCommand.class);
-		LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final PluginCommand pluginCommand = mock(PluginCommand.class);
+		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
 		when(pluginCommand.getExecutor()).thenReturn(executor);
 		when(javaPlugin.getCommand(anyString())).thenReturn(pluginCommand);
 
@@ -68,14 +68,14 @@ class CommandManagerTest {
 	@Test
 	void constructorCall() throws Throwable {
 		// given
-		Constructor<CommandManager> constructor = CommandManager.class.getDeclaredConstructor();
+		final Constructor<CommandManager> constructor = CommandManager.class.getDeclaredConstructor();
 		constructor.setAccessible(true);
 
 		// when
-		Executable result = () -> {
+		final Executable result = () -> {
 			try {
 				constructor.newInstance();
-			} catch (InvocationTargetException ex) {
+			} catch (final InvocationTargetException ex) {
 				throw ex.getTargetException();
 			}
 		};

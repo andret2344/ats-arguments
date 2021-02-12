@@ -1,18 +1,18 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.provider;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.annotation.Argument;
-import eu.andret.arguments.annotation.BaseCommand;
-import eu.andret.arguments.annotation.Completer;
-import eu.andret.arguments.annotation.Fallback;
-import eu.andret.arguments.annotation.Ignore;
-import eu.andret.arguments.annotation.Param;
-import eu.andret.arguments.entity.DisplayType;
-import eu.andret.arguments.entity.ExecutorType;
+import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
+import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Ignore;
+import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.entity.DisplayType;
+import eu.andret.arguments.api.entity.ExecutorType;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 @BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
-	public TestMethodsProvider(CommandSender sender, JavaPlugin plugin) {
+	public TestMethodsProvider(final CommandSender sender, final JavaPlugin plugin) {
 		super(sender, plugin);
 	}
 
@@ -60,19 +60,19 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument(position = 1)
-	public void testMethodWithCorrectPosition(String text) {
+	public void testMethodWithCorrectPosition(final String text) {
 	}
 
 	@Argument
-	public void testMethodWithArgument(String text) {
+	public void testMethodWithArgument(final String text) {
 	}
 
 	@Argument
-	public void testMethodWithVararg(String... text) {
+	public void testMethodWithVararg(final String... text) {
 	}
 
 	@Argument
-	public void testMethodWithIntVararg(int... text) {
+	public void testMethodWithIntVararg(final int... text) {
 	}
 
 	@Argument(description = "test description")
@@ -80,23 +80,23 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public void testMethodWithMultipleArguments(String text, int value, boolean bool) {
+	public void testMethodWithMultipleArguments(final String text, final int value, final boolean bool) {
 	}
 
 	@Argument
-	public void testMethodWithArray(String[] text) {
+	public void testMethodWithArray(final String[] text) {
 	}
 
 	@Fallback
-	public void testMethodWithParam(String world) {
+	public void testMethodWithParam(final String world) {
 	}
 
 	@Argument
-	public void testMethodWithParam(@Param("testWorldMapper") World world) {
+	public void testMethodWithParam(@Param("testWorldMapper") final World world) {
 	}
 
 	@Argument
-	public void testMethodWithParamVarArg(@Param("testWorldMapper") World... material) {
+	public void testMethodWithParamVarArg(@Param("testWorldMapper") final World... material) {
 	}
 
 	@Argument
@@ -117,26 +117,26 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public void testMethodWithTypeCompletion(boolean value) {
+	public void testMethodWithTypeCompletion(final boolean value) {
 	}
 
 	@Argument
-	public void testMethodWithIgnoredTypeCompletion(@Ignore boolean value) {
+	public void testMethodWithIgnoredTypeCompletion(@Ignore final boolean value) {
 	}
 
 	@Argument
-	public void testMethodWithMismatchedTypeCompletion(Player value) {
+	public void testMethodWithMismatchedTypeCompletion(final Player value) {
 	}
 
 	@Argument
-	public void testMethodWithArgumentCompletion(@Completer("testWorldCompleter") World world) {
+	public void testMethodWithArgumentCompletion(@Completer("testWorldCompleter") final World world) {
 	}
 
 	@Argument
-	public void testMethodWithVarArgArgumentCompletion(@Completer("testWorldCompleter") World... worlds) {
+	public void testMethodWithVarArgArgumentCompletion(@Completer("testWorldCompleter") final World... worlds) {
 	}
 
 	@Argument
-	public void testMethodWithMismatchedArgumentCompletion(@Completer("mismatch") World world) {
+	public void testMethodWithMismatchedArgumentCompletion(@Completer("mismatch") final World world) {
 	}
 }

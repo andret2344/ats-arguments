@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -18,7 +18,7 @@ public class FallbackException extends RuntimeException {
 	 *
 	 * @param message The exception message.
 	 */
-	public FallbackException(String message) {
+	public FallbackException(final String message) {
 		super(message);
 	}
 }

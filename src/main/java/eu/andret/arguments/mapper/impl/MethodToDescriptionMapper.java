@@ -1,10 +1,10 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.annotation.Argument;
+import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import lombok.Value;
 
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * An implementation for {@link eu.andret.arguments.mapper.IMethodToDescriptionMapper}.
+ * An implementation for {@link IMethodToDescriptionMapper}.
  *
  * @author Andret
  * @since Apr 17, 2020
@@ -22,20 +22,20 @@ import java.util.stream.Collectors;
 @Value
 public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 	@Override
-	public String mapMethodToDescription(Method method, String command) {
+	public String mapMethodToDescription(final Method method, final String command) {
 		String message = "/" + command + getCommandPattern(method);
-		String description = method.getAnnotation(Argument.class).description();
+		final String description = method.getAnnotation(Argument.class).description();
 		if (!description.isEmpty()) {
 			message += " - " + description;
 		}
 		return message.replace('&', '\u00A7');
 	}
 
-	private String getCommandPattern(Method method) {
-		Parameter[] params = method.getParameters();
-		Argument a = method.getAnnotation(Argument.class);
-		StringBuilder message = new StringBuilder();
-		String argumentWithAliases = getArgumentWithAliases(method);
+	private String getCommandPattern(final Method method) {
+		final Parameter[] params = method.getParameters();
+		final Argument a = method.getAnnotation(Argument.class);
+		final StringBuilder message = new StringBuilder();
+		final String argumentWithAliases = getArgumentWithAliases(method);
 		if (params.length == 0) {
 			return message.append(" ").append(argumentWithAliases).toString();
 		}
@@ -55,8 +55,8 @@ public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 		return message.toString();
 	}
 
-	private String getArgumentWithAliases(Method method) {
-		Argument a = method.getAnnotation(Argument.class);
+	private String getArgumentWithAliases(final Method method) {
+		final Argument a = method.getAnnotation(Argument.class);
 		if (a.aliases().length == 0) {
 			return method.getName();
 		}

@@ -1,9 +1,10 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.entity.ExecutionCall;
 
 import java.lang.reflect.Method;
@@ -19,8 +20,7 @@ public interface IExecutionCallMapper extends IMapper {
 	 * The mapper method.
 	 *
 	 * @param method The method that is being mapped.
-	 * @param methods All methods where {@link eu.andret.arguments.annotation.Fallback} annotated
-	 * 		method will be looked for.
+	 * @param methods All methods where {@link Fallback} annotated method will be looked for.
 	 *
 	 * @return The {@link ExecutionCall} of command.
 	 */

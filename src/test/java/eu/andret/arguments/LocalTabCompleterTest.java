@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -26,12 +26,12 @@ class LocalTabCompleterTest {
 	@Test
 	void multipleMethodsMatch() {
 		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final Command command = mock(Command.class);
 
 		// when
-		List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
+		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
 
 		// then
 		assertNotNull(result);
@@ -69,12 +69,12 @@ class LocalTabCompleterTest {
 	@Test
 	void aliasMatch() {
 		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final Command command = mock(Command.class);
 
 		// when
-		List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testAlias"});
+		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testAlias"});
 
 		// then
 		assertNotNull(result);
@@ -85,12 +85,12 @@ class LocalTabCompleterTest {
 	@Test
 	void noArgumentsNotMatch() {
 		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final Command command = mock(Command.class);
 
 		// when
-		List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{});
+		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{});
 
 		// then
 		assertNotNull(result);
@@ -100,12 +100,12 @@ class LocalTabCompleterTest {
 	@Test
 	void manyArgumentsNotMatch() {
 		// given
-		TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
-		CommandSender sender = mock(CommandSender.class);
-		Command command = mock(Command.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final Command command = mock(Command.class);
 
 		// when
-		List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod", "testAlias"});
+		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod", "testAlias"});
 
 		// then
 		assertNotNull(result);
@@ -115,12 +115,12 @@ class LocalTabCompleterTest {
 	@Test
 	void addTypeCompleter() {
 		// given
-		LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
+		final LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
 
 		// when
-		boolean result1 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
-		boolean result2 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
-		boolean result3 = completer.addTypeCompleter(World.class, sender -> new ArrayList<>());
+		final boolean result1 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
+		final boolean result2 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
+		final boolean result3 = completer.addTypeCompleter(World.class, sender -> new ArrayList<>());
 
 		// then
 		assertTrue(result1);
@@ -131,12 +131,12 @@ class LocalTabCompleterTest {
 	@Test
 	void addArgumentCompleter() {
 		// given
-		LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
+		final LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
 
 		// when
-		boolean result1 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
-		boolean result2 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
-		boolean result3 = completer.addArgumentCompleter("world", sender -> new ArrayList<>());
+		final boolean result1 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
+		final boolean result2 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
+		final boolean result3 = completer.addArgumentCompleter("world", sender -> new ArrayList<>());
 
 		// then
 		assertTrue(result1);

@@ -1,10 +1,10 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
 
-import eu.andret.arguments.annotation.BaseCommand;
+import eu.andret.arguments.api.annotation.BaseCommand;
 import lombok.experimental.UtilityClass;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,20 +20,19 @@ public class CommandManager {
 	/**
 	 * Method registering new command classes.
 	 *
-	 * @param commandClass The class extending {@link eu.andret.arguments.AnnotatedCommandExecutor}
-	 * @param plugin The class extending {@link org.bukkit.plugin.java.JavaPlugin} as main class
-	 * 		of plugin
-	 * @param <T> The main plugin class that extends {@link org.bukkit.plugin.java.JavaPlugin}.
+	 * @param commandClass The class extending {@link AnnotatedCommandExecutor}
+	 * @param plugin The class extending {@link JavaPlugin} as main class of plugin
+	 * @param <T> The main plugin class that extends {@link JavaPlugin}.
 	 *
 	 * @return AnnotatedCommand
 	 */
-	public <T extends JavaPlugin> AnnotatedCommand registerCommand(Class<? extends AnnotatedCommandExecutor<T>> commandClass,
-																   T plugin) {
-		BaseCommand annotation = commandClass.getAnnotation(BaseCommand.class);
+	public <T extends JavaPlugin> AnnotatedCommand registerCommand(final Class<? extends AnnotatedCommandExecutor<T>> commandClass,
+																   final T plugin) {
+		final BaseCommand annotation = commandClass.getAnnotation(BaseCommand.class);
 		if (annotation == null) {
 			throw new UnsupportedOperationException("Class not annotated with @" + BaseCommand.class.getName());
 		}
-		PluginCommand pluginCommand = plugin.getCommand(annotation.value());
+		final PluginCommand pluginCommand = plugin.getCommand(annotation.value());
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}

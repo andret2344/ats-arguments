@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -17,15 +17,14 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public interface IMethodInvoker extends IMapper {
 	/**
-	 * Invokes the method and correctly puts all arguments.
+	 * Invokes one of  methods inside Execution call and correctly puts all arguments.
 	 *
-	 * @param method The {@link java.lang.reflect.Method} to be called.
+	 * @param call The {@link ExecutionCall} containing method to be called.
 	 * @param command The real command arguments array.
-	 * @param sender The {@link org.bukkit.command.CommandSender} who actually performed the
-	 * 		command.
+	 * @param sender The {@link CommandSender} who actually performed the command.
 	 * @param executor The class reference, where the method was written.
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
-	Object invokeMethod(ExecutionCall method, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor);
+	Object invokeMethod(ExecutionCall call, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor);
 }

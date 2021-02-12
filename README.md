@@ -1,14 +1,17 @@
 # atsArguments
 
 ## License
-Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+
+Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
+
 To set up the library in your project, you have to do following steps:
 
 - Add `https://gitlab.com/api/v4/projects/12063927/packages/maven` as a repository
 
 `build.gradle`:
+
 ```groovy
 repositories {
     mavenCentral()
@@ -16,7 +19,9 @@ repositories {
     // other repositories
 }
 ```
+
 `pom.xml`:
+
 ```xml
 <repositories>
     <repository>
@@ -29,13 +34,16 @@ repositories {
 - Add the dependency.
 
 `build.gradle`:
+
 ```groovy
 dependencies {
     implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1'
     // other dependencies
 }
 ```
+
 `pom.xml`:
+
 ```xml
 <dependencies>
     <dependency>
@@ -47,9 +55,11 @@ dependencies {
 </dependencies>
 ```
 
-- At the end you have to shadow the dependency to not have collision in case two plugins uses the same classes
+- At the end you have to shadow the dependency to not have collision in case two plugins uses the
+  same classes
 
 `build.gradle`:
+
 ```groovy
 plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
@@ -64,7 +74,9 @@ shadowJar {
 
 build.dependsOn(shadowJar)
 ```
+
 `pom.xml`:
+
 ```xml
 <build>
     <plugins>
@@ -97,7 +109,10 @@ build.dependsOn(shadowJar)
 > **Note**: It not necessarily have to be `eu.andret.YOUR_PLUGIN_NAME`, it can be any package, that will be unique on the server (like: `com.example.test.arguments`).
 
 ## Basic code setup
-To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and calling its constructor. This class also needs to be annotated with `@BaseCommand`.
+
+To be able to use this library, there has to be a class extending `AnnotatedCommandExecutor` and
+calling its constructor. This class also needs to be annotated with `@BaseCommand`.
+
 ```java
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
@@ -106,7 +121,10 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     }
 }
 ```
-This we have just filled class with everything necessary. Now let's tell the manager to take care of this class:
+
+This we have just filled class with everything necessary. Now let's tell the manager to take care of
+this class:
+
 ```java
 public class TestPlugin extends JavaPlugin {
     @Override 
@@ -117,9 +135,12 @@ public class TestPlugin extends JavaPlugin {
 }
 ```
 
-That's it, we have done the basic setup. However, you have to remember to register the command you put into  `@BaseCommand` inside your `plugin.yml` file!
+That's it, we have done the basic setup. However, you have to remember to register the command you
+put into  `@BaseCommand` inside your `plugin.yml` file!
 
-Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`-annotated class, annotating it with `@Argument`:
+Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`
+-annotated class, annotating it with `@Argument`:
+
 ```java
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
@@ -133,30 +154,42 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
     }
 }
 ```
-This one will be parsed into `/test testing` command, which executing will result in displaying the text on the console.
+
+This one will be parsed into `/test testing` command, which executing will result in displaying the
+text on the console.
 
 ## How should I use it?
-First of all, you have to know, that **only** annotated classes and methods are important. You can write any amount of "typical" methods in `@BaseCommand` class and if they aren't annotated with `@Argument`, you don't have to worry about them.
+
+First of all, you have to know, that **only** annotated classes and methods are important. You can
+write any amount of "typical" methods in `@BaseCommand` class and if they aren't annotated
+with `@Argument`, you don't have to worry about them.
 
 Ok, but what exactly can you do?
 
 ### Rules
-The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings you can use, but first, look at rules that apply:
+
+The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings
+you can use, but first, look at rules that apply:
 
 - The name of the method (case-insensitive) is a command argument.
-- Return value will be sent automatically, unless changed (`void` return type or `null` return value don't send anything).
-- Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments into method ones.
-  - Exception is to create a mapper and use the `@Param` annotation.
-  - When using `@Param` and parsing failed, you can access the raw value using `@Fallback` annotation.
+- Return value will be sent automatically, unless changed (`void` return type or `null` return value
+  don't send anything).
+- Method can have multiple arguments of any primitive type or String. Library will be trying to
+  parse command arguments into method ones.
+    - Exception is to create a mapper and use the `@Param` annotation.
+    - When using `@Param` and parsing failed, you can access the raw value using `@Fallback`
+      annotation.
 - Method cannot have an array, only vararg is possible, rules as the point (with sub-points) above.
 - There can be multiple methods with the same name, api will treat missing arguments as obsolete.
 - Library automatically uses tab completion for method names.
-  - You can configure more precise completers for methods parameters with `@Completer` annotation.
-- In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
+    - You can configure more precise completers for methods parameters with `@Completer` annotation.
+- In case of mismatching argument (method's name) or length of others, it'll result in error sent to
+  sender.
 - No argument after base command will produce simple syntax of available arguments.
 
 ### Annotations
-API provided a few quite useful annotations. 
+
+API provided a few quite useful annotations.
 
 - `@Argument` - Basic annotation for command configuration.
 
@@ -191,58 +224,85 @@ API provided a few quite useful annotations.
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The completer id to find exact registered completer. |
 
-- `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
+- `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain
+  argument.
 
 ### Listeners
-You can use a few listeners to indicate certain behavior. All listeners need to be set up on `AnnotatedCommand`.
+
+You can use a few listeners to indicate certain behavior. All listeners need to be set up
+on `AnnotatedCommand`.
 
 Possible listeners are:
+
 - `OnInsufficientPermissionsListener`
 - `OnUnknownSubCommandExecutionListener`
 
 Not configuring listeners don't result in any default. Nothing will happen.
 
 ### Mappers
-Command can also have mappers. Plugin uses mappers to automate conversion from String to any other type. The method `addArgumentMapper` requires 3 arguments:
+
+Command can also have mappers. Plugin uses mappers to automate conversion from String to any other
+type. The method `addArgumentMapper` requires 3 arguments:
+
 - The unique id of mapper
 - The target return type (eg. `Player.class`)
 - The `Function<String, E>` where the second argument is the `E` type.
 
-Then you can use `@Param("someId")` as an `@Argument` method parameter's annotation. If found and executed command, the function created in here will run.
+Then you can use `@Param("someId")` as an `@Argument` method parameter's annotation. If found and
+executed command, the function created in here will run.
 
-In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error handler". The fallback condition (never called by default) describes what "wrong value" is. 
+In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same
+name as "error handler". The fallback condition (never called by default) describes what "wrong
+value" is.
 
 ### Completers
-Completer is something that will display suggestions when trying to execute command in-game. You can configure type completer or argument one.
+
+Completer is something that will display suggestions when trying to execute command in-game. You can
+configure type completer or argument one.
 
 #### Type completers
-Type completes are easier to configure, because they rely only on the argument type. The method `addTypeCompleter` requires 2 arguments:
+
+Type completes are easier to configure, because they rely only on the argument type. The
+method `addTypeCompleter` requires 2 arguments:
+
 - The type that should be completed (eg. `boolean.class`)
 - One of:
-  - `Collection<String>` containing suggestions,
-  - `Supplier<Collection<String>>` with instruction how to produce suggestions,
-  - `Function<CommandSender, Collection<String>>` with instruction how to produce suggestion basing on `CommandSender`.
-  
-That's it. Just call the described method and completers will start suggesting values basing on parameter type.
-  
+    - `Collection<String>` containing suggestions,
+    - `Supplier<Collection<String>>` with instruction how to produce suggestions,
+    - `Function<CommandSender, Collection<String>>` with instruction how to produce suggestion
+      basing on `CommandSender`.
+
+That's it. Just call the described method and completers will start suggesting values basing on
+parameter type.
+
 #### ArgumentCompleters
-Argument completers are a bit more complex, as they require the id as string. You should use them if not always same type will have the same suggestions.
-The method `addArgumentCompleter` requires 2 arguments:
+
+Argument completers are a bit more complex, as they require the id as string. You should use them if
+not always same type will have the same suggestions. The method `addArgumentCompleter` requires 2
+arguments:
+
 - Unique completer id.
 - One of:
-  - `Collection<String>` containing suggestions,
-  - `Supplier<Collection<String>>` with instruction how to produce suggestions,
-  - `Function<CommandSender, Collection<String>>` with instruction how to produce suggestion basing on `CommandSender`.
+    - `Collection<String>` containing suggestions,
+    - `Supplier<Collection<String>>` with instruction how to produce suggestions,
+    - `Function<CommandSender, Collection<String>>` with instruction how to produce suggestion
+      basing on `CommandSender`.
 
-To have it working, we need to put `@Completer("someId")` before the parameter to get suggestions. Without this annotation, nothing will happen.
+To have it working, we need to put `@Completer("someId")` before the parameter to get suggestions.
+Without this annotation, nothing will happen.
 
 ### Other configuration
 
-There is also possibility to access `AnnotatedCommand.Options` object via `annotatedCommand.getOptions()`. This object that allows the simple configuration.
-- `options.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` to `'§'`.
+There is also possibility to access `AnnotatedCommand.Options` object
+via `annotatedCommand.getOptions()`. This object that allows the simple configuration.
+
+- `options.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors
+  from `'&'` to `'§'`.
 
 ## Full example
+
 `TestPlugin.java`:
+
 ```java
 public class TestPlugin extends JavaPlugin {
     @Override
@@ -265,7 +325,9 @@ public class TestPlugin extends JavaPlugin {
 	}
 }
 ```
+
 `TestCommand.java`:
+
 ```java
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {

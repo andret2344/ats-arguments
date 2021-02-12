@@ -4,13 +4,11 @@ I'm really glad you're reading this. Every volunteer developer whom want to help
 
 ## Basics
 
-You can find current documentation on [wiki page](https://gitlab.com/andret-tools-system/ats-arguments/-/wikis/home).
-
 Bugs and feature requests are in our [issue board](https://gitlab.com/andret-tools-system/ats-arguments/issues).
 
 ## Testing 
 
-Project has lack of good tests, but what could be testes, was indeed. [GitLab CI](https://gitlab.com/andret-tools-system/ats-arguments/-/blob/master/.gitlab-ci.yml) is being run on every commit.
+CI executes tests Automatic due to [GitLab CI](https://gitlab.com/andret-tools-system/ats-arguments/-/blob/master/.gitlab-ci.yml). The current configuration checks everything that can be checked.
 
 To test code when developing, just build `example` subproject and use it as classical Bukkit/Spigot plugin.
 
@@ -47,5 +45,6 @@ The way of requesting it is analogical as is, when reporting bugs. Create an iss
 
 ## Code convention
 
-Whole project is free from IntelliJ or SonarLint suggestions and violations, and meets Java Code Convention.
+There is checkstyle rules file stored in the repository. CI pipeline checks all the checkstyle rules on every commit. 
+
 This is the way it has to be all the time.

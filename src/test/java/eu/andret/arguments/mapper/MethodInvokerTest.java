@@ -1,11 +1,11 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.annotation.Fallback;
+import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.Mapper;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
@@ -37,12 +37,12 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethod"}, sender, commandClass);
@@ -54,18 +54,18 @@ class MethodInvokerTest {
 	@Test
 	void invokeFallbackMethodWith() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, World> {
 		}
-		Function<String, World> getWorld = mock(LocalFunction.class);
-		HashMap<String, Mapper<?>> mappers = new HashMap<>();
+		final Function<String, World> getWorld = mock(LocalFunction.class);
+		final HashMap<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, getWorld, Fallback.ALWAYS));
-		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method methodWorld = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		Method methodString = spy(commandClass.getDeclaredMethod("testMethodWithParam", String.class));
-		ExecutionCall call = new ExecutionCall(methodWorld, methodString);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method methodWorld = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		final Method methodString = spy(commandClass.getDeclaredMethod("testMethodWithParam", String.class));
+		final ExecutionCall call = new ExecutionCall(methodWorld, methodString);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethod", "test"}, sender, commandClass);
@@ -78,12 +78,12 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodOneArg() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethodWithArgument", "test"}, sender, commandClass);
@@ -95,12 +95,12 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodPosition() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"test", "testMethodWithCorrectPosition"}, sender, commandClass);
@@ -112,15 +112,15 @@ class MethodInvokerTest {
 	@Test
 	void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
-		Method method = spy(commandClass.getDeclaredMethod("world"));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
+		final Method method = spy(commandClass.getDeclaredMethod("world"));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		Executable result = () -> invoker.invokeMethod(call, new String[]{"world"}, sender, commandClass);
+		final Executable result = () -> invoker.invokeMethod(call, new String[]{"world"}, sender, commandClass);
 
 		// then
 		assertThrows(IllegalStateException.class, result);
@@ -130,12 +130,12 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethod"}, sender, commandClass);
@@ -148,21 +148,21 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithMismatchedParamNameArg() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, World> {
 		}
-		Function<String, World> getWorld = mock(LocalFunction.class);
-		World world = mock(World.class);
+		final Function<String, World> getWorld = mock(LocalFunction.class);
+		final World world = mock(World.class);
 		when(getWorld.apply(eq("world"))).thenReturn(world);
-		HashMap<String, Mapper<?>> mappers = new HashMap<>();
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		ExecutionCall call = new ExecutionCall(method);
-		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
+		final HashMap<String, Mapper<?>> mappers = new HashMap<>();
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		final ExecutionCall call = new ExecutionCall(method);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
 
 		// when
-		Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, ex);
@@ -173,22 +173,22 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithMismatchedParamTypeArg() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, Location> {
 		}
-		Function<String, Location> getLocation = mock(LocalFunction.class);
-		Location world = mock(Location.class);
+		final Function<String, Location> getLocation = mock(LocalFunction.class);
+		final Location world = mock(Location.class);
 		when(getLocation.apply(eq("world"))).thenReturn(world);
-		HashMap<String, Mapper<?>> mappers = new HashMap<>();
+		final HashMap<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation, Fallback.NEVER));
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
-		ExecutionCall call = new ExecutionCall(method);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		final IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, ex);
@@ -199,12 +199,12 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithVarArg() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
-		ExecutionCall call = new ExecutionCall(method);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "1", "2"}, sender, commandClass);
@@ -216,19 +216,19 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, World> {
 		}
-		Function<String, World> getWorld = mock(LocalFunction.class);
-		World world = mock(World.class);
+		final Function<String, World> getWorld = mock(LocalFunction.class);
+		final World world = mock(World.class);
 		when(getWorld.apply(eq("world"))).thenReturn(world);
-		HashMap<String, Mapper<?>> mappers = new HashMap<>();
+		final HashMap<String, Mapper<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new Mapper<>(World.class, getWorld, Fallback.NEVER));
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		ExecutionCall call = new ExecutionCall(method);
-		IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		final ExecutionCall call = new ExecutionCall(method);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, mappers);
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -241,17 +241,17 @@ class MethodInvokerTest {
 	@Test
 	void invokeMethodWithException() throws ReflectiveOperationException {
 		// given
-		JavaPlugin plugin = mock(JavaPlugin.class);
-		CommandSender sender = mock(CommandSender.class);
-		IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
-		Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
-		Logger logger = mock(Logger.class);
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker invoker = new MethodInvoker(plugin, new HashMap<>());
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
+		final Logger logger = mock(Logger.class);
 		when(plugin.getLogger()).thenReturn(logger);
-		ExecutionCall call = new ExecutionCall(method);
+		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithException"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithException"}, sender, commandClass);
 
 		// then
 		assertThrows(InvocationTargetException.class, ex);

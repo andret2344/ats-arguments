@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -49,7 +49,7 @@ public class Util {
 	 *
 	 * @return The converted value, or not if no possible assignment found, or is an array.
 	 */
-	public Object convert(Class<?> clazz, String value) {
+	public Object convert(final Class<?> clazz, final String value) {
 		return convertFunctions.entrySet()
 				.stream()
 				.filter(entry -> entry.getKey().test(clazz))
@@ -68,7 +68,7 @@ public class Util {
 	 * @return the class, which value inside the string arguments matches
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Class<?> getRealClass(String value) {
+	public Class<?> getRealClass(final String value) {
 		return realClassPredicates.entrySet()
 				.stream()
 				.filter(entry -> entry.getValue().test(value))

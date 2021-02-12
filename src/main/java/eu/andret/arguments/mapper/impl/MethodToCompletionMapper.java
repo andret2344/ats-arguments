@@ -1,11 +1,11 @@
 /*
- * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.annotation.Completer;
-import eu.andret.arguments.annotation.Ignore;
+import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,14 +34,14 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
 
 	@Override
-	public Collection<String> mapCommandToCompletion(Method method, String[] args, CommandSender sender) {
+	public Collection<String> mapCommandToCompletion(final Method method, final String[] args, final CommandSender sender) {
 		if (args.length <= 1 || method.getParameterCount() == 0) {
 			return Collections.emptyList();
 		}
 		if (args.length - 1 <= method.getParameterCount()) {
 			return extractSuggestions(method.getParameters()[args.length - 2]).apply(sender);
 		}
-		Parameter parameter = method.getParameters()[method.getParameterCount() - 1];
+		final Parameter parameter = method.getParameters()[method.getParameterCount() - 1];
 		if (!parameter.isVarArgs()) {
 			return Collections.emptyList();
 		}
@@ -50,21 +50,21 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 
 	@NotNull
 	@NonNull
-	private Function<CommandSender, Collection<String>> extractSuggestions(Parameter parameter) {
+	private Function<CommandSender, Collection<String>> extractSuggestions(final Parameter parameter) {
 		if (parameter.isAnnotationPresent(Ignore.class)) {
 			return sender -> Collections.emptyList();
 		}
 		if (!parameter.isAnnotationPresent(Completer.class)) {
 			return getTypeSuggestion(parameter);
 		}
-		String value = parameter.getAnnotation(Completer.class).value();
+		final String value = parameter.getAnnotation(Completer.class).value();
 		if (!argumentCompleterMap.containsKey(value)) {
 			return getTypeSuggestion(parameter);
 		}
 		return argumentCompleterMap.get(value);
 	}
 
-	private Function<CommandSender, Collection<String>> getTypeSuggestion(Parameter parameter) {
+	private Function<CommandSender, Collection<String>> getTypeSuggestion(final Parameter parameter) {
 		if (typeCompleterMap.containsKey(parameter.getType())) {
 			return typeCompleterMap.get(parameter.getType());
 		}
