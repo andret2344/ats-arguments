@@ -372,7 +372,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Fallback
 	public String player(String player) {
 		// "/test player Andret2344", sender gets: "Who do you mean?"
-		return "Who do you mean?";
+		return "Who do you mean? I don't know " + player;
 	}
 
 	@Argument
