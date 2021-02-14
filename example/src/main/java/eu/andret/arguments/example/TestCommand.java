@@ -44,7 +44,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Fallback
 	public String player(final String player) {
-		return "The " + player + " is offline!";
+		return "The player \"" + player + "\" is offline!";
 	}
 
 	@Argument

@@ -72,7 +72,7 @@ class MethodInvokerTest {
 
 		// then
 		verify(methodWorld, times(0)).invoke(any());
-		verify(methodString, times(1)).invoke(eq(new TestMethodsProvider(sender, plugin)), eq("testMethod"));
+		verify(methodString, times(1)).invoke(eq(new TestMethodsProvider(sender, plugin)), eq("test"));
 	}
 
 	@Test

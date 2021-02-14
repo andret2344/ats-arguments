@@ -58,7 +58,7 @@ public class MethodInvoker implements IMethodInvoker {
 		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
 		for (int i = 0; i < method.getParameterCount(); i++) {
-			if (fallback == null && i == argument.position()) {
+			if (fallback != null && i == 0 || i == argument.position()) {
 				skip++;
 			}
 			final Param param = method.getParameters()[i].getAnnotation(Param.class);
