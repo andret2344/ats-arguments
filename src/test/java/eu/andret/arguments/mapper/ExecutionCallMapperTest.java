@@ -15,13 +15,13 @@ class ExecutionCallMapperTest {
 	@Test
 	void methodWithFallback() throws NoSuchMethodException {
 		// given
-		IExecutionCallMapper mapper = new ExecutionCallMapper();
-		Class<TestMethodsProvider> provider = TestMethodsProvider.class;
-		Method methodWorld = provider.getDeclaredMethod("testMethodWithParam", World.class);
-		Method methodString = provider.getDeclaredMethod("testMethodWithParam", String.class);
+		final IExecutionCallMapper mapper = new ExecutionCallMapper();
+		final Class<TestMethodsProvider> provider = TestMethodsProvider.class;
+		final Method methodWorld = provider.getDeclaredMethod("testMethodWithParam", World.class);
+		final Method methodString = provider.getDeclaredMethod("testMethodWithParam", String.class);
 
 		// when
-		ExecutionCall executionCall = mapper.mapExecutionCall(methodWorld, provider.getDeclaredMethods());
+		final ExecutionCall executionCall = mapper.mapExecutionCall(methodWorld, provider.getDeclaredMethods());
 
 		// then
 		assertEquals(methodWorld, executionCall.getMethod());
@@ -31,11 +31,11 @@ class ExecutionCallMapperTest {
 	@Test
 	void methodWithNoFallback() throws NoSuchMethodException {
 		// given
-		IExecutionCallMapper mapper = new ExecutionCallMapper();
-		Method methodWorld = TestMethodsProvider.class.getDeclaredMethod("testMethod");
+		final IExecutionCallMapper mapper = new ExecutionCallMapper();
+		final Method methodWorld = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
-		ExecutionCall executionCall = mapper.mapExecutionCall(methodWorld, TestMethodsProvider.class.getDeclaredMethods());
+		final ExecutionCall executionCall = mapper.mapExecutionCall(methodWorld, TestMethodsProvider.class.getDeclaredMethods());
 
 		// then
 		assertEquals(methodWorld, executionCall.getMethod());
