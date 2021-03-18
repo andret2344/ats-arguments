@@ -103,4 +103,29 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 		}
 		return "&6I'm ignored too.";
 	}
+
+	@Argument
+	public String overloaded() {
+		return "Overloaded with no arguments";
+	}
+
+	@Argument
+	public String overloaded(final int argument) {
+		return "Overloaded with one integer argument: " + argument;
+	}
+
+	@Argument
+	public String overloaded(@Param("basicPlayerMapper") final Player player) {
+		return "Overloaded with one player argument: " + player.getName();
+	}
+
+	@Argument
+	public String overloaded(final int argument1, final int argument2) {
+		return "Overloaded with two integer arguments: " + argument1 + ", " + argument2;
+	}
+
+	@Argument
+	public String overloaded(@Param("basicPlayerMapper") final Player player, final int argument) {
+		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
+	}
 }
