@@ -19,6 +19,7 @@ import lombok.SneakyThrows;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -42,6 +43,7 @@ public class MethodInvoker implements IMethodInvoker {
 	Map<String, Mapper<?>> mappers;
 
 	@Override
+	@Nullable
 	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender, final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
 		try {
 			final Object[] data = recalculateArguments(call.getMethod(), command);
