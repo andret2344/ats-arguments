@@ -18,6 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
 
@@ -127,5 +128,15 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String overloaded(@Param("basicPlayerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
+	}
+
+	@Argument
+	public String[] array() {
+		return new String[]{"First array line", "Second array line"};
+	}
+
+	@Argument
+	public List<String> list() {
+		return Arrays.asList("First list line", "second list line");
 	}
 }
