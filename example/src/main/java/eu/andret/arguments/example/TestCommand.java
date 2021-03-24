@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.OptionalDouble;
 
+@SuppressWarnings("CheckStyle")
 @BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
@@ -42,13 +43,13 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 		return String.join(" ", message);
 	}
 
-	@Fallback
+	@Fallback("playerMapper")
 	public String player(final String player) {
 		return "The player \"" + player + "\" is offline!";
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
+	public String player(@Param("playerMapper") @Completer("playerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -58,7 +59,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
+	public String distance(@Param("playerMapper") @Completer("playerCompleter") final Player... players) {
 		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -115,7 +116,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("basicPlayerMapper") final Player player) {
+	public String overloaded(@Param("playerMapper") final Player player) {
 		return "Overloaded with one player argument: " + player.getName();
 	}
 
@@ -125,7 +126,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("basicPlayerMapper") final Player player, final int argument) {
+	public String overloaded(@Param("playerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
 	}
 }

@@ -4,6 +4,8 @@
 
 package eu.andret.arguments.api.annotation;
 
+import eu.andret.arguments.api.entity.FallbackPriority;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,8 +14,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * The interface to decide which method should execute in case when {@link Argument} annotated
- * command param passes its fallback predicate.
+ * The interface to decide which method should execute in case when {@link Argument} annotated command param passes its
+ * fallback predicate.
  *
  * @author Andret
  * @since Jun 10, 2020
@@ -24,4 +26,19 @@ public @interface Fallback {
 	Predicate<Object> NEVER = x -> false;
 	Predicate<Object> ON_NULL = Objects::isNull;
 	Predicate<Object> ALWAYS = x -> true;
+
+	/**
+	 * The array of {@link Param} values which will fallback into annotated method if they met their fallback
+	 * conditions.
+	 *
+	 * @return The list of values.
+	 */
+	String[] value();
+
+	/**
+	 * The {@link FallbackPriority} to determine the call order. Methods with equal priority will be called randomly.
+	 *
+	 * @return The method's priority.
+	 */
+	FallbackPriority priority() default FallbackPriority.NORMAL;
 }
