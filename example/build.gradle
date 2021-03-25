@@ -50,7 +50,11 @@ spigot {
 
 	commands {
 		test {
-			description = 'The main Help command.'
+			description = 'The main command.'
+			usage = '/<command>'
+		}
+		parameters {
+			description = 'Parameters command'
 			usage = '/<command>'
 		}
 	}

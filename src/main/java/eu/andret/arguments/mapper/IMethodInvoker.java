@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Andret
  * @since Apr 17, 2020
  */
-public interface IMethodInvoker extends IMapper {
+public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
 	/**
 	 * Invokes one of  methods inside Execution call and correctly puts all arguments.
 	 *
@@ -26,5 +26,5 @@ public interface IMethodInvoker extends IMapper {
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
-	Object invokeMethod(ExecutionCall call, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor);
+	Object invokeMethod(ExecutionCall call, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<E>> executor, Object... parameters);
 }

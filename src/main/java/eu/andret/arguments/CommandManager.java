@@ -27,7 +27,8 @@ public class CommandManager {
 	 * @return AnnotatedCommand
 	 */
 	public <T extends JavaPlugin> AnnotatedCommand registerCommand(final Class<? extends AnnotatedCommandExecutor<T>> commandClass,
-																   final T plugin) {
+																   final T plugin,
+																   final Object... arguments) {
 		final BaseCommand annotation = commandClass.getAnnotation(BaseCommand.class);
 		if (annotation == null) {
 			throw new UnsupportedOperationException("Class not annotated with @" + BaseCommand.class.getName());
@@ -36,7 +37,7 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		pluginCommand.setExecutor(new LocalCommandExecutor(commandClass, plugin));
+		pluginCommand.setExecutor(new LocalCommandExecutor<>(commandClass, plugin, arguments));
 		pluginCommand.setTabCompleter(new LocalTabCompleter(commandClass));
 		return new AnnotatedCommand(pluginCommand);
 	}

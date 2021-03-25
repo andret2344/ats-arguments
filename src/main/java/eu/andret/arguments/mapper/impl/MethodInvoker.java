@@ -37,20 +37,23 @@ import java.util.Optional;
  */
 @Value
 @Getter(AccessLevel.NONE)
-public class MethodInvoker implements IMethodInvoker {
-	private static final Map<CommandSender, AnnotatedCommandExecutor<JavaPlugin>> EXECUTORS = new HashMap<>();
+public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
+	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
 	Map<String, Mapper<?>> mappers;
 
 	@Override
 	@Nullable
-	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender, final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> executor) {
+	@SneakyThrows
+	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender,
+							   final Class<? extends AnnotatedCommandExecutor<E>> executor, final Object... parameters) {
+		final AnnotatedCommandExecutor<E> instance = createInstance(sender, executor, parameters);
 		try {
 			final Object[] data = recalculateArguments(call.getMethod(), command);
-			return invoke(call.getMethod(), sender, executor, data);
+			return call.getMethod().invoke(instance, data);
 		} catch (final FallbackException ex) {
 			final Object[] data = recalculateArguments(call.getFallbackMethod(), command);
-			return invoke(call.getFallbackMethod(), sender, executor, data);
+			return call.getFallbackMethod().invoke(instance, data);
 		}
 	}
 
@@ -98,19 +101,31 @@ public class MethodInvoker implements IMethodInvoker {
 
 	@SuppressWarnings("unchecked")
 	@SneakyThrows
-	private <E extends AnnotatedCommandExecutor<? extends JavaPlugin>> Object invoke(final Method method, final CommandSender sender, final Class<E> executor, final Object... data) {
-		if (!EXECUTORS.containsKey(sender)) {
-			final Constructor<?> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes 2 parameters: CommandSender and JavaPlugin"));
-			EXECUTORS.put(sender, (AnnotatedCommandExecutor<JavaPlugin>) c.newInstance(sender, plugin));
+	private <A extends AnnotatedCommandExecutor<E>> A createInstance(final CommandSender sender, final Class<A> executor, final Object... parameters) {
+		if (executors.containsKey(sender)) {
+			return (A) executors.get(sender);
 		}
-		return method.invoke(EXECUTORS.get(sender), data);
+		final Constructor<A> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
+		final Object[] o = new Object[parameters.length + 2];
+		o[0] = sender;
+		o[1] = plugin;
+		System.arraycopy(parameters, 0, o, 2, parameters.length);
+		Arrays.stream(o)
+				.map(Object::getClass)
+				.map(Class::getName)
+				.forEach(System.out::println);
+		final A result = c.newInstance(o);
+		executors.put(sender, result);
+		return result;
 	}
 
-	private Optional<Constructor<?>> findMatchingConstructor(final Class<?> executor) {
+	@SuppressWarnings({"unchecked", "java:S1612"})
+	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findMatchingConstructor(final Class<A> executor) {
 		return Arrays.stream(executor.getDeclaredConstructors())
-				.filter(c -> c.getParameterCount() == 2)
+				.filter(c -> c.getParameterCount() >= 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
 				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()))
+				.map(x -> (Constructor<A>) x)
 				.findAny();
 	}
 }
