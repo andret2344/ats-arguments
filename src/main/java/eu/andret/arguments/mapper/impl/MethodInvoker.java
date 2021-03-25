@@ -105,7 +105,8 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 		if (executors.containsKey(sender)) {
 			return (A) executors.get(sender);
 		}
-		final Constructor<A> c = findMatchingConstructor(executor).orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass has to contain a constructor that takes at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
+		final Constructor<A> c = findMatchingConstructor(executor)
+				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
 		final Object[] o = new Object[parameters.length + 2];
 		o[0] = sender;
 		o[1] = plugin;

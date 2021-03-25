@@ -122,7 +122,7 @@ class MethodInvokerTest {
 		final Executable result = () -> invoker.invokeMethod(call, new String[]{"world"}, sender, commandClass);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertThrows(IllegalStateException.class, result);
 		verify(method, times(0)).invoke(new TestMethodsProvider(sender, plugin), "test");
 	}
 
