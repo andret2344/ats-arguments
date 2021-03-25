@@ -47,7 +47,7 @@ import java.util.Optional;
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	Map<String, MappingSet<?>> argumentMappers = new HashMap<>();
 	Map<Class<?>, MappingSet<?>> typeMappers = new HashMap<>();
-	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(argumentMappers);
+	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(argumentMappers, typeMappers);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
 	IResponseConsumer responseConsumer = new ResponseConsumer();

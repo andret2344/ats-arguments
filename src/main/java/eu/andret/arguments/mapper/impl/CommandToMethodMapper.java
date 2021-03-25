@@ -35,7 +35,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
-	Map<String, MappingSet<?>> mappers;
+	Map<String, MappingSet<?>> argumentMappers;
+	Map<Class<?>, MappingSet<?>> typeMappers;
 	IExecutionCallMapper executionCallMapper;
 	IMethodNameFilter methodNameFilter;
 	IExecutorTypeFilter executorTypeFilter;
@@ -44,10 +45,11 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	/**
 	 * Constructor that initializes fields.
 	 *
-	 * @param mappers The map of {@link MappingSet}.
+	 * @param argumentMappers The map of the {@link String}-{@link MappingSet} pair.
+	 * @param typeMappers The map of the {@link Class}-{@link MappingSet} pair.
 	 */
-	public CommandToMethodMapper(final Map<String, MappingSet<?>> mappers) {
-		this(mappers, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappers));
+	public CommandToMethodMapper(final Map<String, MappingSet<?>> argumentMappers, final Map<Class<?>, MappingSet<?>> typeMappers) {
+		this(argumentMappers, typeMappers, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(argumentMappers, typeMappers));
 	}
 
 	@Override

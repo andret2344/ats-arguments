@@ -14,6 +14,7 @@ import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.ResponseType;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -138,5 +139,10 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public List<String> list() {
 		return Arrays.asList("First list line", "second list line");
+	}
+
+	@Argument
+	public String amI(final World world) {
+		return ((Player) sender).getWorld().equals(world) ? "Yes!" : "No...";
 	}
 }

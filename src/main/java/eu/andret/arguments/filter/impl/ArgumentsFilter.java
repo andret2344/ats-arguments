@@ -28,7 +28,8 @@ import java.util.stream.Stream;
 @Value
 @Getter(AccessLevel.NONE)
 public class ArgumentsFilter implements IArgumentsFilter {
-	Map<String, MappingSet<?>> mappers;
+	Map<String, MappingSet<?>> argumentMappers;
+	Map<Class<?>, MappingSet<?>> typeMappers;
 
 	@Override
 	public boolean filter(final Method method, final String[] command) {
@@ -60,19 +61,23 @@ public class ArgumentsFilter implements IArgumentsFilter {
 
 	private boolean isOk(final Parameter parameter, final Mapper mapper, final List<Class<?>> classes, final int i, final List<Parameter> parameters) {
 		if (parameter.isVarArgs()) {
-			return isTypeMatchingVarArgParameter(parameter, mapper, classes.subList(i, classes.size()));
+			return isTypeMatchingVarArgParameter(parameter.getType().getComponentType(), mapper, classes.subList(i, classes.size()));
 		}
-		return (i != parameters.size() - 1 || i >= classes.size() - 1) && isTypeMatchingParam(parameter, mapper, classes.get(i));
+		return (i != parameters.size() - 1 || i >= classes.size() - 1) && isTypeMatchingParam(parameter.getType(), mapper, classes.get(i));
 	}
 
-	private boolean isTypeMatchingVarArgParameter(final Parameter parameter, final Mapper mapper, final List<Class<?>> classes) {
-		return classes.stream().allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
-				(clazz == String.class && mapper != null && mappers.get(mapper.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
+	private boolean isTypeMatchingVarArgParameter(final Class<?> parameterClass, final Mapper mapper, final List<Class<?>> classes) {
+		return classes.stream().allMatch(clazz -> isTypeMatchingParam(parameterClass, mapper, clazz));
 	}
 
-	private boolean isTypeMatchingParam(final Parameter parameter, final Mapper mapper, final Class<?> clazz) {
-		return mapper == null
-				? clazz.isAssignableFrom(parameter.getType())
-				: mappers.get(mapper.value()).getClazz().isAssignableFrom(parameter.getType());
+	private boolean isTypeMatchingParam(final Class<?> parameterClass, final Mapper mapper, final Class<?> clazz) {
+		if (mapper != null) {
+			return argumentMappers.get(mapper.value()).getClazz().isAssignableFrom(parameterClass);
+		}
+		if (typeMappers.containsKey(parameterClass)) {
+			return true;
+		}
+		System.out.println("nie ma parama");
+		return clazz.isAssignableFrom(parameterClass);
 	}
 }
