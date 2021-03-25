@@ -53,7 +53,12 @@ class CommandManagerTest {
 		// given
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		final PluginCommand pluginCommand = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		class TestCommandExecutor extends LocalCommandExecutor<JavaPlugin> {
+			TestCommandExecutor(final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass, final JavaPlugin plugin, final Object... parameters) {
+				super(commandClass, plugin, parameters);
+			}
+		}
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(pluginCommand.getExecutor()).thenReturn(executor);
 		when(javaPlugin.getCommand(anyString())).thenReturn(pluginCommand);
 

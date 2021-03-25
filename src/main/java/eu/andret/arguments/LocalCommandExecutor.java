@@ -42,26 +42,29 @@ import java.util.Optional;
  * @since May 18, 2020
  */
 @Value
+@NonFinal
 @Getter(AccessLevel.NONE)
-class LocalCommandExecutor implements CommandExecutor {
+class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	Map<String, Mapper<?>> mappers = new HashMap<>();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
 	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
-	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	IMethodInvoker methodInvoker;
+	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
+	IMethodInvoker<E> methodInvoker;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	@NonFinal
 	AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	@Getter(AccessLevel.PACKAGE)
 	AnnotatedCommand.Options options = new AnnotatedCommand.Options();
+	Object[] parameters;
 
-	<E extends JavaPlugin> LocalCommandExecutor(final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin) {
+	LocalCommandExecutor(final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin, final Object... parameters) {
 		this.commandClass = commandClass;
-		methodInvoker = new MethodInvoker(plugin, mappers);
+		this.parameters = parameters;
+		methodInvoker = new MethodInvoker<>(plugin, mappers);
 	}
 
 	@Override
@@ -98,7 +101,7 @@ class LocalCommandExecutor implements CommandExecutor {
 		onInsufficientPermissionsListener = listener;
 	}
 
-	<E> boolean addMapper(final String id, final Mapper<E> mapper) {
+	<M> boolean addMapper(final String id, final Mapper<M> mapper) {
 		if (mappers.containsKey(id)) {
 			return false;
 		}
@@ -113,7 +116,7 @@ class LocalCommandExecutor implements CommandExecutor {
 
 	private void invokeMethod(final ExecutionCall method, final CommandSender sender, final String[] args) {
 		if (permissionFilter.filterPermission(method.getMethod(), sender)) {
-			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass);
+			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass, parameters);
 			responseConsumer.consumeResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
