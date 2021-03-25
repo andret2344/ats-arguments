@@ -19,8 +19,8 @@ public interface IArgumentsFilter extends IMapper {
 	 * @param method The {@link Method} that will be analyzed.
 	 * @param command The array of {@link String} with arguments passed with command.
 	 *
-	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments,
-	 *        {@code false} otherwise.
+	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments, {@code false}
+	 * 		otherwise.
 	 */
 	boolean filter(Method method, String[] command);
 }

@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MethodToDescriptionMapperTest {
+class MethodToDescriptionMappingSetTest {
 	static Collection<Object[]> getMappingData() {
 		final Object[][] objects = {
 				{"testMethod", "testMethod", null},

@@ -23,8 +23,7 @@ public interface ICommandToMethodMapper extends IMapper {
 	 * @param command The arguments array that followed up base command.
 	 * @param sender The {@link CommandSender} of the command.
 	 *
-	 * @return The Optional wrapping matching method that will be called, or {@link
-	 *        Optional#empty()} if none found.
+	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
 	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender);
 }

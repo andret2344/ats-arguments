@@ -5,7 +5,7 @@
 package eu.andret.arguments.filter;
 
 import eu.andret.arguments.api.annotation.Fallback;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.impl.ArgumentsFilter;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithoutArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
@@ -42,7 +42,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithArgumentsWithoutCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
 
@@ -56,7 +56,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithoutArgumentsWithCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
@@ -70,7 +70,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithArgumentsWithCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
 
@@ -84,7 +84,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithDifferentArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
@@ -98,7 +98,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithDifferentArgumentsWithNonMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
@@ -112,7 +112,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithArray() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArray", String[].class);
 
@@ -126,8 +126,8 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
+		mappers.put("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
@@ -141,7 +141,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -155,7 +155,7 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithVarArgsWithNonMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithIntVararg", int[].class);
 
@@ -169,8 +169,8 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
+		mappers.put("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
@@ -184,8 +184,8 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
-		mappers.put("testWorldMapper", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
+		mappers.put("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -199,12 +199,12 @@ class ArgumentsFilterTest {
 	@Test
 	void methodWithMissingParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
-		final Map<String, Mapper<?>> mappers = new HashMap<>();
+		final Map<String, MappingSet<?>> mappers = new HashMap<>();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappers);
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		final LocalFunction getLocation = mock(LocalFunction.class);
-		mappers.put("testWorldMapper", new Mapper<>(Location.class, getLocation, Fallback.NEVER));
+		mappers.put("testWorldMapper", new MappingSet<>(Location.class, getLocation, Fallback.NEVER));
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when

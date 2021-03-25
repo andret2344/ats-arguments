@@ -205,7 +205,7 @@ first, look at rules that apply:
   anything).
 - Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments
   into method ones.
-    - Exception is to create a mapper and use the `@Param` annotation.
+    - Exception is to create a mappingSet and use the `@Param` annotation.
     - When using `@Param` and parsing failed, you can access the raw value using `@Fallback`
       annotation.
 - Method cannot have an array, only vararg is possible, rules as the point (with sub-points) above.
@@ -238,11 +238,11 @@ API provided a few quite useful annotations.
 | value | `String` | any string representing command | None. | The command all methods will be arguments for. |
 | aliases | `String[]` | Array od any Strings. | `{}` | Aliases to command. |
 
-- `@Param` - Allowing connecting argument with a configured mapper.
+- `@Param` - Allowing connecting argument with a configured mappingSet.
 
 | setting | type | values |  description |
 | ------- | ---- | ------ |  ----------- |
-| value | `String` | any string | The mapper id to find exact registered mapper. |
+| value | `String` | any string | The mappingSet id to find exact registered mappingSet. |
 
 - `@Fallback` - Annotation allowing catching not mapped correctly with `@Param` values.
 
@@ -270,7 +270,7 @@ Not configuring listeners don't result in any default. Nothing will happen.
 Command can also have mappers. Plugin uses mappers to automate conversion from String to any other type. The
 method `addArgumentMapper` requires 3 arguments:
 
-- The unique id of mapper
+- The unique id of mappingSet
 - The target return type (eg. `Player.class`)
 - The `Function<String, E>` where the second argument is the `E` type.
 

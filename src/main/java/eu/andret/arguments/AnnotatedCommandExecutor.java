@@ -12,9 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * The command executor that is superclass for command class instead of {@link CommandExecutor}. It
- * requires all methods annotated with {@link Argument} to be non-static. Subclass should be passed
- * as first argument of {@link CommandManager#registerCommand(Class, JavaPlugin)}
+ * The command executor that is superclass for command class instead of {@link CommandExecutor}. It requires all methods
+ * annotated with {@link Argument} to be non-static. Subclass should be passed as first argument of {@link
+ * CommandManager#registerCommand(Class, JavaPlugin)}
  *
  * @param <T> The {@link JavaPlugin} that will be administrating commands.
  *

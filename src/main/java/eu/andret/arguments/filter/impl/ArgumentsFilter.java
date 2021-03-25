@@ -5,8 +5,7 @@
 package eu.andret.arguments.filter.impl;
 
 import eu.andret.arguments.Util;
-import eu.andret.arguments.api.annotation.Param;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 @Value
 @Getter(AccessLevel.NONE)
 public class ArgumentsFilter implements IArgumentsFilter {
-	Map<String, Mapper<?>> mappers;
+	Map<String, MappingSet<?>> mappers;
 
 	@Override
 	public boolean filter(final Method method, final String[] command) {

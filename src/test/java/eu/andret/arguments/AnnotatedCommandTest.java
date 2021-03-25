@@ -104,13 +104,13 @@ class AnnotatedCommandTest {
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
-		when(executor.addMapper(anyString(), any())).thenReturn(true);
+		when(executor.addArgumentMapper(anyString(), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
-		verify(executor, times(1)).addMapper(eq("test"), any());
+		verify(executor, times(1)).addArgumentMapper(eq("test"), any());
 	}
 
 	@Test
@@ -120,14 +120,14 @@ class AnnotatedCommandTest {
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
-		when(executor.addMapper(anyString(), any())).thenReturn(false);
+		when(executor.addArgumentMapper(anyString(), any())).thenReturn(false);
 
 		// when
 		final Executable result = () -> annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addMapper(eq("test"), any());
+		verify(executor, times(1)).addArgumentMapper(eq("test"), any());
 	}
 
 	@Test

@@ -5,7 +5,7 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -35,7 +35,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
-	Map<String, Mapper<?>> mappers;
+	Map<String, MappingSet<?>> mappers;
 	IExecutionCallMapper executionCallMapper;
 	IMethodNameFilter methodNameFilter;
 	IExecutorTypeFilter executorTypeFilter;
@@ -44,9 +44,9 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	/**
 	 * Constructor that initializes fields.
 	 *
-	 * @param mappers The map of {@link Mapper}.
+	 * @param mappers The map of {@link MappingSet}.
 	 */
-	public CommandToMethodMapper(final Map<String, Mapper<?>> mappers) {
+	public CommandToMethodMapper(final Map<String, MappingSet<?>> mappers) {
 		this(mappers, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappers));
 	}
 

@@ -8,7 +8,7 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
@@ -45,8 +45,9 @@ import java.util.Optional;
 @NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
-	Map<String, Mapper<?>> mappers = new HashMap<>();
-	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappers);
+	Map<String, MappingSet<?>> argumentMappers = new HashMap<>();
+	Map<Class<?>, MappingSet<?>> typeMappers = new HashMap<>();
+	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(argumentMappers);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
 	IResponseConsumer responseConsumer = new ResponseConsumer();
@@ -64,7 +65,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	LocalCommandExecutor(final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin, final Object... parameters) {
 		this.commandClass = commandClass;
 		this.parameters = parameters;
-		methodInvoker = new MethodInvoker<>(plugin, mappers);
+		methodInvoker = new MethodInvoker<>(plugin, argumentMappers, typeMappers);
 	}
 
 	@Override
@@ -101,11 +102,19 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		onInsufficientPermissionsListener = listener;
 	}
 
-	<M> boolean addMapper(final String id, final Mapper<M> mapper) {
-		if (mappers.containsKey(id)) {
+	<M> boolean addArgumentMapper(final String id, final MappingSet<M> mappingSet) {
+		if (argumentMappers.containsKey(id)) {
 			return false;
 		}
-		mappers.put(id, mapper);
+		argumentMappers.put(id, mappingSet);
+		return true;
+	}
+
+	<M> boolean addTypeMapper(final Class<M> clazz, final MappingSet<M> mappingSet) {
+		if (typeMappers.containsKey(clazz)) {
+			return false;
+		}
+		typeMappers.put(clazz, mappingSet);
 		return true;
 	}
 

@@ -62,8 +62,8 @@ public class Util {
 	/**
 	 * Method that will determine the actual class by the content of String.
 	 *
-	 * @param value The value that need to be parsed. Accepts only int, double, boolean and
-	 * 		String. Not matching any of them will result as String.
+	 * @param value The value that need to be parsed. Accepts only int, double, boolean and String. Not matching any
+	 * 		of them will result as String.
 	 *
 	 * @return the class, which value inside the string arguments matches
 	 */
