@@ -14,6 +14,7 @@ import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Value;
@@ -36,12 +37,22 @@ import java.util.Optional;
  * @since Apr 17, 2020
  */
 @Value
+@AllArgsConstructor
 @Getter(AccessLevel.NONE)
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
 	Map<String, MappingSet<?>> argumentMappers;
 	Map<Class<?>, MappingSet<?>> typeMappers;
+
+	/**
+	 * Smallest acceptable constructor.
+	 *
+	 * @param plugin The plugin.
+	 */
+	public MethodInvoker(final JavaPlugin plugin) {
+		this(plugin, new HashMap<>(), new HashMap<>());
+	}
 
 	@Override
 	@Nullable

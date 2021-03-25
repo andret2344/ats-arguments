@@ -38,7 +38,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -60,7 +60,7 @@ class MethodInvokerTest {
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final HashMap<String, MappingSet<?>> mappers = new HashMap<>();
 		mappers.put("testWorldMapper", new MappingSet<>(World.class, getWorld, Fallback.ALWAYS));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers, new HashMap<>());
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method methodWorld = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final Method methodString = spy(commandClass.getDeclaredMethod("testMethodWithParam", String.class));
@@ -79,7 +79,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -96,7 +96,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -113,7 +113,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
 		final Method method = spy(commandClass.getDeclaredMethod("world"));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -131,7 +131,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -158,7 +158,7 @@ class MethodInvokerTest {
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final ExecutionCall call = new ExecutionCall(method);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers, new HashMap<>());
 
 		// when
 		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -183,7 +183,7 @@ class MethodInvokerTest {
 		mappers.put("testWorldMapper", new MappingSet<>(Location.class, getLocation, Fallback.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers, new HashMap<>());
 		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
@@ -200,7 +200,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
 		final ExecutionCall call = new ExecutionCall(method);
@@ -228,7 +228,7 @@ class MethodInvokerTest {
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final ExecutionCall call = new ExecutionCall(method);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappers, new HashMap<>());
 
 		// when
 		invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -243,7 +243,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, new HashMap<>());
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
 		final Logger logger = mock(Logger.class);

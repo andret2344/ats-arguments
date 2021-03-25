@@ -40,6 +40,6 @@ public class CommandManager {
 		}
 		pluginCommand.setExecutor(new LocalCommandExecutor<>(commandClass, plugin, arguments));
 		pluginCommand.setTabCompleter(new LocalTabCompleter(commandClass));
-		return new AnnotatedCommand(pluginCommand);
+		return new AnnotatedCommand<>(pluginCommand);
 	}
 }

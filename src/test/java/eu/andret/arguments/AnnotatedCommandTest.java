@@ -39,7 +39,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 
 		// when
 		final PluginCommand result = annotatedCommand.getCommand();
@@ -54,7 +54,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 
 		// when
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> {
@@ -73,7 +73,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 
 		// when
 		final CommandExecutor result = annotatedCommand.getCommand().getExecutor();
@@ -86,7 +86,7 @@ class AnnotatedCommandTest {
 	void correctCompleterReturned() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 
@@ -103,7 +103,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(executor.addArgumentMapper(anyString(), any())).thenReturn(true);
 
 		// when
@@ -119,7 +119,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(executor.addArgumentMapper(anyString(), any())).thenReturn(false);
 
 		// when
@@ -136,7 +136,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
 		final ArrayList<String> list = new ArrayList<>();
 		list.add("one");
@@ -156,7 +156,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(false);
 
 		// when
@@ -173,7 +173,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
 		final ArrayList<String> list = new ArrayList<>();
 		list.add("one");
@@ -193,7 +193,7 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(false);
 
 		// when
@@ -211,7 +211,7 @@ class AnnotatedCommandTest {
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
-		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 
 		// when
 		annotatedCommand.getOptions().setAutoTranslateColors(true);
