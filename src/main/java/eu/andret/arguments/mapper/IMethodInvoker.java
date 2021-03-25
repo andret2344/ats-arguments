@@ -23,6 +23,7 @@ public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
 	 * @param command The real command arguments array.
 	 * @param sender The {@link CommandSender} who actually performed the command.
 	 * @param executor The class reference, where the method was written.
+	 * @param parameters The parameters that will be put into constructor of {@link AnnotatedCommandExecutor}
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */

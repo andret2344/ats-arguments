@@ -22,6 +22,7 @@ public class CommandManager {
 	 *
 	 * @param commandClass The class extending {@link AnnotatedCommandExecutor}
 	 * @param plugin The class extending {@link JavaPlugin} as main class of plugin
+	 * @param arguments The arguments that will be passed into {@link AnnotatedCommandExecutor} constructor.
 	 * @param <T> The main plugin class that extends {@link JavaPlugin}.
 	 *
 	 * @return AnnotatedCommand
