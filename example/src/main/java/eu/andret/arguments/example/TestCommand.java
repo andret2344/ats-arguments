@@ -10,6 +10,7 @@ import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
+import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.ResponseType;
@@ -48,7 +49,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String player(@Completer("basicPlayerCompleter") final Player player) {
+	public String player(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -58,7 +59,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Completer("basicPlayerCompleter") final Player... players) {
+	public String distance(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
 		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -115,7 +116,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(final Player player) {
+	public String overloaded(@Mapper("basicPlayerMapper") final Player player) {
 		return "Overloaded with one player argument: " + player.getName();
 	}
 
@@ -125,7 +126,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(final Player player, final int argument) {
+	public String overloaded(@Mapper("basicPlayerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
 	}
 

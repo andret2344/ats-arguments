@@ -98,7 +98,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	private Object map(final Mapper mapper, final Class<?> type, final String value) {
 		return getMatchingMappingSet(mapper, type)
 				.map(mappingSet -> convert(mappingSet, type, value))
-				.orElse(Util.convert(type, value));
+				.orElseGet(() -> Util.convert(type, value));
 	}
 
 	private Optional<? extends MappingSet<?>> getMatchingMappingSet(final Mapper mapper, final Class<?> clazz) {
