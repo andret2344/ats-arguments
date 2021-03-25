@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -26,11 +27,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AnnotatedCommandTest {
+	private static class TestCommandExecutor extends LocalCommandExecutor<JavaPlugin> {
+		TestCommandExecutor(final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass, final JavaPlugin plugin, final Object... parameters) {
+			super(commandClass, plugin, parameters);
+		}
+	}
+
 	@Test
 	void correctCommandReturned() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
@@ -45,7 +52,7 @@ class AnnotatedCommandTest {
 	void correctListenersSetup() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
@@ -64,7 +71,7 @@ class AnnotatedCommandTest {
 	void correctExecutorReturned() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 
@@ -94,7 +101,7 @@ class AnnotatedCommandTest {
 	void correctAddMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(true);
@@ -110,7 +117,7 @@ class AnnotatedCommandTest {
 	void incorrectAddMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
 		when(executor.addMapper(anyString(), any())).thenReturn(false);
@@ -201,7 +208,7 @@ class AnnotatedCommandTest {
 	void correctAutoTranslateColors() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalCommandExecutor executor = mock(LocalCommandExecutor.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
 		final AnnotatedCommand annotatedCommand = new AnnotatedCommand(command);
@@ -210,6 +217,6 @@ class AnnotatedCommandTest {
 		annotatedCommand.getOptions().setAutoTranslateColors(true);
 
 		// then
-		assertTrue(((LocalCommandExecutor) annotatedCommand.getCommand().getExecutor()).getOptions().isAutoTranslateColors());
+		assertTrue(((TestCommandExecutor) annotatedCommand.getCommand().getExecutor()).getOptions().isAutoTranslateColors());
 	}
 }

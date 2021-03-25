@@ -42,6 +42,7 @@ import java.util.Optional;
  * @since May 18, 2020
  */
 @Value
+@NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	Map<String, Mapper<?>> mappers = new HashMap<>();

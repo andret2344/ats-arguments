@@ -19,7 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -48,10 +48,7 @@ class CommandToMethodMapperTest {
 
 	@BeforeEach
 	void setup() {
-		Mockito.mockitoSession()
-				.initMocks(this)
-				.startMocking()
-				.finishMocking();
+		MockitoAnnotations.openMocks(this);
 	}
 
 	static Iterable<Object[]> data() {

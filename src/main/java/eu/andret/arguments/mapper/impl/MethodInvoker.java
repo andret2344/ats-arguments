@@ -110,10 +110,6 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 		o[0] = sender;
 		o[1] = plugin;
 		System.arraycopy(parameters, 0, o, 2, parameters.length);
-		Arrays.stream(o)
-				.map(Object::getClass)
-				.map(Class::getName)
-				.forEach(System.out::println);
 		final A result = c.newInstance(o);
 		executors.put(sender, result);
 		return result;
