@@ -77,7 +77,6 @@ public class ArgumentsFilter implements IArgumentsFilter {
 		if (typeMappers.containsKey(parameterClass)) {
 			return true;
 		}
-		System.out.println("nie ma parama");
 		return clazz.isAssignableFrom(parameterClass);
 	}
 }

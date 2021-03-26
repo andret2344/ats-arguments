@@ -211,7 +211,7 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void addMapper() {
+	void addArgumentMapper() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(TestMethodsProvider.class, plugin);
@@ -220,6 +220,23 @@ class LocalCommandExecutorTest {
 		final boolean result1 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		final boolean result2 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
 		final boolean result3 = executor.addArgumentMapper("test3", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+
+		// then
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
+	}
+
+	@Test
+	void addTypeMapper() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(TestMethodsProvider.class, plugin);
+
+		// when
+		final boolean result1 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result2 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result3 = executor.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, Fallback.NEVER));
 
 		// then
 		assertTrue(result1);

@@ -236,4 +236,19 @@ class ArgumentsFilterTest {
 		// then
 		assertFalse(result);
 	}
+
+	@Test
+	void methodWithTypeMapperWithMatchingCommandArguments() throws NoSuchMethodException {
+		// given
+		final Map<Class<?>, MappingSet<?>> mappers = new HashMap<>();
+		mappers.put(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, Fallback.NEVER));
+		final IArgumentsFilter mapper = new ArgumentsFilter(new HashMap<>(), mappers);
+		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
+
+		// when
+		final boolean result = mapper.filter(method, new String[]{"testMethod", "true"});
+
+		// then
+		assertTrue(result);
+	}
 }

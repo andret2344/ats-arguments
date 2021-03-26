@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -98,13 +97,13 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void correctAddMapper() {
+	void correctAddArgumentMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentMapper(anyString(), any())).thenReturn(true);
+		when(executor.addArgumentMapper(eq("test"), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
@@ -114,13 +113,29 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void incorrectAddMapper() {
+	void correctAddTypeMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentMapper(anyString(), any())).thenReturn(false);
+		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(true);
+
+		// when
+		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
+
+		// then
+		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
+	}
+
+	@Test
+	void incorrectAddArgumentMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addArgumentMapper(eq("test"), any())).thenReturn(false);
 
 		// when
 		final Executable result = () -> annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
@@ -128,6 +143,23 @@ class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(executor, times(1)).addArgumentMapper(eq("test"), any());
+	}
+
+	@Test
+	void incorrectAddTypeMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(false);
+
+		// when
+		final Executable result = () -> annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
 	}
 
 	@Test
