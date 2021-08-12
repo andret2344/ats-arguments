@@ -160,7 +160,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 This one will be parsed into `/test testing` command, which executing will result in displaying the text on the console.
 
-It's also possible to pass additional arguments that will be uses ad AnnotatedCommandExecutor constructor arguments.
+It's also possible to pass additional arguments that will be used as AnnotatedCommandExecutor constructor arguments.
 
 ```java
 public class TestPlugin extends JavaPlugin {
@@ -279,8 +279,8 @@ handler". The fallback condition (never called by default) describes what "wrong
 
 #### Type mappers
 
-Type mappers allow specifying how to convert string info provided class without. Use this mapper if always mapping to
-certain type is the same. The method `addTypeMapper` requires following data:
+Type mappers allow specifying how to convert string into provided class. Use this mapper if always mapping to certain
+type is the same. The method `addTypeMapper` requires following data:
 
 - The target return type (e.g. `Player.class`)
 - The `Function<String, E>` where the first method's argument is the `E` type.
@@ -288,9 +288,9 @@ certain type is the same. The method `addTypeMapper` requires following data:
 
 #### Argument mappers
 
-Argument mappers allow specifying how to map string into other type using string key as an identifier. It's perfect
-solution if same type require different mappings in dependency on method's name. The method `addArgumentMapper` requires
-following data:
+Argument mappers allow specifying how to map string into other type using string key as an identifier. It's a perfect
+solution if the same type requires different mappings in dependency on method's name. The method `addArgumentMapper`
+requires following data:
 
 - The unique id of mapper.
 - The target return type (e.g. `Player.class`)
