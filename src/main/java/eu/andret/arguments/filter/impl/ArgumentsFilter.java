@@ -6,7 +6,7 @@ package eu.andret.arguments.filter.impl;
 
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import lombok.Value;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,8 +27,7 @@ import java.util.stream.Stream;
 @Value
 @Getter(AccessLevel.NONE)
 public class ArgumentsFilter implements IArgumentsFilter {
-	Map<String, MappingSet<?>> argumentMappers;
-	Map<Class<?>, MappingSet<?>> typeMappers;
+	MappingConfig mappingConfig;
 
 	@Override
 	public boolean filter(final Method method, final String[] command) {
@@ -72,9 +70,9 @@ public class ArgumentsFilter implements IArgumentsFilter {
 
 	private boolean isTypeMatchingParam(final Class<?> parameterClass, final Mapper mapper, final Class<?> clazz) {
 		if (mapper != null) {
-			return argumentMappers.get(mapper.value()).getClazz().isAssignableFrom(parameterClass);
+			return mappingConfig.get(mapper.value()).getClazz().isAssignableFrom(parameterClass);
 		}
-		if (typeMappers.containsKey(parameterClass)) {
+		if (mappingConfig.exists(parameterClass)) {
 			return true;
 		}
 		return clazz.isAssignableFrom(parameterClass);

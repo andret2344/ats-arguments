@@ -11,6 +11,7 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
@@ -42,8 +43,7 @@ import java.util.Optional;
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
-	Map<String, MappingSet<?>> argumentMappers;
-	Map<Class<?>, MappingSet<?>> typeMappers;
+	MappingConfig mappingConfig;
 
 	/**
 	 * Smallest acceptable constructor.
@@ -51,7 +51,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	 * @param plugin The plugin.
 	 */
 	public MethodInvoker(final JavaPlugin plugin) {
-		this(plugin, new HashMap<>(), new HashMap<>());
+		this(plugin, new MappingConfig());
 	}
 
 	@Override
@@ -104,15 +104,12 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	private Optional<? extends MappingSet<?>> getMatchingMappingSet(final Mapper mapper, final Class<?> clazz) {
 		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
-				.filter(argumentMappers::containsKey)
-				.map(argumentMappers::get)
+				.map(mappingConfig::get)
 				.filter(set -> set.getClazz().equals(clazz));
 		if (mappingSet.isPresent()) {
 			return mappingSet;
 		}
-		return Optional.of(clazz)
-				.filter(typeMappers::containsKey)
-				.map(typeMappers::get);
+		return Optional.of(clazz).map(mappingConfig::get);
 	}
 
 	private Object convert(final MappingSet<?> mappingSet, final Class<?> targetClass, final String value) {
