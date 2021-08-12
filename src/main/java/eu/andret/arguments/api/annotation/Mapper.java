@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation should be put to the argument of method inside class that extends the {@link
- * AnnotatedCommandExecutor}. It allows to find {@link MappingSet} registered to {@link AnnotatedCommand}.
+ * AnnotatedCommandExecutor}. It allows finding {@link MappingSet} registered to {@link AnnotatedCommand}.
  *
  * @author Andret
  * @since Apr 17, 2020

@@ -64,7 +64,7 @@ public @interface Argument {
 	String description() default "";
 
 	/**
-	 * Aliases for argument, eg. "cmd" as alias for "command", and so on.
+	 * Aliases for argument, e.g. "cmd" as alias for "command", and so on.
 	 *
 	 * @return The list of aliases.
 	 */

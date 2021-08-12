@@ -137,7 +137,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 
 	/**
 	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}. {@link
-	 * Fallback} method will be never called.
+	 * Fallback} method will never be called.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
@@ -229,7 +229,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * The accessor method method that allows configuration.
+	 * The accessor method that allows configuration.
 	 *
 	 * @return The {@link AnnotatedCommand.Options} instance that allows to configure behavior.
 	 */

@@ -45,7 +45,7 @@ public class Util {
 	 * Method that tries to convert value in string into class type provides.
 	 *
 	 * @param clazz The {@link java.lang.Class} which type variable is trying to be made
-	 * @param value The string containing possible to convert value, eg. "1", "false" or "0.009".
+	 * @param value The string containing possible to convert value, e.g. "1", "false" or "0.009".
 	 *
 	 * @return The converted value, or not if no possible assignment found, or is an array.
 	 */

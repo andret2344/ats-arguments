@@ -310,7 +310,7 @@ completer or argument one.
 Type completes are easier to configure, because they rely only on the argument type. The method `addTypeCompleter`
 requires 2 arguments:
 
-- The type that should be completed (eg. `boolean.class`)
+- The type that should be completed (e.g. `boolean.class`)
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
