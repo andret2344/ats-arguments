@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,8 +26,14 @@ import static org.mockito.Mockito.when;
 
 class AnnotatedCommandTest {
 	private static class TestCommandExecutor extends LocalCommandExecutor<JavaPlugin> {
-		TestCommandExecutor(final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass, final JavaPlugin plugin, final Object... parameters) {
-			super(commandClass, plugin, parameters);
+		TestCommandExecutor(final AnnotatedCommand<JavaPlugin> annotatedCommand, final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass, final JavaPlugin plugin, final Object... parameters) {
+			super(annotatedCommand, commandClass, plugin, parameters);
+		}
+	}
+
+	private static class TestTabCompleter extends LocalTabCompleter<JavaPlugin> {
+		TestTabCompleter(final AnnotatedCommand<JavaPlugin> annotatedCommand, final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass) {
+			super(annotatedCommand, commandClass);
 		}
 	}
 
@@ -86,7 +91,7 @@ class AnnotatedCommandTest {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 
 		// when
@@ -166,7 +171,7 @@ class AnnotatedCommandTest {
 	void correctAddTypeCompleter() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
@@ -186,7 +191,7 @@ class AnnotatedCommandTest {
 	void incorrectAddTypeCompleter() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(false);
@@ -203,7 +208,7 @@ class AnnotatedCommandTest {
 	void correctAddArgumentCompleter() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
@@ -223,7 +228,7 @@ class AnnotatedCommandTest {
 	void incorrectAddArgumentCompleter() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
-		final LocalTabCompleter completer = mock(LocalTabCompleter.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(false);
@@ -234,21 +239,5 @@ class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(completer, times(1)).addArgumentCompleter(eq("testPlayerMapper"), any());
-	}
-
-	@Test
-	void correctAutoTranslateColors() {
-		// given
-		final PluginCommand command = mock(PluginCommand.class);
-		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
-		when(command.getExecutor()).thenReturn(executor);
-		when(executor.getOptions()).thenReturn(new AnnotatedCommand.Options());
-		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-
-		// when
-		annotatedCommand.getOptions().setAutoTranslateColors(true);
-
-		// then
-		assertTrue(((TestCommandExecutor) annotatedCommand.getCommand().getExecutor()).getOptions().isAutoTranslateColors());
 	}
 }

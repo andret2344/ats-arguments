@@ -9,11 +9,14 @@ import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.entity.MappingSet;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -27,8 +30,21 @@ import java.util.function.Supplier;
  * @since Jun 02, 2019
  */
 @Value
+@NonFinal
+@AllArgsConstructor
 public class AnnotatedCommand<E extends JavaPlugin> {
 	PluginCommand command;
+	@NotNull
+	Options options;
+
+	/**
+	 * Single arg constructor.
+	 *
+	 * @param command The plugin command.
+	 */
+	public AnnotatedCommand(final PluginCommand command) {
+		this(command, new Options());
+	}
 
 	/**
 	 * The Options to manipulate the behavior.
@@ -36,6 +52,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	@Data
 	public static class Options {
 		private boolean autoTranslateColors;
+		private boolean caseSensitive;
 	}
 
 	/**
@@ -69,8 +86,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		return (LocalCommandExecutor<E>) command.getExecutor();
 	}
 
-	private LocalTabCompleter getLocalTabCompleter() {
-		return (LocalTabCompleter) command.getTabCompleter();
+	@SuppressWarnings("unchecked")
+	private LocalTabCompleter<E> getLocalTabCompleter() {
+		return (LocalTabCompleter<E>) command.getTabCompleter();
 	}
 
 	/**
@@ -226,14 +244,5 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public void addArgumentCompleter(final String id, final Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
-	}
-
-	/**
-	 * The accessor method that allows configuration.
-	 *
-	 * @return The {@link AnnotatedCommand.Options} instance that allows to configure behavior.
-	 */
-	public AnnotatedCommand.Options getOptions() {
-		return getLocalCommandExecutor().getOptions();
 	}
 }

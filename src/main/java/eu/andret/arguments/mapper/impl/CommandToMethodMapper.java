@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.mapper.impl;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
@@ -51,10 +52,10 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	}
 
 	@Override
-	public Optional<ExecutionCall> mapCommandToMethod(final Method[] methods, final String[] command, final CommandSender sender) {
+	public Optional<ExecutionCall> mapCommandToMethod(final Method[] methods, final String[] command, final CommandSender sender, final AnnotatedCommand.Options options) {
 		return Arrays.stream(methods)
 				.map(method -> executionCallMapper.mapExecutionCall(method, methods))
-				.filter(executionCall -> methodNameFilter.filterMethodName(executionCall.getMethod(), command))
+				.filter(executionCall -> methodNameFilter.filterMethodName(executionCall.getMethod(), command, options))
 				.filter(executionCall -> executorTypeFilter.filterExecutorType(executionCall.getMethod(), sender))
 				.filter(executionCall -> argumentsFilter.filter(executionCall.getMethod(), command))
 				.findFirst();

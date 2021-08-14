@@ -8,8 +8,10 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,12 +23,20 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class LocalTabCompleterTest {
+	private static class TestCommand extends AnnotatedCommand<JavaPlugin> {
+		TestCommand(final PluginCommand command) {
+			super(command);
+		}
+	}
+
 	@Test
 	void multipleMethodsMatch() {
 		// given
-		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final Command command = mock(Command.class);
 
@@ -69,7 +79,8 @@ class LocalTabCompleterTest {
 	@Test
 	void aliasMatch() {
 		// given
-		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final Command command = mock(Command.class);
 
@@ -85,7 +96,8 @@ class LocalTabCompleterTest {
 	@Test
 	void noArgumentsNotMatch() {
 		// given
-		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final TabCompleter tabCompleter = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final Command command = mock(Command.class);
 
@@ -100,7 +112,10 @@ class LocalTabCompleterTest {
 	@Test
 	void manyArgumentsNotMatch() {
 		// given
-		final TabCompleter tabCompleter = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
+		when(testCommand.getOptions()).thenReturn(options);
+		final TabCompleter tabCompleter = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final Command command = mock(Command.class);
 
@@ -115,7 +130,8 @@ class LocalTabCompleterTest {
 	@Test
 	void addTypeCompleter() {
 		// given
-		final LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final LocalTabCompleter<JavaPlugin> completer = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 
 		// when
 		final boolean result1 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
@@ -131,7 +147,8 @@ class LocalTabCompleterTest {
 	@Test
 	void addArgumentCompleter() {
 		// given
-		final LocalTabCompleter completer = new LocalTabCompleter(TestMethodsProvider.class);
+		final TestCommand testCommand = mock(TestCommand.class);
+		final LocalTabCompleter<JavaPlugin> completer = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 
 		// when
 		final boolean result1 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());

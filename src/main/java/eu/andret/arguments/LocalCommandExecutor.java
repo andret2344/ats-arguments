@@ -44,6 +44,7 @@ import java.util.Optional;
 @NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
+	AnnotatedCommand<E> annotatedCommand;
 	MappingConfig mappingConfig = new MappingConfig();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
@@ -57,10 +58,10 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@NonFinal
 	AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
 	@Getter(AccessLevel.PACKAGE)
-	AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 	Object[] parameters;
 
-	LocalCommandExecutor(final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin, final Object... parameters) {
+	LocalCommandExecutor(final AnnotatedCommand<E> annotatedCommand, final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin, final Object... parameters) {
+		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.parameters = parameters;
 		methodInvoker = new MethodInvoker<>(plugin, mappingConfig);
@@ -76,7 +77,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender)
+					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender, annotatedCommand.getOptions())
 					.ifPresentOrElse(method -> invokeMethod(method, sender, args), () -> noneMethodFound(sender));
 		}
 		return true;
@@ -124,7 +125,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(final ExecutionCall method, final CommandSender sender, final String[] args) {
 		if (permissionFilter.filterPermission(method.getMethod(), sender)) {
 			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass, parameters);
-			responseConsumer.consumeResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), options);
+			responseConsumer.consumeResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), annotatedCommand.getOptions());
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}

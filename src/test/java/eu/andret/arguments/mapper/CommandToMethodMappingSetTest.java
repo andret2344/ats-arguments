@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingSet;
@@ -72,13 +73,14 @@ class CommandToMethodMappingSetTest {
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> executor = TestMethodsProvider.class;
 		final Method method = executor.getDeclaredMethod("testMethod");
 		final CommandSender sender = mock(CommandSender.class);
+		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));
-		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
+		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
 		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
 		lenient().when(argumentsMapper.filter(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
+		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {

@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.filter.impl;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.filter.IMethodNameFilter;
 import lombok.Value;
@@ -12,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -23,15 +25,24 @@ import java.util.stream.Stream;
 @Value
 public class MethodNameFilter implements IMethodNameFilter {
 	@Override
-	public boolean filterMethodName(final Method method, final String[] command) {
+	public boolean filterMethodName(final Method method, final String[] command, final AnnotatedCommand.Options options) {
 		return Optional.of(method)
 				.filter(m -> m.isAnnotationPresent(Argument.class))
 				.filter(this::verifyNonStatic)
 				.filter(m -> verifyArgumentPosition(m, command))
 				.map(m -> m.getAnnotation(Argument.class))
-				.map(a -> Stream.concat(Arrays.stream(a.aliases()), Stream.of(method.getName()))
-						.anyMatch(command[a.position()]::equalsIgnoreCase))
+				.map(a -> nameMatches(a, method, command, options))
 				.orElse(false);
+	}
+
+	private boolean nameMatches(final Argument a, final Method method, final String[] command, final AnnotatedCommand.Options options) {
+		final String name = command[a.position()];
+		final Predicate<String> predicate = options.isCaseSensitive() ? name::equals : name::equalsIgnoreCase;
+		return getAllNamesStream(a, method).anyMatch(predicate);
+	}
+
+	private Stream<String> getAllNamesStream(final Argument a, final Method method) {
+		return Stream.concat(Arrays.stream(a.aliases()), Stream.of(method.getName()));
 	}
 
 	private boolean verifyNonStatic(final Method method) {

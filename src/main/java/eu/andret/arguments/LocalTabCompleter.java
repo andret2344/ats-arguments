@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -39,8 +40,10 @@ import java.util.stream.Stream;
  */
 @Value
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NonFinal
 @Getter(AccessLevel.NONE)
-class LocalTabCompleter implements TabCompleter {
+class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
+	AnnotatedCommand<E> annotatedCommand;
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
 	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
 	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
@@ -54,19 +57,19 @@ class LocalTabCompleter implements TabCompleter {
 		}
 		if (args.length == 1) {
 			return Stream.concat(
-					Stream.of(commandClass.getDeclaredMethods())
-							.filter(m -> m.getAnnotation(Argument.class) != null)
-							.map(Method::getName),
-					Stream.of(commandClass.getDeclaredMethods())
-							.filter(m -> m.getAnnotation(Argument.class) != null)
-							.flatMap(m -> Stream.of(m.getDeclaredAnnotation(Argument.class).aliases())))
+							Stream.of(commandClass.getDeclaredMethods())
+									.filter(m -> m.getAnnotation(Argument.class) != null)
+									.map(Method::getName),
+							Stream.of(commandClass.getDeclaredMethods())
+									.filter(m -> m.getAnnotation(Argument.class) != null)
+									.flatMap(m -> Stream.of(m.getDeclaredAnnotation(Argument.class).aliases())))
 					.filter(s -> s.startsWith(args[0]))
 					.collect(Collectors.toList());
 		}
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
 				.filter(m -> !Modifier.isStatic(m.getModifiers()))
-				.filter(m -> methodNameMapper.filterMethodName(m, args))
+				.filter(m -> methodNameMapper.filterMethodName(m, args, annotatedCommand.getOptions()))
 				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
