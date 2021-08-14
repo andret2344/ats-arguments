@@ -5,7 +5,6 @@ import io.franzbecker.gradle.lombok.task.DelombokTask
 
 buildscript {
 	repositories {
-		jcenter()
 		maven { url 'https://plugins.gradle.org/m2/' }
 	}
 	dependencies { classpath 'io.franzbecker:gradle-lombok:2.0' }

@@ -12,8 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation used for {@link AnnotatedCommandExecutor}'s subclass to define base command for
- * all methods.
+ * The annotation used for {@link AnnotatedCommandExecutor}'s subclass to define base command for all methods.
  *
  * @author Andret
  * @since Jul 01, 2019

@@ -11,7 +11,7 @@ import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.entity.ResponseType;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IMapper;
@@ -211,15 +211,32 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void addMapper() {
+	void addArgumentMapper() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(TestMethodsProvider.class, plugin);
 
 		// when
-		final boolean result1 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
-		final boolean result2 = executor.addMapper("test1", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
-		final boolean result3 = executor.addMapper("test3", new Mapper<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result1 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result2 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result3 = executor.addArgumentMapper("test3", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+
+		// then
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
+	}
+
+	@Test
+	void addTypeMapper() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(TestMethodsProvider.class, plugin);
+
+		// when
+		final boolean result1 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result2 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		final boolean result3 = executor.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, Fallback.NEVER));
 
 		// then
 		assertTrue(result1);

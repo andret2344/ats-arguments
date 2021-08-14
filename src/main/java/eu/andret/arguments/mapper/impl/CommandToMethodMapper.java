@@ -5,7 +5,8 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingConfig;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -22,7 +23,6 @@ import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,7 +35,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
-	Map<String, Mapper<?>> mappers;
+	MappingConfig mappingConfig;
 	IExecutionCallMapper executionCallMapper;
 	IMethodNameFilter methodNameFilter;
 	IExecutorTypeFilter executorTypeFilter;
@@ -44,10 +44,10 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	/**
 	 * Constructor that initializes fields.
 	 *
-	 * @param mappers The map of {@link Mapper}.
+	 * @param mappingConfig The map of the {@link String}-{@link MappingSet} pair.
 	 */
-	public CommandToMethodMapper(final Map<String, Mapper<?>> mappers) {
-		this(mappers, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappers));
+	public CommandToMethodMapper(final MappingConfig mappingConfig) {
+		this(mappingConfig, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappingConfig));
 	}
 
 	@Override

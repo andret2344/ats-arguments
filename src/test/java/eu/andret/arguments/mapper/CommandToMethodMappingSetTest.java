@@ -6,7 +6,7 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-class CommandToMethodMapperTest {
+class CommandToMethodMappingSetTest {
 	@Mock
 	private IExecutionCallMapper executionCallMapper;
 	@Mock
@@ -42,7 +42,7 @@ class CommandToMethodMapperTest {
 	@Mock
 	private IArgumentsFilter argumentsMapper;
 	@Mock
-	private Map<String, Mapper<?>> mappers;
+	private Map<String, MappingSet<?>> mappers;
 	@InjectMocks
 	private CommandToMethodMapper mapper;
 

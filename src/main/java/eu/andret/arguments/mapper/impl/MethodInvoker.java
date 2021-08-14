@@ -9,11 +9,13 @@ import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Fallback;
-import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingConfig;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Value;
@@ -36,11 +38,21 @@ import java.util.Optional;
  * @since Apr 17, 2020
  */
 @Value
+@AllArgsConstructor
 @Getter(AccessLevel.NONE)
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
-	Map<String, Mapper<?>> mappers;
+	MappingConfig mappingConfig;
+
+	/**
+	 * Smallest acceptable constructor.
+	 *
+	 * @param plugin The plugin.
+	 */
+	public MethodInvoker(final JavaPlugin plugin) {
+		this(plugin, new MappingConfig());
+	}
 
 	@Override
 	@Nullable
@@ -66,37 +78,46 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 			if (fallback != null && i == 0 || i == argument.position()) {
 				skip++;
 			}
-			final Param param = method.getParameters()[i].getAnnotation(Param.class);
+			final Mapper mapper = method.getParameters()[i].getAnnotation(Mapper.class);
 			if (method.getParameters()[i].isVarArgs()) {
 				final Class<?> type = method.getParameters()[i].getType().getComponentType();
 				final int length = args.length - i + skip - 2;
 				final Object array = Array.newInstance(type, length);
 				for (int j = 0; j < length; j++) {
-					Array.set(array, j, convert(param, type, args[j + i + skip]));
+					Array.set(array, j, map(mapper, type, args[j + i + skip]));
 				}
 				data[i] = array;
 				break;
 			} else {
-				data[i] = convert(param, method.getParameters()[i].getType(), args[i + skip]);
+				data[i] = map(mapper, method.getParameters()[i].getType(), args[i + skip]);
 			}
 		}
 		return data;
 	}
 
-	private Object convert(final Param param, final Class<?> c, final String value) {
-		final Optional<? extends Mapper<?>> mapper = Optional.ofNullable(param)
-				.map(Param::value)
-				.filter(mappers::containsKey)
-				.map(mappers::get)
-				.filter(m -> m.getClazz().equals(c));
-		if (mapper.isEmpty()) {
-			return Util.convert(c, value);
+	private Object map(final Mapper mapper, final Class<?> type, final String value) {
+		return getMatchingMappingSet(mapper, type)
+				.map(mappingSet -> convert(mappingSet, type, value))
+				.orElseGet(() -> Util.convert(type, value));
+	}
+
+	private Optional<? extends MappingSet<?>> getMatchingMappingSet(final Mapper mapper, final Class<?> clazz) {
+		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
+				.map(Mapper::value)
+				.map(mappingConfig::get)
+				.filter(set -> set.getClazz().equals(clazz));
+		if (mappingSet.isPresent()) {
+			return mappingSet;
 		}
-		final Object result = mapper.get().getFunction().apply(value);
-		if (mapper.get().getFallbackCondition().test(result)) {
-			throw new FallbackException("Fallback Condition failed");
+		return Optional.of(clazz).map(mappingConfig::get);
+	}
+
+	private Object convert(final MappingSet<?> mappingSet, final Class<?> targetClass, final String value) {
+		final Object result = mappingSet.getFunction().apply(value);
+		if (mappingSet.getFallbackCondition().test(result)) {
+			throw new FallbackException("Fallback condition failed");
 		}
-		return c.cast(result);
+		return targetClass.cast(result);
 	}
 
 	@SuppressWarnings("unchecked")

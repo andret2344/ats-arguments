@@ -15,8 +15,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation used for {@link AnnotatedCommandExecutor}'s method to analyze them in search for
- * matching sub-commands of main command.
+ * The annotation used for {@link AnnotatedCommandExecutor}'s method to analyze them in search for matching sub-commands
+ * of main command.
  *
  * @author Andret
  * @since May 18, 2019
@@ -64,7 +64,7 @@ public @interface Argument {
 	String description() default "";
 
 	/**
-	 * Aliases for argument, eg. "cmd" as alias for "command", and so on.
+	 * Aliases for argument, e.g. "cmd" as alias for "command", and so on.
 	 *
 	 * @return The list of aliases.
 	 */

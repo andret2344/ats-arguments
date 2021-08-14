@@ -21,8 +21,7 @@ public interface IMethodNameFilter extends IMapper {
 	 * @param method The {@link Method} that will be mapped.
 	 * @param command The command arguments.
 	 *
-	 * @return {@code true} if method's name matches argument at correct position, {@code false}
-	 * 		otherwise.
+	 * @return {@code true} if method's name matches argument at correct position, {@code false} otherwise.
 	 */
 	boolean filterMethodName(Method method, String[] command);
 }

@@ -14,8 +14,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation should be put to the argument of method inside class that extends the {@link
- * AnnotatedCommandExecutor}. It allows to find {@link Completer} registered to {@link
- * AnnotatedCommand}.
+ * AnnotatedCommandExecutor}. It allows finding {@link Completer} registered to {@link AnnotatedCommand}.
  *
  * @author Andret
  * @since Nov 07, 2020
@@ -24,7 +23,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Completer {
 	/**
-	 * The id of registered completer..
+	 * The id of registered completer.
 	 *
 	 * @return The id.
 	 */

@@ -18,7 +18,7 @@ public interface IDisplayTypeFilter {
 	/**
 	 * Maps the argument's display type.
 	 *
-	 * @param method The method where Annotation should be get from.
+	 * @param method The method where Annotation should be got from.
 	 * @param sender The sender who invoked the command.
 	 *
 	 * @return {@code true} if argument should be visible in held, {@code false} otherwise.

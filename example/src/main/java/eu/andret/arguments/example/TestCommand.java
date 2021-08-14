@@ -10,10 +10,11 @@ import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
-import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.ResponseType;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,7 +50,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String player(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
+	public String player(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -59,7 +60,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
+	public String distance(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
 		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -116,7 +117,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("basicPlayerMapper") final Player player) {
+	public String overloaded(@Mapper("basicPlayerMapper") final Player player) {
 		return "Overloaded with one player argument: " + player.getName();
 	}
 
@@ -126,7 +127,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("basicPlayerMapper") final Player player, final int argument) {
+	public String overloaded(@Mapper("basicPlayerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
 	}
 
@@ -138,5 +139,10 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public List<String> list() {
 		return Arrays.asList("First list line", "second list line");
+	}
+
+	@Argument
+	public String amI(final World world) {
+		return ((Player) sender).getWorld().equals(world) ? "Yes!" : "No...";
 	}
 }
