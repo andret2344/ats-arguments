@@ -35,7 +35,9 @@ public class TestPlugin extends JavaPlugin {
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 
-		CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"));
+		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
+		paramCommand.getOptions().setCaseSensitive(true);
+		paramCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
 	}
 
 	public boolean isSuperSecretSetting() {

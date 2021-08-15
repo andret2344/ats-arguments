@@ -340,6 +340,7 @@ that allows the simple configuration.
 
 - `options.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` matching
   chat color.
+- `options.setCaseSensitive(boolean)` - whether arguments should be case-sensitive or case-insensitive.
 
 ## Full example
 
