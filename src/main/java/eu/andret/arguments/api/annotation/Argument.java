@@ -53,7 +53,9 @@ public @interface Argument {
 	 * @return The response type.
 	 *
 	 * @see ResponseType
+	 * @deprecated
 	 */
+	@Deprecated(forRemoval = true, since = "Sep 08, 2021")
 	ResponseType responseType() default ResponseType.SENDER;
 
 	/**

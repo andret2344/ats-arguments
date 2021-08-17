@@ -34,4 +34,9 @@ public class TestParametrizedCommand extends AnnotatedCommandExecutor<TestPlugin
 		final int blockX = player.getLocation().getBlockX();
 		return blockX - x;
 	}
+
+	@Argument
+	public String caseSensitive() {
+		return "This is case sensitive command";
+	}
 }
