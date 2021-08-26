@@ -57,6 +57,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	@NonFinal
 	AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
+	@NonFinal
+	AnnotatedCommand.OnMainCommandExecutionListener onMainCommandExecutionListener;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
 
@@ -70,11 +72,13 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String label, @NotNull final String[] args) {
 		if (args.length == 0) {
-			Arrays.stream(commandClass.getDeclaredMethods())
-					.filter(method -> !Modifier.isStatic(method.getModifiers()))
-					.filter(method -> method.isAnnotationPresent(Argument.class))
-					.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
-					.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName())));
+			Optional.ofNullable(onMainCommandExecutionListener)
+					.ifPresentOrElse(listener -> listener.mainCommandExecution(sender), () ->
+							Arrays.stream(commandClass.getDeclaredMethods())
+									.filter(method -> !Modifier.isStatic(method.getModifiers()))
+									.filter(method -> method.isAnnotationPresent(Argument.class))
+									.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
+									.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName()))));
 		} else {
 			commandToMethodMapper
 					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender, annotatedCommand.getOptions())
@@ -99,6 +103,15 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	 */
 	public void setOnInsufficientPermissionsListener(final AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
+	}
+
+	/**
+	 * Sets on main command execution  listener.
+	 *
+	 * @param listener The {@link AnnotatedCommand.OnMainCommandExecutionListener}
+	 */
+	public void setOnMainCommandExecutionListener(final AnnotatedCommand.OnMainCommandExecutionListener listener) {
+		onMainCommandExecutionListener = listener;
 	}
 
 	<M> boolean addArgumentMapper(final String id, final MappingSet<M> mappingSet) {

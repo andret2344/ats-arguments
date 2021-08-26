@@ -34,6 +34,7 @@ public class TestPlugin extends JavaPlugin {
 				.map(HumanEntity::getName)
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
+		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);

@@ -81,6 +81,19 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		void insufficientPermissions(CommandSender sender);
 	}
 
+	/**
+	 * Listener to define action when sender executes command with no arguments.
+	 */
+	public interface OnMainCommandExecutionListener {
+
+		/**
+		 * Main command.
+		 *
+		 * @param sender The sender that executed the command with no arguments.
+		 */
+		void mainCommandExecution(CommandSender sender);
+	}
+
 	@SuppressWarnings("unchecked")
 	private LocalCommandExecutor<E> getLocalCommandExecutor() {
 		return (LocalCommandExecutor<E>) command.getExecutor();
@@ -107,6 +120,15 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public void setOnInsufficientPermissionsListener(final OnInsufficientPermissionsListener listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
+	}
+
+	/**
+	 * Sets the main command execution listener.
+	 *
+	 * @param listener The {@link OnMainCommandExecutionListener}.
+	 */
+	public void setOnMainCommandExecutionListener(final OnMainCommandExecutionListener listener) {
+		getLocalCommandExecutor().setOnMainCommandExecutionListener(listener);
 	}
 
 	/**
