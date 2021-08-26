@@ -72,18 +72,21 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(displayType = DisplayType.NONE)
-	public void notDisplayed() {
+	public String notDisplayed() {
 		// Argument won't be displayed when "/test" will be executed
+		return "Not displayed";
 	}
 
 	@Argument(displayType = DisplayType.IF_PERMS, permission = "eu.andret.test.conditions")
-	public void conditionallyDisplayed() {
+	public String conditionallyDisplayed() {
 		// Argument will be displayed when "/test" will be executed only if sender has permissions
+		return "Conditionally displayed";
 	}
 
 	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
-	public void alwaysDisplayed() {
+	public String alwaysDisplayed() {
 		// Argument will be displayed when "/test" will be executed under no conditions
+		return "Always displayed";
 	}
 
 	@Argument

@@ -41,7 +41,7 @@ public class CommandManager {
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand, options);
 		pluginCommand.setExecutor(new LocalCommandExecutor<>(annotatedCommand, commandClass, plugin, arguments));
-		pluginCommand.setTabCompleter(new LocalTabCompleter(annotatedCommand, commandClass));
+		pluginCommand.setTabCompleter(new LocalTabCompleter<>(annotatedCommand, commandClass));
 		return annotatedCommand;
 	}
 }

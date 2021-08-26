@@ -78,7 +78,7 @@ class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(onMainCommandExecutionListener, times(1)).mainCommandExecution(eq(sender));
+		verify(onMainCommandExecutionListener, times(1)).mainCommandExecution(sender);
 	}
 
 	@Test
