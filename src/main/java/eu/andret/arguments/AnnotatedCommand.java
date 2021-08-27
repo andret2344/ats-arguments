@@ -18,10 +18,12 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Wrapper class for classical {@link PluginCommand}.
@@ -117,10 +119,12 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *        String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper with this id is already registered!");
+			throw new IllegalArgumentException("Mapper for this class is already registered!");
 		}
 	}
 
@@ -131,6 +135,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
 	 *        String}.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper) {
 		addTypeMapper(clazz, mapper, Fallback.NEVER);
@@ -146,6 +152,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *        String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
@@ -162,9 +170,39 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of String
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper) {
 		addArgumentMapper(id, clazz, mapper, Fallback.NEVER);
+	}
+
+	/**
+	 * Adds the mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 *
+	 * @param anEnum The {@link Enum} that will be returned from mapper function,
+	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum, final Predicate<Object> fallbackCondition) {
+		final Function<String, T> mapper = name -> T.valueOf(anEnum, name.toUpperCase());
+		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
+			throw new IllegalArgumentException("Mapper for this enum is already registered!");
+		}
+	}
+
+	/**
+	 * Adds the mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 *
+	 * @param anEnum The {@link Enum} that will be returned from mapper function,
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum) {
+		addEnumMapper(anEnum, Fallback.NEVER);
 	}
 
 	/**
@@ -178,6 +216,24 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public void addTypeCompleter(final Class<?> clazz, final Function<CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
 			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
+		}
+	}
+
+	/**
+	 * Adds the enum completer that allows to suggest values on command writing.
+	 *
+	 * @param anEnum The {@link Enum} class that will be matched to completer.
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumCompleter(final Class<T> anEnum) {
+		final Function<CommandSender, Collection<String>> function = sender -> Arrays.stream(anEnum.getEnumConstants())
+				.map(String::valueOf)
+				.map(String::toUpperCase)
+				.collect(Collectors.toList());
+		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
+			throw new IllegalArgumentException("Completer for enum " + anEnum + " is already defined.");
 		}
 	}
 
