@@ -40,7 +40,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	Options options;
 
 	/**
-	 * Single arg constructor.
+	 * Single argument constructor.
 	 *
 	 * @param command The plugin command.
 	 */
@@ -58,20 +58,20 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Listener to define action when sender performs unknown sub-command.
+	 * Listener to define an action when the sender performs an unknown sub-command.
 	 */
 	public interface OnUnknownSubCommandExecutionListener {
 
 		/**
 		 * Unknown sub-command executed.
 		 *
-		 * @param sender The sender that executed the unknown sub-command
+		 * @param sender The sender that executed an unknown sub-command
 		 */
 		void unknownSubCommandExecuted(CommandSender sender);
 	}
 
 	/**
-	 * Listener to define action when sender has insufficient permissions.
+	 * Listener to define an action when the sender has insufficient permissions.
 	 */
 	public interface OnInsufficientPermissionsListener {
 
@@ -94,7 +94,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Sets unknown sub command execution listener.
+	 * Sets an unknown sub command execution listener.
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
 	 */
@@ -103,7 +103,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Sets insufficient permissions' listener.
+	 * Sets an insufficient permissions' listener.
 	 *
 	 * @param listener The {@link OnInsufficientPermissionsListener}.
 	 */
@@ -112,7 +112,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
@@ -129,7 +129,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
@@ -143,7 +143,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
@@ -162,8 +162,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}. {@link
-	 * Fallback} method will never be called.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}. {@link Fallback}
+	 * method will never be called.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
@@ -178,7 +178,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
 	 *
 	 * @param anEnum The {@link Enum} that will be returned from mapper function,
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
@@ -194,7 +194,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
 	 *
 	 * @param anEnum The {@link Enum} that will be returned from mapper function,
 	 * @param <T> The {@link Enum} type that will be mapped.
@@ -206,7 +206,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param function The {@link Function} that will be used to create the list of matching values.
@@ -220,7 +220,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the enum completer that allows to suggest values on command writing.
+	 * Adds an enum completer that allows to suggest values on command writing.
 	 *
 	 * @param anEnum The {@link Enum} class that will be matched to completer.
 	 * @param <T> The {@link Enum} type that will be mapped.
@@ -238,7 +238,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param supplier The {@link Supplier} that will be used to create the list of matching values.
@@ -250,7 +250,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param collection The {@link Collection} that will be the list of matching values.
@@ -262,7 +262,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds a argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.
@@ -277,7 +277,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds a argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.
@@ -290,7 +290,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds a argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.
