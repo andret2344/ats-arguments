@@ -18,10 +18,12 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Wrapper class for classical {@link PluginCommand}.
@@ -38,7 +40,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	Options options;
 
 	/**
-	 * Single arg constructor.
+	 * Single argument constructor.
 	 *
 	 * @param command The plugin command.
 	 */
@@ -56,20 +58,20 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Listener to define action when sender performs unknown sub-command.
+	 * Listener to define an action when the sender performs an unknown sub-command.
 	 */
 	public interface OnUnknownSubCommandExecutionListener {
 
 		/**
 		 * Unknown sub-command executed.
 		 *
-		 * @param sender The sender that executed the unknown sub-command
+		 * @param sender The sender that executed an unknown sub-command
 		 */
 		void unknownSubCommandExecuted(CommandSender sender);
 	}
 
 	/**
-	 * Listener to define action when sender has insufficient permissions.
+	 * Listener to define an action when the sender has insufficient permissions.
 	 */
 	public interface OnInsufficientPermissionsListener {
 
@@ -105,7 +107,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Sets unknown sub command execution listener.
+	 * Sets an unknown sub command execution listener.
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
 	 */
@@ -114,7 +116,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Sets insufficient permissions' listener.
+	 * Sets an insufficient permissions' listener.
 	 *
 	 * @param listener The {@link OnInsufficientPermissionsListener}.
 	 */
@@ -132,34 +134,38 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
 	 *        String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper with this id is already registered!");
+			throw new IllegalArgumentException("Mapper for this class is already registered!");
 		}
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
 	 *        String}.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper) {
 		addTypeMapper(clazz, mapper, Fallback.NEVER);
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
@@ -168,6 +174,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *        String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
@@ -176,21 +184,51 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the mapper that allows to instantly create matching type instead of expecting {@link String}. {@link
-	 * Fallback} method will never be called.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}. {@link Fallback}
+	 * method will never be called.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
 	 * @param clazz The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of String
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper) {
 		addArgumentMapper(id, clazz, mapper, Fallback.NEVER);
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 *
+	 * @param anEnum The {@link Enum} that will be returned from mapper function,
+	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum, final Predicate<Object> fallbackCondition) {
+		final Function<String, T> mapper = name -> T.valueOf(anEnum, name.toUpperCase());
+		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
+			throw new IllegalArgumentException("Mapper for this enum is already registered!");
+		}
+	}
+
+	/**
+	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
+	 *
+	 * @param anEnum The {@link Enum} that will be returned from mapper function,
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum) {
+		addEnumMapper(anEnum, Fallback.NEVER);
+	}
+
+	/**
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param function The {@link Function} that will be used to create the list of matching values.
@@ -204,7 +242,25 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds an enum completer that allows to suggest values on command writing.
+	 *
+	 * @param anEnum The {@link Enum} class that will be matched to completer.
+	 * @param <T> The {@link Enum} type that will be mapped.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
+	 */
+	public <T extends Enum<T>> void addEnumCompleter(final Class<T> anEnum) {
+		final Function<CommandSender, Collection<String>> function = sender -> Arrays.stream(anEnum.getEnumConstants())
+				.map(String::valueOf)
+				.map(String::toUpperCase)
+				.collect(Collectors.toList());
+		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
+			throw new IllegalArgumentException("Completer for enum " + anEnum + " is already defined.");
+		}
+	}
+
+	/**
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param supplier The {@link Supplier} that will be used to create the list of matching values.
@@ -216,7 +272,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the type completer that allows to suggest values on command writing.
+	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param collection The {@link Collection} that will be the list of matching values.
@@ -228,7 +284,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.
@@ -243,7 +299,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.
@@ -256,7 +312,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds the argument completer that allows to suggest values on command writing.
+	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
 	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
 	 * 		select the created completer.

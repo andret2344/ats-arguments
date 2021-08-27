@@ -7,6 +7,7 @@ package eu.andret.arguments.example;
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.CommandManager;
 import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.example.entity.SomeEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -27,6 +28,8 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(World::getName)
 				.collect(Collectors.toList()));
+		testCommand.addEnumMapper(SomeEnum.class, Fallback.ON_NULL);
+		testCommand.addEnumCompleter(SomeEnum.class);
 		testCommand.addArgumentMapper("basicPlayerMapper", Player.class, Bukkit::getPlayer, Fallback.ON_NULL);
 		testCommand.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
 		testCommand.addArgumentCompleter("basicPlayerCompleter", () -> Bukkit.getOnlinePlayers()

@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.provider.TestEnum;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -13,6 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -121,22 +125,6 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void correctAddTypeMapper() {
-		// given
-		final PluginCommand command = mock(PluginCommand.class);
-		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
-		when(command.getExecutor()).thenReturn(executor);
-		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(true);
-
-		// when
-		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
-
-		// then
-		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
-	}
-
-	@Test
 	void incorrectAddArgumentMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
@@ -154,6 +142,22 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
+	void correctAddTypeMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(true);
+
+		// when
+		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
+
+		// then
+		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
+	}
+
+	@Test
 	void incorrectAddTypeMapper() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
@@ -168,6 +172,43 @@ class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
+	}
+
+	@Test
+	void correctAddEnumMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeMapper(eq(TestEnum.class), any())).thenReturn(true);
+		final Collection<String> values = Arrays.stream(TestEnum.values())
+				.map(Enum::toString)
+				.collect(Collectors.toList());
+
+		// when
+		annotatedCommand.addEnumMapper(TestEnum.class);
+
+		// then
+		verify(executor, times(1)).addTypeMapper(eq(TestEnum.class),
+				argThat(function -> function.getFunction().apply("TEST_ONE").equals(TestEnum.TEST_ONE)));
+	}
+
+	@Test
+	void incorrectAddEnumMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeMapper(eq(TestEnum.class), any())).thenReturn(false);
+
+		// when
+		final Executable result = () -> annotatedCommand.addEnumMapper(TestEnum.class);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(executor, times(1)).addTypeMapper(eq(TestEnum.class), any());
 	}
 
 	@Test
@@ -242,5 +283,42 @@ class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(completer, times(1)).addArgumentCompleter(eq("testPlayerMapper"), any());
+	}
+
+	@Test
+	void correctAddEnumCompleter() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(completer.addTypeCompleter(eq(TestEnum.class), any())).thenReturn(true);
+		final Collection<String> values = Arrays.stream(TestEnum.values())
+				.map(Enum::toString)
+				.collect(Collectors.toList());
+
+		// when
+		annotatedCommand.addEnumCompleter(TestEnum.class);
+
+		// then
+		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class),
+				argThat(function -> function.apply(null).equals(values)));
+	}
+
+	@Test
+	void incorrectAddEnumCompleter() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(completer.addTypeCompleter(eq(TestEnum.class), any())).thenReturn(false);
+
+		// when
+		final Executable result = () -> annotatedCommand.addEnumCompleter(TestEnum.class);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class), any());
 	}
 }
