@@ -43,7 +43,7 @@ public class ResponseConsumer implements IResponseConsumer {
 					.flatMap(Collection::stream)
 					.map(String::valueOf);
 		}
-		return Stream.of(result).map(String::valueOf);
+		return Arrays.stream(String.valueOf(result).split("\\r|\\n|\\r\\n|\\n\\r")).map(String::valueOf);
 	}
 
 	private String mapToColored(final String message, final AnnotatedCommand.Options options) {
