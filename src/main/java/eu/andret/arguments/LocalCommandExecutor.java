@@ -106,7 +106,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	/**
-	 * Sets on main command execution  listener.
+	 * Sets on main command execution listener.
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnMainCommandExecutionListener}
 	 */
