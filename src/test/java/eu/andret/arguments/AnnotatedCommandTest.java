@@ -69,10 +69,13 @@ class AnnotatedCommandTest {
 		});
 		annotatedCommand.setOnInsufficientPermissionsListener(sender -> {
 		});
+		annotatedCommand.setOnMainCommandExecutionListener(sender -> {
+		});
 
 		// then
 		verify(executor, times(1)).setOnUnknownSubCommandExecutionListener(any());
 		verify(executor, times(1)).setOnInsufficientPermissionsListener(any());
+		verify(executor, times(1)).setOnMainCommandExecutionListener(any());
 	}
 
 	@Test

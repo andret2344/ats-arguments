@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.AnnotatedCommand.OnInsufficientPermissionsListener;
+import eu.andret.arguments.AnnotatedCommand.OnMainCommandExecutionListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Fallback;
@@ -57,6 +58,27 @@ class LocalCommandExecutorTest {
 
 		// then
 		verify(sender, times(25)).sendMessage("/test testString");
+	}
+
+	@Test
+	void noCommandArgumentsWithListener() {
+		// given
+		final CommandSender sender = mock(CommandSender.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final IMethodToDescriptionMapper mapper = mock(IMethodToDescriptionMapper.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, null);
+		injectMapper(executor, mapper, "methodToDescriptionMapper");
+		when(mapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
+		when(command.getName()).thenReturn("test");
+		final OnMainCommandExecutionListener onMainCommandExecutionListener = mock(OnMainCommandExecutionListener.class);
+		executor.setOnMainCommandExecutionListener(onMainCommandExecutionListener);
+
+		// when
+		executor.onCommand(sender, command, "test", new String[0]);
+
+		// then
+		verify(onMainCommandExecutionListener, times(1)).mainCommandExecution(sender);
 	}
 
 	@Test
