@@ -13,7 +13,6 @@ import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
-import eu.andret.arguments.api.entity.ResponseType;
 import eu.andret.arguments.example.entity.SomeEnum;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -37,12 +36,6 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 			return "I'm secretly testing!";
 		}
 		return "I'm testing!";
-	}
-
-	@Argument(responseType = ResponseType.BROADCAST)
-	public String broadcast(final String... message) {
-		// "/test broadcast Welcome to the new server!", everyone on server gets "Welcome to the new server"
-		return String.join(" ", message);
 	}
 
 	@Fallback

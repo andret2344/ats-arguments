@@ -9,7 +9,6 @@ import eu.andret.arguments.AnnotatedCommand.OnMainCommandExecutionListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Fallback;
-import eu.andret.arguments.api.entity.ResponseType;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingSet;
@@ -209,7 +208,6 @@ class LocalCommandExecutorTest {
 		final ExecutionCall call = new ExecutionCall(method);
 		final Argument argument = mock(Argument.class);
 		when(method.getAnnotation(Argument.class)).thenReturn(argument);
-		when(argument.responseType()).thenReturn(ResponseType.SENDER);
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
@@ -234,7 +232,7 @@ class LocalCommandExecutorTest {
 		assertTrue(result);
 		verify(unknownSubCommandExecutionListener, times(0)).unknownSubCommandExecuted(any(CommandSender.class));
 		verify(insufficientPermissionsListener, times(0)).insufficientPermissions(sender);
-		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq(value), eq(ResponseType.SENDER), any(AnnotatedCommand.Options.class));
+		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq(value), any(AnnotatedCommand.Options.class));
 	}
 
 	@Test

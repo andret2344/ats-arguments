@@ -5,7 +5,6 @@
 package eu.andret.arguments.consumer;
 
 import eu.andret.arguments.AnnotatedCommand;
-import eu.andret.arguments.api.entity.ResponseType;
 import eu.andret.arguments.mapper.IMapper;
 import org.bukkit.command.CommandSender;
 
@@ -21,8 +20,7 @@ public interface IResponseConsumer extends IMapper {
 	 *
 	 * @param sender The {@link CommandSender} who performed the command.
 	 * @param result The result returned from called method.
-	 * @param responseType The {@link ResponseType}.
 	 * @param options The {@link AnnotatedCommand.Options}.
 	 */
-	void consumeResponse(CommandSender sender, Object result, ResponseType responseType, AnnotatedCommand.Options options);
+	void consumeResponse(CommandSender sender, Object result, AnnotatedCommand.Options options);
 }
