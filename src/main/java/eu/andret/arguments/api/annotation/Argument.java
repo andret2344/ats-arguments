@@ -7,7 +7,6 @@ package eu.andret.arguments.api.annotation;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
-import eu.andret.arguments.api.entity.ResponseType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -46,17 +45,6 @@ public @interface Argument {
 	 * @see ExecutorType
 	 */
 	ExecutorType executorType() default ExecutorType.ALL;
-
-	/**
-	 * Who should get the returned from method value.
-	 *
-	 * @return The response type.
-	 *
-	 * @see ResponseType
-	 * @deprecated
-	 */
-	@Deprecated(forRemoval = true, since = "Sep 08, 2021")
-	ResponseType responseType() default ResponseType.SENDER;
 
 	/**
 	 * The description od the method to appear in help.
