@@ -5,7 +5,6 @@
 package eu.andret.arguments.consumer.impl;
 
 import eu.andret.arguments.AnnotatedCommand;
-import eu.andret.arguments.api.entity.ResponseType;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -20,12 +19,12 @@ import java.util.stream.Stream;
  */
 public class ResponseConsumer implements IResponseConsumer {
 	@Override
-	public void consumeResponse(final CommandSender sender, final Object result, final ResponseType responseType, final AnnotatedCommand.Options options) {
+	public void consumeResponse(final CommandSender sender, final Object result, final AnnotatedCommand.Options options) {
 		Optional.ofNullable(result)
 				.map(this::createResponseStream)
 				.orElse(Stream.empty())
 				.map(message -> mapToColored(message, options))
-				.forEach(message -> consumeMessage(message, sender, responseType));
+				.forEach(sender::sendMessage);
 	}
 
 	private Stream<String> createResponseStream(final Object result) {
@@ -51,22 +50,5 @@ public class ResponseConsumer implements IResponseConsumer {
 			return message;
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);
-	}
-
-	private void consumeMessage(final String message, final CommandSender sender, final ResponseType responseType) {
-		switch (responseType) {
-			case SENDER:
-				sender.sendMessage(message);
-				break;
-			case CONSOLE:
-				sender.getServer().getLogger().info(message);
-				break;
-			case BROADCAST:
-				sender.getServer().broadcastMessage(message);
-				break;
-			case NONE:
-			default:
-				break;
-		}
 	}
 }

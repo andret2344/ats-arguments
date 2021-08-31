@@ -138,7 +138,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(final ExecutionCall method, final CommandSender sender, final String[] args) {
 		if (permissionFilter.filterPermission(method.getMethod(), sender)) {
 			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass, parameters);
-			responseConsumer.consumeResponse(sender, result, method.getMethod().getAnnotation(Argument.class).responseType(), annotatedCommand.getOptions());
+			responseConsumer.consumeResponse(sender, result, annotatedCommand.getOptions());
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}
