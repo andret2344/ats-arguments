@@ -28,12 +28,12 @@ public @interface Fallback {
 	Predicate<Object> ALWAYS = x -> true;
 
 	/**
-	 * The array of {@link Param} values which will fallback into annotated method if they met their fallback
+	 * The array of {@link Mapper} values which will fall back into annotated method if they met their fallback
 	 * conditions.
 	 *
 	 * @return The list of values.
 	 */
-	String[] value();
+	String[] value() default {};
 
 	/**
 	 * The {@link FallbackPriority} to determine the call order. Methods with equal priority will be called randomly.

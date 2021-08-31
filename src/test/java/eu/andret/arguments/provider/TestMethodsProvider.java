@@ -40,10 +40,12 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public void testMethodWithPermission() {
 	}
 
+	@SuppressWarnings("ArgumentMethodStatic")
 	@Argument
 	public static void testStaticMethod() {
 	}
 
+	@SuppressWarnings("PositionOutOfBounds")
 	@Argument(position = 1)
 	public void testMethodWithExceededPosition() {
 	}
@@ -84,7 +86,7 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public void testMethodWithArray(final String[] text) {
+	public void testMethodWithArray(@SuppressWarnings("ArrayParameter") final String[] text) {
 	}
 
 	@Fallback
