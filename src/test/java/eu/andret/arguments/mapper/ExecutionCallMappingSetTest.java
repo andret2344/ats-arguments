@@ -1,3 +1,7 @@
+/*
+ * Copyright Andret (c) 2018-2020. Copying and modifying allowed only keeping git link reference.
+ */
+
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.entity.ExecutionCall;
@@ -11,7 +15,7 @@ import java.lang.reflect.Method;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ExecutionCallMapperTest {
+class ExecutionCallMappingSetTest {
 	@Test
 	void methodWithFallback() throws NoSuchMethodException {
 		// given

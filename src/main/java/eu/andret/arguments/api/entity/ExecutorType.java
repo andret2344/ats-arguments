@@ -7,8 +7,8 @@ package eu.andret.arguments.api.entity;
 import eu.andret.arguments.api.annotation.Argument;
 
 /**
- * Describes who can execute the command. It's used in {@link Argument} to define who can execute
- * command bound to method.
+ * Describes who can execute the command. It's used in {@link Argument} to define who can execute command bound to
+ * method.
  *
  * @author Andret
  * @since May 18, 2019

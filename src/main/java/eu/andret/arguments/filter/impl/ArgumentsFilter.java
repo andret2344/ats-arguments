@@ -5,8 +5,8 @@
 package eu.andret.arguments.filter.impl;
 
 import eu.andret.arguments.Util;
-import eu.andret.arguments.api.annotation.Param;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import lombok.Value;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 @Value
 @Getter(AccessLevel.NONE)
 public class ArgumentsFilter implements IArgumentsFilter {
-	Map<String, Mapper<?>> mappers;
+	MappingConfig mappingConfig;
 
 	@Override
 	public boolean filter(final Method method, final String[] command) {
@@ -50,29 +49,32 @@ public class ArgumentsFilter implements IArgumentsFilter {
 			if (parameter.getType().isArray() && !parameter.isVarArgs()) {
 				throw new IllegalArgumentException("Cannot be the array! Use VarArgs instead. Method " + method);
 			}
-			final Param param = parameter.getAnnotation(Param.class);
-			if (!isOk(parameter, param, classes, i, parameters)) {
+			final Mapper mapper = parameter.getAnnotation(Mapper.class);
+			if (!isOk(parameter, mapper, classes, i, parameters)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean isOk(final Parameter parameter, final Param param, final List<Class<?>> classes, final int i, final List<Parameter> parameters) {
+	private boolean isOk(final Parameter parameter, final Mapper mapper, final List<Class<?>> classes, final int i, final List<Parameter> parameters) {
 		if (parameter.isVarArgs()) {
-			return isTypeMatchingVarArgParameter(parameter, param, classes.subList(i, classes.size()));
+			return isTypeMatchingVarArgParameter(parameter.getType().getComponentType(), mapper, classes.subList(i, classes.size()));
 		}
-		return (i != parameters.size() - 1 || i >= classes.size() - 1) && isTypeMatchingParam(parameter, param, classes.get(i));
+		return (i != parameters.size() - 1 || i >= classes.size() - 1) && isTypeMatchingParam(parameter.getType(), mapper, classes.get(i));
 	}
 
-	private boolean isTypeMatchingVarArgParameter(final Parameter parameter, final Param param, final List<Class<?>> classes) {
-		return classes.stream().allMatch(clazz -> clazz.isAssignableFrom(parameter.getType().getComponentType()) ||
-				(clazz == String.class && param != null && mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType().getComponentType())));
+	private boolean isTypeMatchingVarArgParameter(final Class<?> parameterClass, final Mapper mapper, final List<Class<?>> classes) {
+		return classes.stream().allMatch(clazz -> isTypeMatchingParam(parameterClass, mapper, clazz));
 	}
 
-	private boolean isTypeMatchingParam(final Parameter parameter, final Param param, final Class<?> clazz) {
-		return param == null
-				? clazz.isAssignableFrom(parameter.getType())
-				: mappers.get(param.value()).getClazz().isAssignableFrom(parameter.getType());
+	private boolean isTypeMatchingParam(final Class<?> parameterClass, final Mapper mapper, final Class<?> clazz) {
+		if (mapper != null) {
+			return mappingConfig.get(mapper.value()).getClazz().isAssignableFrom(parameterClass);
+		}
+		if (mappingConfig.exists(parameterClass)) {
+			return true;
+		}
+		return clazz.isAssignableFrom(parameterClass);
 	}
 }

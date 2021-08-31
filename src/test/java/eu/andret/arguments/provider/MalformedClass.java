@@ -9,6 +9,7 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,15 +17,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 @BaseCommand("malformed")
 @EqualsAndHashCode(callSuper = true)
 public class MalformedClass extends AnnotatedCommandExecutor<JavaPlugin> {
-	String world;
-
-	public MalformedClass(final CommandSender sender, final JavaPlugin plugin, final String world) {
-		super(sender, plugin);
-		this.world = world;
+	public MalformedClass(final CommandSender sender) {
+		super(sender, null);
 	}
 
 	@Argument
 	public String world() {
-		return world;
+		return Bukkit.getServer().getWorld("world").getName();
 	}
 }

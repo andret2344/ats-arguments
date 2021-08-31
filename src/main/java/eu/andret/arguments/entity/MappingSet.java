@@ -11,8 +11,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * This class remembers the returned from mapping function class. It was needed to have such a
- * class, because generic type is lost after compilation.
+ * This class remembers the returned from mapping function class. It was needed to have such a class, because generic
+ * type is lost after compilation.
  *
  * @param <T> The returned from function type;
  *
@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  * @since Apr 17, 2020
  */
 @Value
-public class Mapper<T> {
+public class MappingSet<T> {
 	Class<T> clazz;
 	Function<String, T> function;
 	@NonNull

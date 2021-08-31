@@ -4,9 +4,10 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.Mapper;
+import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -19,7 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-class CommandToMethodMapperTest {
+class CommandToMethodMappingSetTest {
 	@Mock
 	private IExecutionCallMapper executionCallMapper;
 	@Mock
@@ -42,16 +43,13 @@ class CommandToMethodMapperTest {
 	@Mock
 	private IArgumentsFilter argumentsMapper;
 	@Mock
-	private Map<String, Mapper<?>> mappers;
+	private Map<String, MappingSet<?>> mappers;
 	@InjectMocks
 	private CommandToMethodMapper mapper;
 
 	@BeforeEach
 	void setup() {
-		Mockito.mockitoSession()
-				.initMocks(this)
-				.startMocking()
-				.finishMocking();
+		MockitoAnnotations.openMocks(this);
 	}
 
 	static Iterable<Object[]> data() {
@@ -75,13 +73,14 @@ class CommandToMethodMapperTest {
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> executor = TestMethodsProvider.class;
 		final Method method = executor.getDeclaredMethod("testMethod");
 		final CommandSender sender = mock(CommandSender.class);
+		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));
-		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class))).thenReturn(methodNameMapperResult);
+		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
 		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
 		lenient().when(argumentsMapper.filter(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender);
+		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {

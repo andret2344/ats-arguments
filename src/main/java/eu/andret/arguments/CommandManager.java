@@ -22,12 +22,14 @@ public class CommandManager {
 	 *
 	 * @param commandClass The class extending {@link AnnotatedCommandExecutor}
 	 * @param plugin The class extending {@link JavaPlugin} as main class of plugin
-	 * @param <T> The main plugin class that extends {@link JavaPlugin}.
+	 * @param arguments The arguments that will be passed into {@link AnnotatedCommandExecutor} constructor.
+	 * @param <E> The main plugin class that extends {@link JavaPlugin}.
 	 *
 	 * @return AnnotatedCommand
 	 */
-	public <T extends JavaPlugin> AnnotatedCommand registerCommand(final Class<? extends AnnotatedCommandExecutor<T>> commandClass,
-																   final T plugin) {
+	public <E extends JavaPlugin> AnnotatedCommand<E> registerCommand(final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+																	  final E plugin,
+																	  final Object... arguments) {
 		final BaseCommand annotation = commandClass.getAnnotation(BaseCommand.class);
 		if (annotation == null) {
 			throw new UnsupportedOperationException("Class not annotated with @" + BaseCommand.class.getName());
@@ -36,8 +38,10 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		pluginCommand.setExecutor(new LocalCommandExecutor(commandClass, plugin));
-		pluginCommand.setTabCompleter(new LocalTabCompleter(commandClass));
-		return new AnnotatedCommand(pluginCommand);
+		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
+		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand, options);
+		pluginCommand.setExecutor(new LocalCommandExecutor<>(annotatedCommand, commandClass, plugin, arguments));
+		pluginCommand.setTabCompleter(new LocalTabCompleter<>(annotatedCommand, commandClass));
+		return annotatedCommand;
 	}
 }

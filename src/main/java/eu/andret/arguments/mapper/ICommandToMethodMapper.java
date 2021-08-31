@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
@@ -22,9 +23,9 @@ public interface ICommandToMethodMapper extends IMapper {
 	 * @param methods Methods annotated with {@link Argument}.
 	 * @param command The arguments array that followed up base command.
 	 * @param sender The {@link CommandSender} of the command.
+	 * @param options The command options.
 	 *
-	 * @return The Optional wrapping matching method that will be called, or {@link
-	 *        Optional#empty()} if none found.
+	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
-	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender);
+	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender, AnnotatedCommand.Options options);
 }

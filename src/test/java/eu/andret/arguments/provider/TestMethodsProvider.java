@@ -10,7 +10,7 @@ import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
-import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import org.bukkit.World;
@@ -92,11 +92,11 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public void testMethodWithParam(@Param("testWorldMapper") final World world) {
+	public void testMethodWithParam(@Mapper("testWorldMapper") final World world) {
 	}
 
 	@Argument
-	public void testMethodWithParamVarArg(@Param("testWorldMapper") final World... material) {
+	public void testMethodWithParamVarArg(@Mapper("testWorldMapper") final World... material) {
 	}
 
 	@Argument

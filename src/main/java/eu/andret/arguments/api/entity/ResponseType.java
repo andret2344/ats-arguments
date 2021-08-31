@@ -12,7 +12,9 @@ import eu.andret.arguments.api.annotation.Argument;
  *
  * @author Andret
  * @since May 18, 2019
+ * @deprecated
  */
+@Deprecated(forRemoval = true, since = "Sep 08, 2021")
 public enum ResponseType {
 	/**
 	 * None response type.

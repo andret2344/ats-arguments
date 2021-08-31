@@ -10,14 +10,17 @@ import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
-import eu.andret.arguments.api.annotation.Param;
+import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.ResponseType;
+import eu.andret.arguments.example.entity.SomeEnum;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
 
@@ -49,7 +52,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String player(@Param("playerMapper") @Completer("playerCompleter") final Player player) {
+	public String player(@Mapper("playerMapper") @Completer("playerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -59,7 +62,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Param("playerMapper") @Completer("playerCompleter") final Player... players) {
+	public String distance(@Mapper("playerMapper") @Completer("playerCompleter") final Player... players) {
 		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -71,18 +74,21 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(displayType = DisplayType.NONE)
-	public void notDisplayed() {
+	public String notDisplayed() {
 		// Argument won't be displayed when "/test" will be executed
+		return "Not displayed";
 	}
 
 	@Argument(displayType = DisplayType.IF_PERMS, permission = "eu.andret.test.conditions")
-	public void conditionallyDisplayed() {
+	public String conditionallyDisplayed() {
 		// Argument will be displayed when "/test" will be executed only if sender has permissions
+		return "Conditionally displayed";
 	}
 
 	@Argument(displayType = DisplayType.ALWAYS, permission = "eu.andret.test.conditions")
-	public void alwaysDisplayed() {
+	public String alwaysDisplayed() {
 		// Argument will be displayed when "/test" will be executed under no conditions
+		return "Always displayed";
 	}
 
 	@Argument
@@ -116,7 +122,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("playerMapper") final Player player) {
+	public String overloaded(@Mapper("playerMapper") final Player player) {
 		return "Overloaded with one player argument: " + player.getName();
 	}
 
@@ -126,7 +132,27 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Param("playerMapper") final Player player, final int argument) {
+	public String overloaded(@Mapper("playerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
+	}
+
+	@Argument
+	public String[] array() {
+		return new String[]{"First array line", "Second array line"};
+	}
+
+	@Argument
+	public List<String> list() {
+		return Arrays.asList("First list line", "second list line");
+	}
+
+	@Argument
+	public String amI(final World world) {
+		return ((Player) sender).getWorld().equals(world) ? "Yes!" : "No...";
+	}
+
+	@Argument
+	public String enumeration(final SomeEnum someEnum) {
+		return someEnum.name();
 	}
 }

@@ -22,8 +22,7 @@ public interface IPermissionFilter extends IMapper {
 	 * @param method The {@link Method} to be analyzed.
 	 * @param sender The {@link CommandSender} who performed the command.
 	 *
-	 * @return {@code true} if sender has permission to execute the command or is op, {@code false}
-	 * 		otherwise.
+	 * @return {@code true} if sender has permission to execute the command or is op, {@code false} otherwise.
 	 */
 	boolean filterPermission(Method method, CommandSender sender);
 }
