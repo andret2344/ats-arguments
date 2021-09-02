@@ -5,10 +5,11 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.api.annotation.Fallback;
-import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.mapper.impl.FallbackInvoker;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.provider.MalformedClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
@@ -41,10 +42,9 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethod"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethod"}, sender, commandClass);
 
 		// then
 		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin));
@@ -57,21 +57,24 @@ class MethodInvokerTest {
 		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, World> {
 		}
+		abstract class LocalFallbackInvoker extends FallbackInvoker<JavaPlugin> {
+		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, Fallback.ALWAYS));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method methodWorld = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final Method methodString = spy(commandClass.getDeclaredMethod("testMethodWithParam", String.class));
-		final ExecutionCall call = new ExecutionCall(methodWorld, methodString);
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.ALWAYS));
+		final IFallbackInvoker<JavaPlugin> fallbackInvoker = mock(LocalFallbackInvoker.class);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig, fallbackInvoker);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
+		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
+		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
+		final TestMethodsProvider o = (TestMethodsProvider) provider.getConstructors()[0].newInstance(sender, plugin);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethod", "test"}, sender, commandClass);
+		invoker.invokeMethod(methodWorld, new String[]{"testMethod", "test"}, sender, provider);
 
 		// then
 		verify(methodWorld, times(0)).invoke(any());
-		verify(methodString, times(1)).invoke(new TestMethodsProvider(sender, plugin), "test");
+		verify(fallbackInvoker, times(1)).invokeFallback(mapper, "test", World.class, o);
 	}
 
 	@Test
@@ -82,10 +85,9 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethodWithArgument", "test"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethodWithArgument", "test"}, sender, commandClass);
 
 		// then
 		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin), "test");
@@ -99,10 +101,9 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"test", "testMethodWithCorrectPosition"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"test", "testMethodWithCorrectPosition"}, sender, commandClass);
 
 		// then
 		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin), "test");
@@ -116,10 +117,9 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
 		final Method method = spy(commandClass.getDeclaredMethod("world"));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		final Executable result = () -> invoker.invokeMethod(call, new String[]{"world"}, sender, commandClass);
+		final Executable result = () -> invoker.invokeMethod(method, new String[]{"world"}, sender, commandClass);
 
 		// then
 		assertThrows(IllegalStateException.class, result);
@@ -134,11 +134,10 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethod"}, sender, commandClass);
-		invoker.invokeMethod(call, new String[]{"testMethod"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethod"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethod"}, sender, commandClass);
 
 		// then
 		verify(method, times(2)).invoke(new TestMethodsProvider(sender, plugin));
@@ -157,11 +156,10 @@ class MethodInvokerTest {
 		final MappingConfig mappingConfig = new MappingConfig();
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final ExecutionCall call = new ExecutionCall(method);
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
 
 		// when
-		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, ex);
@@ -180,14 +178,13 @@ class MethodInvokerTest {
 		final Location world = mock(Location.class);
 		when(getLocation.apply("world")).thenReturn(world);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, TypeFallback.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, ex);
@@ -203,10 +200,9 @@ class MethodInvokerTest {
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "1", "2"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "1", "2"}, sender, commandClass);
 
 		// then
 		final Object args = new int[]{1, 2};
@@ -224,14 +220,13 @@ class MethodInvokerTest {
 		final World world = mock(World.class);
 		when(getWorld.apply("world")).thenReturn(world);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final ExecutionCall call = new ExecutionCall(method);
 		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
 
 		// when
-		invoker.invokeMethod(call, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
+		invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
 
 		// then
 		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin), world);
@@ -248,10 +243,9 @@ class MethodInvokerTest {
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
 		final Logger logger = mock(Logger.class);
 		when(plugin.getLogger()).thenReturn(logger);
-		final ExecutionCall call = new ExecutionCall(method);
 
 		// when
-		final Executable ex = () -> invoker.invokeMethod(call, new String[]{"testMethodWithException"}, sender, commandClass);
+		final Executable ex = () -> invoker.invokeMethod(method, new String[]{"testMethodWithException"}, sender, commandClass);
 
 		// then
 		assertThrows(InvocationTargetException.class, ex);

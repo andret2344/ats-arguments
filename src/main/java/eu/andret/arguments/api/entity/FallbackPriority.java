@@ -4,12 +4,12 @@
 
 package eu.andret.arguments.api.entity;
 
-import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Represents {@link Fallback} method's priority in execution.
+ * Represents {@link TypeFallback} method's priority in execution.
  */
 @Getter
 @AllArgsConstructor

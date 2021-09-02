@@ -6,11 +6,12 @@ package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
-import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.example.entity.SomeEnum;
@@ -31,16 +32,16 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(permission = "me.testing")
-	public String testing() {
-		// "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+	public String running() {
+		// "/test running", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
 		if (plugin.isSuperSecretSetting()) {
 			return "I'm secretly testing!";
 		}
 		return "I'm testing!";
 	}
 
-	@Fallback("playerMapper")
-	public String player(final String player) {
+	@ArgumentFallback("playerMapper")
+	public String playerFallback(final String player) {
 		return "The player \"" + player + "\" is offline!";
 	}
 
@@ -142,6 +143,11 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String amI(final World world) {
 		return ((Player) sender).getWorld().equals(world) ? "Yes!" : "No...";
+	}
+
+	@TypeFallback(World.class)
+	public String worldFallback(final String world) {
+		return "The world \"" + world + "\" is invalid!";
 	}
 
 	@Argument

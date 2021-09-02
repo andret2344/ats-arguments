@@ -6,18 +6,22 @@ package eu.andret.arguments.provider;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
-import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
+import eu.andret.arguments.api.entity.FallbackPriority;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("unused")
 @BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(final CommandSender sender, final JavaPlugin plugin) {
@@ -89,8 +93,8 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public void testMethodWithArray(@SuppressWarnings("ArrayParameter") final String[] text) {
 	}
 
-	@Fallback
-	public void testMethodWithParam(final String world) {
+	@ArgumentFallback("testWorldMapper")
+	public void testMethodWithParamArgumentFallback(final String world) {
 	}
 
 	@Argument
@@ -140,5 +144,17 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@Argument
 	public void testMethodWithMismatchedArgumentCompletion(@Completer("mismatch") final World world) {
+	}
+
+	@Argument
+	public void testMethodWithMappedArgument(final Location location) {
+	}
+
+	@TypeFallback(value = Location.class, priority = FallbackPriority.LOWEST)
+	public void testMethodWithMappedArgumentTypeFallbackLowest(final String text) {
+	}
+
+	@TypeFallback(value = Location.class, priority = FallbackPriority.HIGHEST)
+	public void testMethodWithMappedArgumentTypeFallbackHighest(final String text) {
 	}
 }

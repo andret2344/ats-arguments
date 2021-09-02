@@ -30,7 +30,7 @@ public class ArgumentsFilter implements IArgumentsFilter {
 	MappingConfig mappingConfig;
 
 	@Override
-	public boolean filter(final Method method, final String[] command) {
+	public boolean filterArguments(final Method method, final String[] command) {
 		final int size = Math.min(command.length - 1, method.getParameterCount());
 		if (size == 0 && command.length - 1 + method.getParameterCount() != 0) {
 			return false;

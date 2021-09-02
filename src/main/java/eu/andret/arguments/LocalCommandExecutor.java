@@ -7,7 +7,6 @@ package eu.andret.arguments;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
-import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
@@ -30,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
@@ -62,7 +62,9 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
 
-	LocalCommandExecutor(final AnnotatedCommand<E> annotatedCommand, final Class<? extends AnnotatedCommandExecutor<E>> commandClass, final E plugin, final Object... parameters) {
+	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
+						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+						 @NotNull final E plugin, @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.parameters = parameters;
@@ -70,7 +72,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String label, @NotNull final String[] args) {
+	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
+							 @NotNull final String label, @NotNull final String[] args) {
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
 					.ifPresentOrElse(listener -> listener.mainCommandExecution(sender), () ->
@@ -78,7 +81,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 									.filter(method -> !Modifier.isStatic(method.getModifiers()))
 									.filter(method -> method.isAnnotationPresent(Argument.class))
 									.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
-									.forEach(method -> sender.sendMessage(methodToDescriptionMapper.mapMethodToDescription(method, command.getName()))));
+									.forEach(method -> sender.sendMessage(methodToDescriptionMapper
+											.mapMethodToDescription(method, command.getName()))));
 		} else {
 			commandToMethodMapper
 					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender, annotatedCommand.getOptions())
@@ -92,7 +96,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnUnknownSubCommandExecutionListener}
 	 */
-	public void setOnUnknownSubCommandExecutionListener(final AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(
+			@NotNull final AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
@@ -101,7 +106,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnInsufficientPermissionsListener}
 	 */
-	public void setOnInsufficientPermissionsListener(final AnnotatedCommand.OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(
+			@NotNull final AnnotatedCommand.OnInsufficientPermissionsListener listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 
@@ -110,11 +116,12 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	 *
 	 * @param listener The {@link AnnotatedCommand.OnMainCommandExecutionListener}
 	 */
-	public void setOnMainCommandExecutionListener(final AnnotatedCommand.OnMainCommandExecutionListener listener) {
+	public void setOnMainCommandExecutionListener(
+			@NotNull final AnnotatedCommand.OnMainCommandExecutionListener listener) {
 		onMainCommandExecutionListener = listener;
 	}
 
-	<M> boolean addArgumentMapper(final String id, final MappingSet<M> mappingSet) {
+	<M> boolean addArgumentMapper(@NotNull final String id, @NotNull final MappingSet<M> mappingSet) {
 		if (mappingConfig.exists(id)) {
 			return false;
 		}
@@ -122,7 +129,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		return true;
 	}
 
-	<M> boolean addTypeMapper(final Class<M> clazz, final MappingSet<M> mappingSet) {
+	<M> boolean addTypeMapper(@NotNull final Class<M> clazz, @NotNull final MappingSet<M> mappingSet) {
 		if (mappingConfig.exists(clazz)) {
 			return false;
 		}
@@ -130,13 +137,14 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		return true;
 	}
 
-	private void noneMethodFound(final CommandSender sender) {
+	private void noneMethodFound(@NotNull final CommandSender sender) {
 		Optional.ofNullable(onUnknownSubCommandExecutionListener)
 				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
 	}
 
-	private void invokeMethod(final ExecutionCall method, final CommandSender sender, final String[] args) {
-		if (permissionFilter.filterPermission(method.getMethod(), sender)) {
+	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
+							  @NotNull final String[] args) {
+		if (permissionFilter.filterPermission(method, sender)) {
 			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass, parameters);
 			responseConsumer.consumeResponse(sender, result, annotatedCommand.getOptions());
 		} else if (onInsufficientPermissionsListener != null) {

@@ -5,7 +5,6 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommand;
-import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
@@ -15,7 +14,6 @@ import eu.andret.arguments.filter.impl.ArgumentsFilter;
 import eu.andret.arguments.filter.impl.ExecutorTypeFilter;
 import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
-import eu.andret.arguments.mapper.IExecutionCallMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +35,6 @@ import java.util.Optional;
 @Getter(AccessLevel.NONE)
 public class CommandToMethodMapper implements ICommandToMethodMapper {
 	MappingConfig mappingConfig;
-	IExecutionCallMapper executionCallMapper;
 	IMethodNameFilter methodNameFilter;
 	IExecutorTypeFilter executorTypeFilter;
 	IArgumentsFilter argumentsFilter;
@@ -48,16 +45,15 @@ public class CommandToMethodMapper implements ICommandToMethodMapper {
 	 * @param mappingConfig The map of the {@link String}-{@link MappingSet} pair.
 	 */
 	public CommandToMethodMapper(final MappingConfig mappingConfig) {
-		this(mappingConfig, new ExecutionCallMapper(), new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappingConfig));
+		this(mappingConfig, new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappingConfig));
 	}
 
 	@Override
-	public Optional<ExecutionCall> mapCommandToMethod(final Method[] methods, final String[] command, final CommandSender sender, final AnnotatedCommand.Options options) {
+	public Optional<Method> mapCommandToMethod(final Method[] methods, final String[] command, final CommandSender sender, final AnnotatedCommand.Options options) {
 		return Arrays.stream(methods)
-				.map(method -> executionCallMapper.mapExecutionCall(method, methods))
-				.filter(executionCall -> methodNameFilter.filterMethodName(executionCall.getMethod(), command, options))
-				.filter(executionCall -> executorTypeFilter.filterExecutorType(executionCall.getMethod(), sender))
-				.filter(executionCall -> argumentsFilter.filter(executionCall.getMethod(), command))
+				.filter(method -> methodNameFilter.filterMethodName(method, command, options))
+				.filter(method -> executorTypeFilter.filterExecutorType(method, sender))
+				.filter(method -> argumentsFilter.filterArguments(method, command))
 				.findFirst();
 	}
 }

@@ -6,7 +6,6 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;
@@ -27,5 +26,5 @@ public interface ICommandToMethodMapper extends IMapper {
 	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
-	Optional<ExecutionCall> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender, AnnotatedCommand.Options options);
+	Optional<Method> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender, AnnotatedCommand.Options options);
 }

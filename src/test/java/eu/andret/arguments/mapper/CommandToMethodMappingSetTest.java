@@ -6,8 +6,6 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -24,7 +22,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,15 +32,11 @@ import static org.mockito.Mockito.mock;
 
 class CommandToMethodMappingSetTest {
 	@Mock
-	private IExecutionCallMapper executionCallMapper;
-	@Mock
 	private IMethodNameFilter methodNameMapper;
 	@Mock
 	private IExecutorTypeFilter executorTypeMapper;
 	@Mock
 	private IArgumentsFilter argumentsMapper;
-	@Mock
-	private Map<String, MappingSet<?>> mappers;
 	@InjectMocks
 	private CommandToMethodMapper mapper;
 
@@ -74,17 +67,16 @@ class CommandToMethodMappingSetTest {
 		final Method method = executor.getDeclaredMethod("testMethod");
 		final CommandSender sender = mock(CommandSender.class);
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
-		lenient().when(executionCallMapper.mapExecutionCall(eq(method), any(Method[].class))).thenReturn(new ExecutionCall(method));
 		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
 		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
-		lenient().when(argumentsMapper.filter(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
+		lenient().when(argumentsMapper.filterArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		final Optional<ExecutionCall> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);
+		final Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {
-			assertEquals(Optional.of(method), result.map(ExecutionCall::getMethod));
+			assertEquals(Optional.of(method), result);
 		} else {
 			assertEquals(Optional.empty(), result);
 		}

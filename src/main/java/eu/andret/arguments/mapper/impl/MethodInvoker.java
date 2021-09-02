@@ -8,11 +8,11 @@ import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.mapper.IFallbackInvoker;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,6 +44,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
 	MappingConfig mappingConfig;
+	IFallbackInvoker<E> fallbackInvoker;
 
 	/**
 	 * Smallest acceptable constructor.
@@ -51,31 +52,39 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	 * @param plugin The plugin.
 	 */
 	public MethodInvoker(final JavaPlugin plugin) {
-		this(plugin, new MappingConfig());
+		this(plugin, new MappingConfig(), new FallbackInvoker<>());
+	}
+
+	/**
+	 * Medium acceptable constructor.
+	 *
+	 * @param plugin The plugin.
+	 */
+	public MethodInvoker(final JavaPlugin plugin, final MappingConfig mappingConfig) {
+		this(plugin, mappingConfig, new FallbackInvoker<>());
 	}
 
 	@Override
 	@Nullable
 	@SneakyThrows
-	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender,
+	public Object invokeMethod(final Method method, final String[] command, final CommandSender sender,
 							   final Class<? extends AnnotatedCommandExecutor<E>> executor, final Object... parameters) {
-		final AnnotatedCommandExecutor<E> instance = createInstance(sender, executor, parameters);
+		final AnnotatedCommandExecutor<E> commandExecutor = createInstance(sender, executor, parameters);
 		try {
-			final Object[] data = recalculateArguments(call.getMethod(), command);
-			return call.getMethod().invoke(instance, data);
+			final Object[] data = recalculateArguments(method, command);
+			return method.invoke(commandExecutor, data);
 		} catch (final FallbackException ex) {
-			final Object[] data = recalculateArguments(call.getFallbackMethod(), command);
-			return call.getFallbackMethod().invoke(instance, data);
+			return fallbackInvoker.invokeFallback(ex.getMapper(), ex.getValue(), ex.getTargetClass(), commandExecutor);
 		}
 	}
 
 	private Object[] recalculateArguments(final Method method, final String... args) {
 		final Argument argument = method.getAnnotation(Argument.class);
-		final Fallback fallback = method.getAnnotation(Fallback.class);
+		final TypeFallback typeFallback = method.getAnnotation(TypeFallback.class);
 		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
 		for (int i = 0; i < method.getParameterCount(); i++) {
-			if (fallback != null && i == 0 || i == argument.position()) {
+			if (typeFallback != null && i == 0 || i == argument.position()) {
 				skip++;
 			}
 			final Mapper mapper = method.getParameters()[i].getAnnotation(Mapper.class);
@@ -97,7 +106,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 
 	private Object map(final Mapper mapper, final Class<?> type, final String value) {
 		return getMatchingMappingSet(mapper, type)
-				.map(mappingSet -> convert(mappingSet, type, value))
+				.map(mappingSet -> convert(mapper, mappingSet, type, value))
 				.orElseGet(() -> Util.convert(type, value));
 	}
 
@@ -112,10 +121,11 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 		return Optional.of(clazz).map(mappingConfig::get);
 	}
 
-	private Object convert(final MappingSet<?> mappingSet, final Class<?> targetClass, final String value) {
+	private Object convert(final Mapper mapper, final MappingSet<?> mappingSet, final Class<?> targetClass,
+						   final String value) {
 		final Object result = mappingSet.getFunction().apply(value);
 		if (mappingSet.getFallbackCondition().test(result)) {
-			throw new FallbackException("Fallback condition failed");
+			throw new FallbackException("Fallback condition failed", mapper, targetClass, value);
 		}
 		return targetClass.cast(result);
 	}

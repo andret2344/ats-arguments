@@ -22,7 +22,7 @@ import java.util.function.Predicate;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Fallback {
+public @interface ArgumentFallback {
 	Predicate<Object> NEVER = x -> false;
 	Predicate<Object> ON_NULL = Objects::isNull;
 	Predicate<Object> ALWAYS = x -> true;
@@ -33,7 +33,7 @@ public @interface Fallback {
 	 *
 	 * @return The list of values.
 	 */
-	String[] value() default {};
+	String[] value();
 
 	/**
 	 * The {@link FallbackPriority} to determine the call order. Methods with equal priority will be called randomly.
