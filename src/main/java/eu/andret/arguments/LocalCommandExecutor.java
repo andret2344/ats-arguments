@@ -14,10 +14,10 @@ import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
-import eu.andret.arguments.mapper.IMethodInvoker;
+import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
-import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,7 +52,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
-	IMethodInvoker<E> methodInvoker;
+	IMethodSelector<E> methodSelector;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	@NonFinal
@@ -68,7 +68,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.parameters = parameters;
-		methodInvoker = new MethodInvoker<>(plugin, mappingConfig);
+		methodSelector = new MethodSelector<>(plugin, mappingConfig);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
-			final Object result = methodInvoker.invokeMethod(method, args, sender, commandClass, parameters);
+			final Object result = methodSelector.invokeMethod(method, args, sender, commandClass, parameters);
 			responseConsumer.consumeResponse(sender, result, annotatedCommand.getOptions());
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);

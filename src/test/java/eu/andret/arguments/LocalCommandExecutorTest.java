@@ -14,7 +14,7 @@ import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IMapper;
-import eu.andret.arguments.mapper.IMethodInvoker;
+import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Bukkit;
@@ -197,9 +197,9 @@ class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
-		abstract class LocalMethodInvoker implements IMethodInvoker<JavaPlugin> {
+		abstract class LocalMethodSelector implements IMethodSelector<JavaPlugin> {
 		}
-		final LocalMethodInvoker methodInvoker = mock(LocalMethodInvoker.class);
+		final LocalMethodSelector methodSelector = mock(LocalMethodSelector.class);
 		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final Method method = mock(Method.class);
 		final Argument argument = mock(Argument.class);
@@ -208,11 +208,11 @@ class LocalCommandExecutorTest {
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 		final Object value = mock(Object.class);
-		when(methodInvoker.invokeMethod(eq(method), any(String[].class), eq(sender), eq(TestMethodsProvider.class))).thenReturn(value);
+		when(methodSelector.invokeMethod(eq(method), any(String[].class), eq(sender), eq(TestMethodsProvider.class))).thenReturn(value);
 		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
-		injectMapper(executor, methodInvoker, "methodInvoker");
+		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, responseConsumer, "responseConsumer");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};

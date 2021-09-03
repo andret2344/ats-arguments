@@ -21,18 +21,18 @@ import java.util.List;
  * @author Andret
  * @since Sep 02, 2021
  */
-public interface IFallbackInvoker<E extends JavaPlugin> {
+public interface IFallbackSelector<E extends JavaPlugin> {
 	/**
 	 * Invokes fallback method on basis of annotation value.
 	 *
 	 * @param mapper The {@link Mapper} annotation of failed mapping.
 	 * @param targetClass The {@link Class} that's instance was to be created.
-	 * @param executor The class reference, where the method was written.
+	 * @param executorClass The class reference, where the method was written.
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull
 	List<Method> invokeFallback(@Nullable Mapper mapper,
 								@NotNull Class<?> targetClass,
-								@NotNull Class<? extends AnnotatedCommandExecutor<E>> executor);
+								@NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass);
 }

@@ -9,9 +9,9 @@ import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
-import eu.andret.arguments.mapper.impl.FallbackInvoker;
+import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
-import eu.andret.arguments.mapper.impl.RealMethodInvoker;
+import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.provider.MalformedClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Location;
@@ -40,7 +40,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 
@@ -58,27 +58,26 @@ class MethodInvokerTest {
 		final CommandSender sender = mock(CommandSender.class);
 		abstract class LocalFunction implements Function<String, World> {
 		}
-		abstract class LocalFallbackInvoker extends FallbackInvoker<JavaPlugin> {
-			public LocalFallbackInvoker(final JavaPlugin plugin) {
+		abstract class LocalFallbackSelector extends FallbackSelector<JavaPlugin> {
+			public LocalFallbackSelector(final JavaPlugin plugin) {
 				super(plugin);
 			}
 		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.ALWAYS));
-		final IFallbackInvoker<JavaPlugin> fallbackInvoker = mock(LocalFallbackInvoker.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig, fallbackInvoker, new RealMethodInvoker<>(plugin));
+		final IFallbackSelector<JavaPlugin> fallbackInvoker = mock(LocalFallbackSelector.class);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin, mappingConfig, fallbackInvoker, new MethodInvoker<>(plugin));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
 		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
 		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
-		final TestMethodsProvider o = (TestMethodsProvider) provider.getConstructors()[0].newInstance(sender, plugin);
 
 		// when
 		invoker.invokeMethod(methodWorld, new String[]{"testMethod", "test"}, sender, provider);
 
 		// then
 		verify(methodWorld, times(0)).invoke(any());
-//		verify(fallbackInvoker, times(1)).invokeFallback(mapper, "test", World.class, sender, provider);
+		verify(fallbackInvoker, times(1)).invokeFallback(mapper, World.class, provider);
 	}
 
 	@Test
@@ -86,7 +85,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
 
@@ -102,7 +101,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
 
@@ -118,7 +117,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
 		final Method method = spy(commandClass.getDeclaredMethod("world"));
 
@@ -135,7 +134,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 
@@ -160,7 +159,7 @@ class MethodInvokerTest {
 		final MappingConfig mappingConfig = new MappingConfig();
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin, mappingConfig);
 
 		// when
 		final Executable ex = () -> invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -185,7 +184,7 @@ class MethodInvokerTest {
 		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, TypeFallback.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin, mappingConfig);
 
 		// when
 		final Executable ex = () -> invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -201,7 +200,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
 
@@ -227,7 +226,7 @@ class MethodInvokerTest {
 		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin, mappingConfig);
 
 		// when
 		invoker.invokeMethod(method, new String[]{"testMethodWithIntVararg", "world"}, sender, commandClass);
@@ -242,7 +241,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
+		final IMethodSelector<JavaPlugin> invoker = new MethodSelector<>(plugin);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
 		final Logger logger = mock(Logger.class);

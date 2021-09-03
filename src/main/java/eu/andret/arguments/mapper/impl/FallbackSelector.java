@@ -8,7 +8,7 @@ import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
-import eu.andret.arguments.mapper.IFallbackInvoker;
+import eu.andret.arguments.mapper.IFallbackSelector;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
@@ -24,14 +24,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * An implementation of {@link IFallbackInvoker}.
+ * An implementation of {@link IFallbackSelector}.
+ *
+ * @param <E> The JavaPlugin instance.
  *
  * @author Andret
  * @since Sep 02, 2021
  */
 @Value
 @NonFinal
-public class FallbackInvoker<E extends JavaPlugin> implements IFallbackInvoker<E> {
+public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
 

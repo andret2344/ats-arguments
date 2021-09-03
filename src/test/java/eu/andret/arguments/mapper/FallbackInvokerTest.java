@@ -5,45 +5,43 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.mapper.impl.FallbackInvoker;
+import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 
 class FallbackInvokerTest {
 	@Test
 	void invokeMismatch() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final FallbackInvoker<JavaPlugin> invoker = new FallbackInvoker<>(plugin);
+		final FallbackSelector<JavaPlugin> invoker = new FallbackSelector<>(plugin);
 		final Class<? extends TestMethodsProvider> providerClass = TestMethodsProvider.class;
 
-//		final Object result = invoker.invokeFallback(null, "test", World.class, sender, providerClass);
+		final Object result = invoker.invokeFallback(null, World.class, providerClass);
 
-//		assertEquals(new ArrayList<>(), result);
+		assertEquals(new ArrayList<>(), result);
 	}
 
 	@Test
 	void dupa() throws ReflectiveOperationException {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
 		final Class<? extends TestMethodsProvider> providerClass = TestMethodsProvider.class;
-		final Method fallbackMethod = spy(providerClass.getDeclaredMethod("testMethodWithParamArgumentFallback",
-				String.class));
+		final Method fallbackMethod = providerClass.getDeclaredMethod("testMethodWithParamArgumentFallback",
+				String.class);
 		final Method method = providerClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final Mapper mapper = method.getParameters()[0].getAnnotation(Mapper.class);
-		final IFallbackInvoker<JavaPlugin> invoker = new FallbackInvoker<>(plugin);
+		final IFallbackSelector<JavaPlugin> invoker = new FallbackSelector<>(plugin);
 
-//		final Object result = invoker.invokeFallback(mapper, "test", World.class, sender, providerClass);
+		final Object result = invoker.invokeFallback(mapper, World.class, providerClass);
 
-//		assertEquals(new ArrayList<>(), result);
-//		verify(fallbackMethod, times(1)).invoke(any(), eq("test"));
+		assertEquals(List.of(fallbackMethod), result);
 	}
 }
