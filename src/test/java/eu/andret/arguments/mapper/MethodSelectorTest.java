@@ -59,7 +59,7 @@ class MethodSelectorTest {
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
 		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
 		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
-		final List<Method> methods = List.of(provider.getDeclaredMethod("testMethodWithParamArgumentFallback",
+		final List<Method> methods = List.of(provider.getDeclaredMethod("testMethodArgumentFallback",
 				String.class));
 		when(fallbackSelector.selectFallback(mapper, World.class, provider)).thenReturn(methods);
 

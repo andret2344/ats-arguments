@@ -93,8 +93,20 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public void testMethodWithArray(@SuppressWarnings("ArrayParameter") final String[] text) {
 	}
 
+	@ArgumentFallback(value = "testWorldMapper", priority = FallbackPriority.LOW)
+	public void testMethodArgumentFallback(final String world) {
+	}
+
+	@ArgumentFallback(value = "testWorldMapper", priority = FallbackPriority.HIGH)
+	public void testMethodArgumentSecondFallback(final String world) {
+	}
+
 	@ArgumentFallback("testWorldMapper")
-	public void testMethodWithParamArgumentFallback(final String world) {
+	public void testMethodArgumentFallbackWithWrongArgs(final String world, final int unnecessary) {
+	}
+
+	@ArgumentFallback("testWorldMapper")
+	public void testMethodArgumentFallbackWithWrongArg(final int wrong) {
 	}
 
 	@Argument
@@ -156,5 +168,13 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@TypeFallback(value = Location.class, priority = FallbackPriority.HIGHEST)
 	public void testMethodWithMappedArgumentTypeFallbackHighest(final String text) {
+	}
+
+	@TypeFallback(Location.class)
+	public void testMethodWithMappedArgumentTypeFallbackWrongArg(final World wrong) {
+	}
+
+	@TypeFallback(Location.class)
+	public void testMethodWithMappedArgumentTypeFallbackWrongArgs(final String text, final World wrong) {
 	}
 }

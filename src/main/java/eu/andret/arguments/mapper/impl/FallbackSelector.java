@@ -55,6 +55,7 @@ public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector
 				.filter(method -> Arrays.asList(method.getAnnotation(ArgumentFallback.class).value())
 						.contains(argument))
 				.filter(method -> method.getParameterCount() == 1)
+				.filter(method -> method.getParameterTypes()[0].equals(String.class))
 				.sorted((o1, o2) -> o2.getAnnotation(ArgumentFallback.class).priority().getSlot()
 						- o1.getAnnotation(ArgumentFallback.class).priority().getSlot())
 				.collect(Collectors.toList());
@@ -68,6 +69,7 @@ public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector
 				.filter(method -> Arrays.asList(method.getAnnotation(TypeFallback.class).value())
 						.contains(type))
 				.filter(method -> method.getParameterCount() == 1)
+				.filter(method -> method.getParameterTypes()[0].equals(String.class))
 				.sorted((o1, o2) -> o2.getAnnotation(TypeFallback.class).priority().getSlot()
 						- o1.getAnnotation(TypeFallback.class).priority().getSlot())
 				.collect(Collectors.toList());
