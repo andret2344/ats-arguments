@@ -16,31 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
-class FallbackInvokerTest {
+class FallbackSelectorTest {
 	@Test
 	void invokeMismatch() {
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final FallbackSelector<JavaPlugin> invoker = new FallbackSelector<>(plugin);
+		final FallbackSelector<JavaPlugin> invoker = new FallbackSelector<>();
 		final Class<? extends TestMethodsProvider> providerClass = TestMethodsProvider.class;
 
-		final Object result = invoker.invokeFallback(null, World.class, providerClass);
+		final Object result = invoker.selectFallback(null, World.class, providerClass);
 
 		assertEquals(new ArrayList<>(), result);
 	}
 
 	@Test
 	void dupa() throws ReflectiveOperationException {
-		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final Class<? extends TestMethodsProvider> providerClass = TestMethodsProvider.class;
 		final Method fallbackMethod = providerClass.getDeclaredMethod("testMethodWithParamArgumentFallback",
 				String.class);
 		final Method method = providerClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final Mapper mapper = method.getParameters()[0].getAnnotation(Mapper.class);
-		final IFallbackSelector<JavaPlugin> invoker = new FallbackSelector<>(plugin);
+		final IFallbackSelector<JavaPlugin> invoker = new FallbackSelector<>();
 
-		final Object result = invoker.invokeFallback(mapper, World.class, providerClass);
+		final Object result = invoker.selectFallback(mapper, World.class, providerClass);
 
 		assertEquals(List.of(fallbackMethod), result);
 	}

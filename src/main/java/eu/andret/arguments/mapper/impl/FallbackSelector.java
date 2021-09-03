@@ -35,11 +35,10 @@ import java.util.stream.Collectors;
 @NonFinal
 public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
-	JavaPlugin plugin;
 
 	@NotNull
 	@Override
-	public List<Method> invokeFallback(@Nullable final Mapper mapper,
+	public List<Method> selectFallback(@Nullable final Mapper mapper,
 									   @NotNull final Class<?> targetClass,
 									   @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
 		if (mapper == null) {

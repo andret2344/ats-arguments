@@ -10,6 +10,7 @@ import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IFallbackSelector;
@@ -41,43 +42,29 @@ import java.util.Optional;
 @Getter(AccessLevel.NONE)
 public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
-	JavaPlugin plugin;
+	IFallbackSelector<E> fallbackSelector;
 	MappingConfig mappingConfig;
-	IFallbackSelector<E> fallbackInvoker;
-	MethodInvoker<E> methodInvoker;
 
 	/**
 	 * Smallest acceptable constructor.
 	 *
 	 * @param plugin The plugin.
 	 */
-	public MethodSelector(final JavaPlugin plugin) {
-		this(plugin, new MappingConfig(), new FallbackSelector<>(plugin), new MethodInvoker<>(plugin));
-	}
-
-	/**
-	 * Medium acceptable constructor.
-	 *
-	 * @param plugin The plugin.
-	 */
-	public MethodSelector(final JavaPlugin plugin, final MappingConfig mappingConfig) {
-		this(plugin, mappingConfig, new FallbackSelector<>(plugin), new MethodInvoker<>(plugin));
+	public MethodSelector(final FallbackSelector<E> fallbackSelector) {
+		this(fallbackSelector, new MappingConfig());
 	}
 
 	@NotNull
 	@Override
 	@SneakyThrows
-	public List<Object> invokeMethod(@NotNull final Method method,
-									 @NotNull final String[] command,
-									 @NotNull final CommandSender sender,
-									 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass,
-									 @NotNull final Object... parameters) {
+	public ExecutionCall selectMethod(@NotNull final Method method, @NotNull final String[] command,
+									  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
 		try {
 			final Object[] data = recalculateArguments(method, command);
-			return methodInvoker.invokeMethods(List.of(method), data, sender, executorClass, parameters);
+			return new ExecutionCall(List.of(method), data);
 		} catch (final FallbackException ex) {
-			final List<Method> methods = fallbackInvoker.invokeFallback(ex.getMapper(), ex.getTargetClass(), executorClass);
-			return methodInvoker.invokeMethods(methods, new Object[]{ex.getValue()}, sender, executorClass, parameters);
+			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), executorClass);
+			return new ExecutionCall(methods, new Object[]{ex.getValue()});
 		}
 	}
 

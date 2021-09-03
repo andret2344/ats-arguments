@@ -21,7 +21,7 @@ import java.util.List;
  * @author Andret
  * @since Sep 02, 2021
  */
-public interface IFallbackSelector<E extends JavaPlugin> {
+public interface IFallbackSelector<E extends JavaPlugin> extends IMapper {
 	/**
 	 * Invokes fallback method on basis of annotation value.
 	 *
@@ -32,7 +32,7 @@ public interface IFallbackSelector<E extends JavaPlugin> {
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull
-	List<Method> invokeFallback(@Nullable Mapper mapper,
+	List<Method> selectFallback(@Nullable Mapper mapper,
 								@NotNull Class<?> targetClass,
 								@NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass);
 }

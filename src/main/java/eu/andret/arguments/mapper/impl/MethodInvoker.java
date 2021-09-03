@@ -5,9 +5,11 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
  * @since Sep 03, 2021
  */
 @Value
+@NonFinal
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
@@ -37,14 +40,13 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	@NotNull
 	@Override
 	@SneakyThrows
-	public List<Object> invokeMethods(@NotNull final List<Method> methods,
-									  @NotNull final Object[] data,
+	public List<Object> invokeMethods(@NotNull final ExecutionCall executionCall,
 									  @NotNull final CommandSender sender,
 									  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass,
 									  @NotNull final Object... parameters) {
 		final AnnotatedCommandExecutor<E> commandExecutor = createInstance(sender, executorClass, parameters);
-		return methods.stream()
-				.map(x -> invokeMethod(x, commandExecutor, data))
+		return executionCall.getMethods().stream()
+				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
 				.collect(Collectors.toList());
 	}
 

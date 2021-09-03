@@ -7,6 +7,7 @@ package eu.andret.arguments;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
@@ -14,9 +15,13 @@ import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IFallbackSelector;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
+import eu.andret.arguments.mapper.impl.FallbackSelector;
+import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
@@ -32,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,8 +57,10 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IPermissionFilter permissionFilter = new PermissionFilter();
 	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
+	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
+	IMethodSelector<E> methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
+	IMethodInvoker<E> methodInvoker;
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
-	IMethodSelector<E> methodSelector;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
 	@NonFinal
@@ -64,11 +72,12 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 
 	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
 						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
-						 @NotNull final E plugin, @NotNull final Object... parameters) {
+						 @NotNull final E plugin,
+						 @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.parameters = parameters;
-		methodSelector = new MethodSelector<>(plugin, mappingConfig);
+		methodInvoker = new MethodInvoker<>(plugin);
 	}
 
 	@Override
@@ -145,8 +154,9 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
-			final Object result = methodSelector.invokeMethod(method, args, sender, commandClass, parameters);
-			responseConsumer.consumeResponse(sender, result, annotatedCommand.getOptions());
+			final ExecutionCall call = methodSelector.selectMethod(method, args, commandClass);
+			final List<Object> result = methodInvoker.invokeMethods(call, sender, commandClass, parameters);
+			result.forEach(element -> responseConsumer.consumeResponse(sender, element, annotatedCommand.getOptions()));
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}

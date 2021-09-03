@@ -5,7 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import org.bukkit.command.CommandSender;
+import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,16 +25,12 @@ public interface IMethodSelector<E extends JavaPlugin> extends IMapper {
 	 *
 	 * @param method The {@link Method} containing method to be called.
 	 * @param command The real command arguments array.
-	 * @param sender The {@link CommandSender} who actually performed the command.
 	 * @param executorClass The class reference, where the method was written.
-	 * @param parameters The parameters that will be put into constructor of {@link AnnotatedCommandExecutor}.
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull
-	Object invokeMethod(@NotNull Method method,
-						@NotNull String[] command,
-						@NotNull CommandSender sender,
-						@NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass,
-						@NotNull Object... parameters);
+	ExecutionCall selectMethod(@NotNull Method method,
+							   @NotNull String[] command,
+							   @NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass);
 }

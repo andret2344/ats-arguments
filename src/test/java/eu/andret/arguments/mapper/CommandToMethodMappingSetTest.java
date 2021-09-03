@@ -27,8 +27,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CommandToMethodMappingSetTest {
 	@Mock
@@ -67,9 +67,9 @@ class CommandToMethodMappingSetTest {
 		final Method method = executor.getDeclaredMethod("testMethod");
 		final CommandSender sender = mock(CommandSender.class);
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
-		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
-		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
-		lenient().when(argumentsMapper.filterArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
+		when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
+		when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
+		when(argumentsMapper.filterArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
 		final Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);

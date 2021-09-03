@@ -9,11 +9,16 @@ import eu.andret.arguments.AnnotatedCommand.OnMainCommandExecutionListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.TypeFallback;
-import eu.andret.arguments.consumer.IResponseConsumer;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IPermissionFilter;
+import eu.andret.arguments.local.LocalFallbackSelector;
+import eu.andret.arguments.local.LocalMethodInvoker;
+import eu.andret.arguments.local.LocalMethodSelector;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IMapper;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
@@ -197,23 +202,23 @@ class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
-		abstract class LocalMethodSelector implements IMethodSelector<JavaPlugin> {
-		}
-		final LocalMethodSelector methodSelector = mock(LocalMethodSelector.class);
-		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
+		final IFallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
+		final IMethodSelector<JavaPlugin> methodSelector = mock(LocalMethodSelector.class);
+		final IMethodInvoker<JavaPlugin> methodInvoker = mock(LocalMethodInvoker.class);
 		final Method method = mock(Method.class);
 		final Argument argument = mock(Argument.class);
 		when(method.getAnnotation(Argument.class)).thenReturn(argument);
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-		final Object value = mock(Object.class);
-		when(methodSelector.invokeMethod(eq(method), any(String[].class), eq(sender), eq(TestMethodsProvider.class))).thenReturn(value);
+		final ExecutionCall executionCall = mock(ExecutionCall.class);
+		when(methodSelector.selectMethod(eq(method), any(String[].class), eq(TestMethodsProvider.class))).thenReturn(executionCall);
 		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
+		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, methodSelector, "methodSelector");
-		injectMapper(executor, responseConsumer, "responseConsumer");
+		injectMapper(executor, methodInvoker, "methodInvoker");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};
 		final OnUnknownSubCommandExecutionListener unknownSubCommandExecutionListener = mock(OnUnknownSubCommandExecutionListener.class);
@@ -228,7 +233,6 @@ class LocalCommandExecutorTest {
 		assertTrue(result);
 		verify(unknownSubCommandExecutionListener, times(0)).unknownSubCommandExecuted(any(CommandSender.class));
 		verify(insufficientPermissionsListener, times(0)).insufficientPermissions(sender);
-		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq(value), any(AnnotatedCommand.Options.class));
 	}
 
 	@Test

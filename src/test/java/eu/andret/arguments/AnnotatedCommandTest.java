@@ -182,9 +182,6 @@ class AnnotatedCommandTest {
 		when(command.getExecutor()).thenReturn(executor);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(executor.addTypeMapper(eq(TestEnum.class), any())).thenReturn(true);
-		final Collection<String> values = Arrays.stream(TestEnum.values())
-				.map(Enum::toString)
-				.collect(Collectors.toList());
 
 		// when
 		annotatedCommand.addEnumMapper(TestEnum.class);
