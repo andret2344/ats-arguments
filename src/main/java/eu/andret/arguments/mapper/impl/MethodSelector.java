@@ -23,6 +23,7 @@ import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -48,9 +49,9 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 	/**
 	 * Smallest acceptable constructor.
 	 *
-	 * @param plugin The plugin.
+	 * @param fallbackSelector The fallback selector.
 	 */
-	public MethodSelector(final FallbackSelector<E> fallbackSelector) {
+	public MethodSelector(@NotNull final FallbackSelector<E> fallbackSelector) {
 		this(fallbackSelector, new MappingConfig());
 	}
 
@@ -68,7 +69,8 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 		}
 	}
 
-	private Object[] recalculateArguments(final Method method, final String... args) {
+	@NotNull
+	private Object[] recalculateArguments(@NotNull final Method method, @NotNull final String... args) {
 		final Argument argument = method.getAnnotation(Argument.class);
 		final TypeFallback typeFallback = method.getAnnotation(TypeFallback.class);
 		final Object[] data = new Object[method.getParameterCount()];
@@ -94,13 +96,16 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 		return data;
 	}
 
-	private Object map(final Mapper mapper, final Class<?> type, final String value) {
-		return getMatchingMappingSet(mapper, type)
+	@NotNull
+	private Object map(@Nullable final Mapper mapper, @NotNull final Class<?> type, @NotNull final String value) {
+		return getMappingSet(mapper, type)
 				.map(mappingSet -> convert(mapper, mappingSet, type, value))
 				.orElseGet(() -> Util.convert(type, value));
 	}
 
-	private Optional<? extends MappingSet<?>> getMatchingMappingSet(final Mapper mapper, final Class<?> clazz) {
+	@NotNull
+	private Optional<? extends MappingSet<?>> getMappingSet(@Nullable final Mapper mapper,
+															@NotNull final Class<?> clazz) {
 		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
 				.map(mappingConfig::get)
@@ -111,8 +116,9 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 		return Optional.of(clazz).map(mappingConfig::get);
 	}
 
-	private Object convert(final Mapper mapper, final MappingSet<?> mappingSet, final Class<?> targetClass,
-						   final String value) {
+	@NotNull
+	private Object convert(@Nullable final Mapper mapper, @NotNull final MappingSet<?> mappingSet,
+						   @NotNull final Class<?> targetClass, @NotNull final String value) {
 		final Object result = mappingSet.getFunction().apply(value);
 		if (mappingSet.getFallbackCondition().test(result)) {
 			throw new FallbackException("Fallback condition failed", mapper, targetClass, value);

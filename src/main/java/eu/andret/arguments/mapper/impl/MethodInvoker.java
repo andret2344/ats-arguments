@@ -72,7 +72,8 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 
 	@NotNull
 	@SuppressWarnings({"unchecked", "java:S1612"})
-	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(@NotNull final Class<A> executor) {
+	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
+			@NotNull final Class<A> executor) {
 		return Arrays.stream(executor.getDeclaredConstructors())
 				.filter(c -> c.getParameterCount() >= 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))

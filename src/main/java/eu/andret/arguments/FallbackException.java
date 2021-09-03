@@ -7,6 +7,8 @@ package eu.andret.arguments;
 import eu.andret.arguments.api.annotation.Mapper;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The exception thrown when parameter patches its edge value.
@@ -29,7 +31,8 @@ public class FallbackException extends RuntimeException {
 	 * @param targetClass The target class.
 	 * @param value The implicit string.
 	 */
-	public FallbackException(final String message, final Mapper mapper, final Class<?> targetClass, final String value) {
+	public FallbackException(@Nullable final String message, @Nullable final Mapper mapper,
+							 @NotNull final Class<?> targetClass, @NotNull final String value) {
 		super(message);
 		this.mapper = mapper;
 		this.value = value;

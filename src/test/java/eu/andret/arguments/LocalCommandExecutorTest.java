@@ -47,11 +47,12 @@ class LocalCommandExecutorTest {
 	@Test
 	void noCommandArguments() {
 		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final IMethodToDescriptionMapper mapper = mock(IMethodToDescriptionMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, null);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 		injectMapper(executor, mapper, "methodToDescriptionMapper");
 		when(mapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
 		when(command.getName()).thenReturn("test");
@@ -66,11 +67,12 @@ class LocalCommandExecutorTest {
 	@Test
 	void noCommandArgumentsWithListener() {
 		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final IMethodToDescriptionMapper mapper = mock(IMethodToDescriptionMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, null);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 		injectMapper(executor, mapper, "methodToDescriptionMapper");
 		when(mapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
 		when(command.getName()).thenReturn("test");
