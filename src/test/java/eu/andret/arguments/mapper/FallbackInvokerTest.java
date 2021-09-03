@@ -43,9 +43,9 @@ class FallbackInvokerTest {
 		final Class<? extends TestMethodsProvider> providerClass = TestMethodsProvider.class;
 		final Method fallbackMethod = spy(providerClass.getDeclaredMethod("testMethodWithParamArgumentFallback",
 				String.class));
+		final Method method = providerClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final TestMethodsProvider testMethodsProvider = (TestMethodsProvider) providerClass.getConstructors()[0]
 				.newInstance(sender, plugin);
-		final Method method = providerClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final Mapper mapper = method.getParameters()[0].getAnnotation(Mapper.class);
 
 		final Object result = invoker.invokeFallback(mapper, "test", World.class, testMethodsProvider);
