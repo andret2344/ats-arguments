@@ -15,24 +15,23 @@ import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MethodToDescriptionMappingSetTest {
+class MethodToDescriptionMapperTest {
 	static Collection<Object[]> getMappingData() {
 		final Object[][] objects = {
-				{"testMethod", "testMethod", null},
-				{"testMethodWithAliases", "<testMethodWithAliases|testAlias1>", null},
-				{"testMethodWithDescription", "testMethodWithDescription - test description", null},
-				{"testMethodWithArgument", "testMethodWithArgument <text>", String.class},
-				{"testMethodWithCorrectPosition", "<text> testMethodWithCorrectPosition", String.class},
-				{"testMethodWithVararg", "testMethodWithVararg <text...>", String[].class}
+				{"testMethod", "testMethod", new Class<?>[0]},
+				{"testMethodWithAliases", "<testMethodWithAliases|testAlias1>", new Class<?>[0]},
+				{"testMethodWithDescription", "testMethodWithDescription - test description", new Class<?>[0]},
+				{"testMethodWithArgument", "testMethodWithArgument <text>", new Class<?>[]{String.class}},
+				{"testMethodWithCorrectPosition", "<text> testMethodWithCorrectPosition <text2>", new Class<?>[]{String.class, String.class}},
+				{"testMethodWithVararg", "testMethodWithVararg <text...>", new Class<?>[]{String[].class}}
 		};
 		return Arrays.asList(objects);
 	}
 
 	@ParameterizedTest
 	@MethodSource("getMappingData")
-	void testMappingMethod(final String input, final String output, final Class<?> clazz) throws NoSuchMethodException {
+	void testMappingMethod(final String input, final String output, final Class<?>[] args) throws NoSuchMethodException {
 		// given
-		final Class<?>[] args = clazz == null ? new Class<?>[0] : new Class<?>[]{clazz};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod(input, args);
 		final IMethodToDescriptionMapper mapper = new MethodToDescriptionMapper();
 

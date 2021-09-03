@@ -91,13 +91,13 @@ class MethodSelectorTest {
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
 		final IMethodSelector<JavaPlugin> selector = new MethodSelector<>(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class));
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class, String.class));
 
 		// when
-		final ExecutionCall executionCall = selector.selectMethod(method, new String[]{"test", "testMethodWithCorrectPosition"}, commandClass);
+		final ExecutionCall executionCall = selector.selectMethod(method, new String[]{"test", "testMethodWithCorrectPosition", "test2"}, commandClass);
 
 		// then
-		validate(executionCall, List.of(method), new Object[]{"test"});
+		validate(executionCall, List.of(method), new Object[]{"test", "test2"});
 	}
 
 	@Test

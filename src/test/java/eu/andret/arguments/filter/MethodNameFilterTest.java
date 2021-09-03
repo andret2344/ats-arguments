@@ -110,7 +110,7 @@ class MethodNameFilterTest {
 	void methodWithCorrectPosition() throws NoSuchMethodException {
 		// given
 		final String[] command = {"test", "testMethodWithCorrectPosition"};
-		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class);
+		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithCorrectPosition", String.class, String.class);
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 

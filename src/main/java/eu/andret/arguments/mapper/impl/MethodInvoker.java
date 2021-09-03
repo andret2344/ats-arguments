@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 		final AnnotatedCommandExecutor<E> commandExecutor = createInstance(sender, executorClass, parameters);
 		return executionCall.getMethods().stream()
 				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
+				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
