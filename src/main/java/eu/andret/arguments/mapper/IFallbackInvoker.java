@@ -10,6 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 /**
  * The interface to invoke the fallback method.
  *
@@ -23,13 +26,13 @@ public interface IFallbackInvoker<E extends JavaPlugin> {
 	 * Invokes fallback method on basis of annotation value.
 	 *
 	 * @param mapper The {@link Mapper} annotation of failed mapping.
-	 * @param text The real command argument.
 	 * @param targetClass The {@link Class} that's instance was to be created.
 	 * @param executor The class reference, where the method was written.
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull
-	Object invokeFallback(@Nullable Mapper mapper, @NotNull String text, @NotNull Class<?> targetClass,
-						  @NotNull AnnotatedCommandExecutor<E> executor);
+	List<Method> invokeFallback(@Nullable Mapper mapper,
+								@NotNull Class<?> targetClass,
+								@NotNull Class<? extends AnnotatedCommandExecutor<E>> executor);
 }

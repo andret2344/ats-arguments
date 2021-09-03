@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,6 +46,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	JavaPlugin plugin;
 	MappingConfig mappingConfig;
 	IFallbackInvoker<E> fallbackInvoker;
+	RealMethodInvoker<E> realMethodInvoker;
 
 	/**
 	 * Smallest acceptable constructor.
@@ -52,7 +54,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	 * @param plugin The plugin.
 	 */
 	public MethodInvoker(final JavaPlugin plugin) {
-		this(plugin, new MappingConfig(), new FallbackInvoker<>());
+		this(plugin, new MappingConfig(), new FallbackInvoker<>(plugin), new RealMethodInvoker<>(plugin));
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	 * @param plugin The plugin.
 	 */
 	public MethodInvoker(final JavaPlugin plugin, final MappingConfig mappingConfig) {
-		this(plugin, mappingConfig, new FallbackInvoker<>());
+		this(plugin, mappingConfig, new FallbackInvoker<>(plugin), new RealMethodInvoker<>(plugin));
 	}
 
 	@Override
@@ -69,12 +71,12 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	@SneakyThrows
 	public Object invokeMethod(final Method method, final String[] command, final CommandSender sender,
 							   final Class<? extends AnnotatedCommandExecutor<E>> executor, final Object... parameters) {
-		final AnnotatedCommandExecutor<E> commandExecutor = createInstance(sender, executor, parameters);
 		try {
 			final Object[] data = recalculateArguments(method, command);
-			return method.invoke(commandExecutor, data);
+			return realMethodInvoker.realCallMethod(List.of(method), data, sender, executor, parameters);
 		} catch (final FallbackException ex) {
-			return fallbackInvoker.invokeFallback(ex.getMapper(), ex.getValue(), ex.getTargetClass(), commandExecutor);
+			final List<Method> methods = fallbackInvoker.invokeFallback(ex.getMapper(), ex.getTargetClass(), executor);
+			return realMethodInvoker.realCallMethod(methods, new Object[]{ex.getValue()}, sender, executor, parameters);
 		}
 	}
 

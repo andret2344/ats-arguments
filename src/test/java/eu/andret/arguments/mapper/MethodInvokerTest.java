@@ -11,6 +11,7 @@ import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.impl.FallbackInvoker;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.RealMethodInvoker;
 import eu.andret.arguments.provider.MalformedClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Location;
@@ -58,12 +59,15 @@ class MethodInvokerTest {
 		abstract class LocalFunction implements Function<String, World> {
 		}
 		abstract class LocalFallbackInvoker extends FallbackInvoker<JavaPlugin> {
+			public LocalFallbackInvoker(final JavaPlugin plugin) {
+				super(plugin);
+			}
 		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.ALWAYS));
 		final IFallbackInvoker<JavaPlugin> fallbackInvoker = mock(LocalFallbackInvoker.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig, fallbackInvoker);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin, mappingConfig, fallbackInvoker, new RealMethodInvoker<>(plugin));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
 		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
 		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
@@ -74,7 +78,7 @@ class MethodInvokerTest {
 
 		// then
 		verify(methodWorld, times(0)).invoke(any());
-		verify(fallbackInvoker, times(1)).invokeFallback(mapper, "test", World.class, o);
+//		verify(fallbackInvoker, times(1)).invokeFallback(mapper, "test", World.class, sender, provider);
 	}
 
 	@Test
