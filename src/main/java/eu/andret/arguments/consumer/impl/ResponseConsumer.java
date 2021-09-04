@@ -12,12 +12,15 @@ import org.bukkit.command.CommandSender;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
  * Implementation for {@link IResponseConsumer}.
  */
 public class ResponseConsumer implements IResponseConsumer {
+	private static final Pattern LINES_SEPARATOR = Pattern.compile("\\r|\\n|\\r\\n|\\n\\r");
+
 	@Override
 	public void consumeResponse(final CommandSender sender, final Object result, final AnnotatedCommand.Options options) {
 		Optional.ofNullable(result)
@@ -42,7 +45,7 @@ public class ResponseConsumer implements IResponseConsumer {
 					.flatMap(Collection::stream)
 					.map(String::valueOf);
 		}
-		return Arrays.stream(String.valueOf(result).split("\\r|\\n|\\r\\n|\\n\\r")).map(String::valueOf);
+		return Arrays.stream(LINES_SEPARATOR.split(String.valueOf(result))).map(String::valueOf);
 	}
 
 	private String mapToColored(final String message, final AnnotatedCommand.Options options) {

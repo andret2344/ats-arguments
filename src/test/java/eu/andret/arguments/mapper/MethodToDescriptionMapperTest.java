@@ -22,7 +22,8 @@ class MethodToDescriptionMapperTest {
 				{"testMethodWithAliases", "<testMethodWithAliases|testAlias1>", new Class<?>[0]},
 				{"testMethodWithDescription", "testMethodWithDescription - test description", new Class<?>[0]},
 				{"testMethodWithArgument", "testMethodWithArgument <text>", new Class<?>[]{String.class}},
-				{"testMethodWithCorrectPosition", "<text> testMethodWithCorrectPosition <text2>", new Class<?>[]{String.class, String.class}},
+				{"testMethodWithCorrectPosition", "<text> testMethodWithCorrectPosition", new Class<?>[]{String.class}},
+				{"testMethodSecondWithCorrectPosition", "<text> testMethodSecondWithCorrectPosition <text2>", new Class<?>[]{String.class, String.class}},
 				{"testMethodWithVararg", "testMethodWithVararg <text...>", new Class<?>[]{String[].class}}
 		};
 		return Arrays.asList(objects);

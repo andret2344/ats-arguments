@@ -8,7 +8,8 @@ import eu.andret.arguments.AnnotatedCommand.OnInsufficientPermissionsListener;
 import eu.andret.arguments.AnnotatedCommand.OnMainCommandExecutionListener;
 import eu.andret.arguments.AnnotatedCommand.OnUnknownSubCommandExecutionListener;
 import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.api.annotation.TypeFallback;
+import eu.andret.arguments.api.entity.FallbackConstants;
+import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IPermissionFilter;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -61,7 +63,7 @@ class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(26)).sendMessage("/test testString");
+		verify(sender, times(27)).sendMessage("/test testString");
 	}
 
 	@Test
@@ -204,6 +206,7 @@ class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
+		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final IFallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
 		final IMethodSelector<JavaPlugin> methodSelector = mock(LocalMethodSelector.class);
 		final IMethodInvoker<JavaPlugin> methodInvoker = mock(LocalMethodInvoker.class);
@@ -212,16 +215,21 @@ class LocalCommandExecutorTest {
 		when(method.getAnnotation(Argument.class)).thenReturn(argument);
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
+		final Class<TestMethodsProvider> provider = TestMethodsProvider.class;
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, provider, plugin);
 		final ExecutionCall executionCall = mock(ExecutionCall.class);
-		when(methodSelector.selectMethod(eq(method), any(String[].class), eq(TestMethodsProvider.class))).thenReturn(executionCall);
+		final Object object = mock(Object.class);
+		final List<Object> list = List.of(object);
+		when(methodSelector.selectMethod(eq(method), any(String[].class), eq(provider))).thenReturn(executionCall);
 		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
+		when(methodInvoker.invokeMethods(executionCall, sender, provider)).thenReturn(list);
+		when(command.getName()).thenReturn("test");
 		injectMapper(executor, methodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
 		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, methodInvoker, "methodInvoker");
-		when(command.getName()).thenReturn("test");
+		injectMapper(executor, responseConsumer, "responseConsumer");
 		final String[] args = {"testMethod"};
 		final OnUnknownSubCommandExecutionListener unknownSubCommandExecutionListener = mock(OnUnknownSubCommandExecutionListener.class);
 		executor.setOnUnknownSubCommandExecutionListener(unknownSubCommandExecutionListener);
@@ -233,8 +241,9 @@ class LocalCommandExecutorTest {
 
 		// then
 		assertTrue(result);
-		verify(unknownSubCommandExecutionListener, times(0)).unknownSubCommandExecuted(any(CommandSender.class));
-		verify(insufficientPermissionsListener, times(0)).insufficientPermissions(sender);
+		verify(unknownSubCommandExecutionListener, times(0)).unknownSubCommandExecuted(any());
+		verify(insufficientPermissionsListener, times(0)).insufficientPermissions(any());
+		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq(object), any());
 	}
 
 	@Test
@@ -246,9 +255,9 @@ class LocalCommandExecutorTest {
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 
 		// when
-		final boolean result1 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
-		final boolean result2 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
-		final boolean result3 = executor.addArgumentMapper("test3", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
+		final boolean result1 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		final boolean result2 = executor.addArgumentMapper("test1", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		final boolean result3 = executor.addArgumentMapper("test3", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 
 		// then
 		assertTrue(result1);
@@ -265,9 +274,9 @@ class LocalCommandExecutorTest {
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 
 		// when
-		final boolean result1 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
-		final boolean result2 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
-		final boolean result3 = executor.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, TypeFallback.NEVER));
+		final boolean result1 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		final boolean result2 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		final boolean result3 = executor.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, FallbackConstants.NEVER));
 
 		// then
 		assertTrue(result1);

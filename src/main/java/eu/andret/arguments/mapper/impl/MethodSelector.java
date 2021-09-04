@@ -9,7 +9,6 @@ import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
@@ -18,7 +17,6 @@ import eu.andret.arguments.mapper.IMethodSelector;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,7 +55,6 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 
 	@NotNull
 	@Override
-	@SneakyThrows
 	public ExecutionCall selectMethod(@NotNull final Method method, @NotNull final String[] command,
 									  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
 		try {
@@ -72,11 +69,10 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 	@NotNull
 	private Object[] recalculateArguments(@NotNull final Method method, @NotNull final String... args) {
 		final Argument argument = method.getAnnotation(Argument.class);
-		final TypeFallback typeFallback = method.getAnnotation(TypeFallback.class);
 		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
 		for (int i = 0; i < method.getParameterCount(); i++) {
-			if (typeFallback != null && i == 0 || i == argument.position()) {
+			if (i == argument.position()) {
 				skip++;
 			}
 			final Mapper mapper = method.getParameters()[i].getAnnotation(Mapper.class);

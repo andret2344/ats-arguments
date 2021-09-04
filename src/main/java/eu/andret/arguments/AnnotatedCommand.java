@@ -8,6 +8,7 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
+import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -161,7 +162,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper) {
-		addTypeMapper(clazz, mapper, TypeFallback.NEVER);
+		addTypeMapper(clazz, mapper, FallbackConstants.NEVER);
 	}
 
 	/**
@@ -196,7 +197,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper) {
-		addArgumentMapper(id, clazz, mapper, TypeFallback.NEVER);
+		addArgumentMapper(id, clazz, mapper, FallbackConstants.NEVER);
 	}
 
 	/**
@@ -224,7 +225,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum) {
-		addEnumMapper(anEnum, TypeFallback.NEVER);
+		addEnumMapper(anEnum, FallbackConstants.NEVER);
 	}
 
 	/**

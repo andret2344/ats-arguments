@@ -66,7 +66,11 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument(position = 1)
-	public void testMethodWithCorrectPosition(final String text, final String text2) {
+	public void testMethodWithCorrectPosition(final String text) {
+	}
+
+	@Argument(position = 1)
+	public void testMethodSecondWithCorrectPosition(final String text, final String text2) {
 	}
 
 	@Argument

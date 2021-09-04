@@ -29,7 +29,7 @@ public class PermissionFilter implements IPermissionFilter {
 			return true;
 		}
 		final Argument argument = method.getAnnotation(Argument.class);
-		if (argument.permission().equals("")) {
+		if (argument.permission().isEmpty()) {
 			return true;
 		}
 		return sender.hasPermission(argument.permission());

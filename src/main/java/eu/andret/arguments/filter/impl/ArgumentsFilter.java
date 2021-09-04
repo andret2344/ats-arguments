@@ -50,14 +50,14 @@ public class ArgumentsFilter implements IArgumentsFilter {
 				throw new IllegalArgumentException("Cannot be the array! Use VarArgs instead. Method " + method);
 			}
 			final Mapper mapper = parameter.getAnnotation(Mapper.class);
-			if (!isOk(parameter, mapper, classes, i, parameters)) {
+			if (!isTypeMatched(parameter, mapper, classes, i, parameters)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean isOk(final Parameter parameter, final Mapper mapper, final List<Class<?>> classes, final int i, final List<Parameter> parameters) {
+	private boolean isTypeMatched(final Parameter parameter, final Mapper mapper, final List<Class<?>> classes, final int i, final List<Parameter> parameters) {
 		if (parameter.isVarArgs()) {
 			return isTypeMatchingVarArgParameter(parameter.getType().getComponentType(), mapper, classes.subList(i, classes.size()));
 		}

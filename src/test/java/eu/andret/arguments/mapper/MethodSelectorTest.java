@@ -6,7 +6,7 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.api.annotation.TypeFallback;
+import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
@@ -53,7 +53,7 @@ class MethodSelectorTest {
 		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.ALWAYS));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.ALWAYS));
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
 		final IMethodSelector<JavaPlugin> selector = new MethodSelector<>(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
@@ -91,7 +91,7 @@ class MethodSelectorTest {
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
 		final IMethodSelector<JavaPlugin> selector = new MethodSelector<>(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithCorrectPosition", String.class, String.class));
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class));
 
 		// when
 		final ExecutionCall executionCall = selector.selectMethod(method, new String[]{"test", "testMethodWithCorrectPosition", "test2"}, commandClass);
@@ -125,7 +125,7 @@ class MethodSelectorTest {
 		final World world = mock(World.class);
 		when(getWorld.apply("world")).thenReturn(world);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, TypeFallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);

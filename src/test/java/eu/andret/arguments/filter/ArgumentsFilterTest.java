@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.filter;
 
-import eu.andret.arguments.api.annotation.TypeFallback;
+import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.impl.ArgumentsFilter;
@@ -119,7 +119,7 @@ class ArgumentsFilterTest {
 	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
@@ -160,7 +160,7 @@ class ArgumentsFilterTest {
 	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
@@ -175,7 +175,7 @@ class ArgumentsFilterTest {
 	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, TypeFallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -194,7 +194,7 @@ class ArgumentsFilterTest {
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		final LocalFunction getLocation = mock(LocalFunction.class);
-		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, TypeFallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, FallbackConstants.NEVER));
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when
@@ -240,7 +240,7 @@ class ArgumentsFilterTest {
 	void methodWithTypeMapperWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, TypeFallback.NEVER));
+		mappingConfig.add(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
 
