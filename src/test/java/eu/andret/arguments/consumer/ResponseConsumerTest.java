@@ -103,4 +103,22 @@ class ResponseConsumerTest {
 		inOrder.verify(sender, times(1)).sendMessage("&7colored line");
 		inOrder.verify(sender, times(1)).sendMessage("clear line");
 	}
+
+	@Test
+	void methodReturningMultiline() {
+		// given
+		final CommandSender sender = mock(CommandSender.class);
+		final IResponseConsumer mapper = new ResponseConsumer();
+
+		// when
+		mapper.consumeResponse(sender, "one\rtwo\nthree\r\nfour\n\rfive", new AnnotatedCommand.Options());
+
+		// then
+		final InOrder inOrder = Mockito.inOrder(sender);
+		inOrder.verify(sender, times(1)).sendMessage("one");
+		inOrder.verify(sender, times(1)).sendMessage("two");
+		inOrder.verify(sender, times(1)).sendMessage("three");
+		inOrder.verify(sender, times(1)).sendMessage("four");
+		inOrder.verify(sender, times(1)).sendMessage("five");
+	}
 }
