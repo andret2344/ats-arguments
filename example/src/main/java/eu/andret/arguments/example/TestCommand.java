@@ -6,11 +6,12 @@ package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
-import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.example.entity.SomeEnum;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
 
+@SuppressWarnings("CheckStyle")
 @BaseCommand(value = "test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
@@ -30,21 +32,21 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(permission = "me.testing")
-	public String testing() {
-		// "/test testing", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
+	public String running() {
+		// "/test running", requires permission "me.testing", sender gets "I'm testing" or "I'm secretly testing"
 		if (plugin.isSuperSecretSetting()) {
 			return "I'm secretly testing!";
 		}
 		return "I'm testing!";
 	}
 
-	@Fallback
-	public String player(final String player) {
+	@ArgumentFallback("playerMapper")
+	public String playerFallback(final String player) {
 		return "The player \"" + player + "\" is offline!";
 	}
 
 	@Argument
-	public String player(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player player) {
+	public String player(@Mapper("playerMapper") @Completer("playerCompleter") final Player player) {
 		if (player == null) {
 			// "/test player Andret2344", sender gets: "Who do you mean?"
 			return "Who do you mean?";
@@ -54,7 +56,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument(executorType = ExecutorType.PLAYER)
-	public String distance(@Mapper("basicPlayerMapper") @Completer("basicPlayerCompleter") final Player... players) {
+	public String distance(@Mapper("playerMapper") @Completer("playerCompleter") final Player... players) {
 		final OptionalDouble min = Arrays.stream(players)
 				.filter(Objects::nonNull)
 				.mapToDouble(player -> player.getLocation().distance(((Player) sender).getLocation()))
@@ -67,7 +69,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument(displayType = DisplayType.NONE)
 	public String notDisplayed() {
-		// Argument won't be displayed when "/test" will be executed
+		// Argument won't be displayed when "/test" is executed
 		return "Not displayed";
 	}
 
@@ -114,7 +116,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Mapper("basicPlayerMapper") final Player player) {
+	public String overloaded(@Mapper("playerMapper") final Player player) {
 		return "Overloaded with one player argument: " + player.getName();
 	}
 
@@ -124,7 +126,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public String overloaded(@Mapper("basicPlayerMapper") final Player player, final int argument) {
+	public String overloaded(@Mapper("playerMapper") final Player player, final int argument) {
 		return "Overloaded with two arguments: " + player.getName() + ", " + argument;
 	}
 
@@ -141,6 +143,11 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String amI(final World world) {
 		return ((Player) sender).getWorld().equals(world) ? "Yes!" : "No...";
+	}
+
+	@TypeFallback(World.class)
+	public String worldFallback(final String world) {
+		return "The world \"" + world + "\" is invalid!";
 	}
 
 	@Argument

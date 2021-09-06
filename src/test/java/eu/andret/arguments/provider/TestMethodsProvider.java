@@ -6,18 +6,22 @@ package eu.andret.arguments.provider;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
-import eu.andret.arguments.api.annotation.Fallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
+import eu.andret.arguments.api.entity.FallbackPriority;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("unused")
 @BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(final CommandSender sender, final JavaPlugin plugin) {
@@ -40,10 +44,12 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public void testMethodWithPermission() {
 	}
 
+	@SuppressWarnings("ArgumentMethodStatic")
 	@Argument
 	public static void testStaticMethod() {
 	}
 
+	@SuppressWarnings("PositionOutOfBounds")
 	@Argument(position = 1)
 	public void testMethodWithExceededPosition() {
 	}
@@ -61,6 +67,10 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@Argument(position = 1)
 	public void testMethodWithCorrectPosition(final String text) {
+	}
+
+	@Argument(position = 1)
+	public void testMethodSecondWithCorrectPosition(final String text, final String text2) {
 	}
 
 	@Argument
@@ -84,11 +94,23 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public void testMethodWithArray(final String[] text) {
+	public void testMethodWithArray(@SuppressWarnings("ArrayParameter") final String[] text) {
 	}
 
-	@Fallback
-	public void testMethodWithParam(final String world) {
+	@ArgumentFallback(value = "testWorldMapper", priority = FallbackPriority.LOW)
+	public void testMethodArgumentFallback(final String world) {
+	}
+
+	@ArgumentFallback(value = "testWorldMapper", priority = FallbackPriority.HIGH)
+	public void testMethodArgumentSecondFallback(final String world) {
+	}
+
+	@ArgumentFallback("testWorldMapper")
+	public void testMethodArgumentFallbackWithWrongArgs(final String world, final int unnecessary) {
+	}
+
+	@ArgumentFallback("testWorldMapper")
+	public void testMethodArgumentFallbackWithWrongArg(final int wrong) {
 	}
 
 	@Argument
@@ -138,5 +160,25 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@Argument
 	public void testMethodWithMismatchedArgumentCompletion(@Completer("mismatch") final World world) {
+	}
+
+	@Argument
+	public void testMethodWithMappedArgument(final Location location) {
+	}
+
+	@TypeFallback(value = Location.class, priority = FallbackPriority.LOWEST)
+	public void testMethodWithMappedArgumentTypeFallbackLowest(final String text) {
+	}
+
+	@TypeFallback(value = Location.class, priority = FallbackPriority.HIGHEST)
+	public void testMethodWithMappedArgumentTypeFallbackHighest(final String text) {
+	}
+
+	@TypeFallback(Location.class)
+	public void testMethodWithMappedArgumentTypeFallbackWrongArg(final World wrong) {
+	}
+
+	@TypeFallback(Location.class)
+	public void testMethodWithMappedArgumentTypeFallbackWrongArgs(final String text, final World wrong) {
 	}
 }

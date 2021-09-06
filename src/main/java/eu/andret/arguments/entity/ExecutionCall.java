@@ -4,32 +4,19 @@
 
 package eu.andret.arguments.entity;
 
-import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.api.annotation.Fallback;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
- * The class as a container for the {@link Argument} method and its {@link Fallback} method.
+ * The class that holds the method that are about to call and their future arguments.
  *
  * @author Andret
- * @since Aug 10, 2020
+ * @since Sep 04, 2021
  */
-
 @Value
-@AllArgsConstructor
 public class ExecutionCall {
-	Method method;
-	Method fallbackMethod;
-
-	/**
-	 * Constructor for class.
-	 *
-	 * @param method The method that has no fallback one.
-	 */
-	public ExecutionCall(final Method method) {
-		this(method, null);
-	}
+	List<Method> methods;
+	Object[] data;
 }

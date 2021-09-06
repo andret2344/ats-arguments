@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.filter;
 
-import eu.andret.arguments.api.annotation.Fallback;
+import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.impl.ArgumentsFilter;
@@ -31,7 +31,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod"});
 
 		// then
 		assertTrue(result);
@@ -44,7 +44,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod"});
 
 		// then
 		assertFalse(result);
@@ -57,7 +57,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "testArgument"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument"});
 
 		// then
 		assertFalse(result);
@@ -70,7 +70,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgument", String.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "testArgument"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument"});
 
 		// then
 		assertTrue(result);
@@ -83,7 +83,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "testArgument", "1", "false"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "1", "false"});
 
 		// then
 		assertTrue(result);
@@ -96,7 +96,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
 
 		// then
 		assertFalse(result);
@@ -109,7 +109,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArray", String[].class);
 
 		// when
-		final Executable result = () -> mapper.filter(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		final Executable result = () -> mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
@@ -119,12 +119,12 @@ class ArgumentsFilterTest {
 	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "AIR"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "AIR"});
 
 		// then
 		assertTrue(result);
@@ -137,7 +137,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "test", "test2"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "test", "test2"});
 
 		// then
 		assertTrue(result);
@@ -150,7 +150,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithIntVararg", int[].class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "test", "1"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "test", "1"});
 
 		// then
 		assertFalse(result);
@@ -160,12 +160,12 @@ class ArgumentsFilterTest {
 	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "world", "world_nether"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "world_nether"});
 
 		// then
 		assertTrue(result);
@@ -175,12 +175,12 @@ class ArgumentsFilterTest {
 	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "1", "2"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "1", "2"});
 
 		// then
 		assertFalse(result);
@@ -194,11 +194,11 @@ class ArgumentsFilterTest {
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		final LocalFunction getLocation = mock(LocalFunction.class);
-		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, Fallback.NEVER));
+		mappingConfig.add("testWorldMapper", new MappingSet<>(Location.class, getLocation, FallbackConstants.NEVER));
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "world", "world_nether"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "world_nether"});
 
 		// then
 		assertFalse(result);
@@ -214,7 +214,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "world", "1"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "1"});
 
 		// then
 		assertFalse(result);
@@ -230,7 +230,7 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "world", "1", "false", "test"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "1", "false", "test"});
 
 		// then
 		assertFalse(result);
@@ -240,12 +240,12 @@ class ArgumentsFilterTest {
 	void methodWithTypeMapperWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, Fallback.NEVER));
+		mappingConfig.add(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, FallbackConstants.NEVER));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
 
 		// when
-		final boolean result = mapper.filter(method, new String[]{"testMethod", "true"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "true"});
 
 		// then
 		assertTrue(result);

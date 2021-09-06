@@ -25,10 +25,10 @@ repositories {
 ```xml
 
 <repositories>
-    <repository>
-        <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
-    </repository>
-    <!-- other repositories -->
+	<repository>
+		<url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
+	</repository>
+	<!-- other repositories -->
 </repositories>
 ```
 
@@ -48,12 +48,12 @@ dependencies {
 ```xml
 
 <dependencies>
-    <dependency>
-        <groupId>eu.andret</groupId>
-        <artifactId>ats-arguments</artifactId>
-        <version>0.1.1.1</version>
-    </dependency>
-    <!-- other dependencies -->
+	<dependency>
+		<groupId>eu.andret</groupId>
+		<artifactId>ats-arguments</artifactId>
+		<version>0.1.1.1</version>
+	</dependency>
+	<!-- other dependencies -->
 </dependencies>
 ```
 
@@ -81,30 +81,30 @@ build.dependsOn(shadowJar)
 ```xml
 
 <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.2.1</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                        <relocations>
-                            <relocation>
-                                <pattern>eu.andret.arguments</pattern>
-                                <shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
-                            </relocation>
-                        </relocations>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-    <!-- ... -->
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-shade-plugin</artifactId>
+			<version>3.2.1</version>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>shade</goal>
+					</goals>
+					<configuration>
+						<relocations>
+							<relocation>
+								<pattern>eu.andret.arguments</pattern>
+								<shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
+							</relocation>
+						</relocations>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+	<!-- ... -->
 </build>
 ```
 
@@ -226,7 +226,6 @@ API provides a few quite useful annotations.
 | ------- | ---- | ------ | ------- | ----------- |
 | permission | `String` | Any string. | `""` | Permission whether sender can perform the command. |
 | executorType | `ExecutorType` | `ALL`, `PLAYER` or `CONSOLE`. | `ALL` | Executor type that is allowed to execute the command. |
-| responseType | `ResponseType` | `NONE`, `SENDER`, `CONSOLE` or `BROADCAST`. | `SENDER` | Who should get the returned value from method. |
 | description | `String` | Any String. | `""` | The description of command that will show up in help. |
 | aliases | `String[]` | Array of any non-colliding strings. | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
 | position | `int` | Any non-negative int lower or equal to methods arguments count. | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
@@ -245,7 +244,13 @@ API provides a few quite useful annotations.
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The mapper id to find exact registered mapper. |
 
-- `@Fallback` - Annotation allowing catching not mapped correctly with `@Param` values.
+- `@ArgumentFallback` - Annotation allowing catching not mapped correctly with argument mapper values. | setting | type
+  | values | description | | ------- | ---- | ------ | ----------- | | value | `String[]` | any strings | The mapper ids
+  that in case of failure should call the annotated method. |
+
+- `@TypeFallback` - Annotation allowing catching not mapped correctly with type mapper values. | setting | type | values
+  | description | | ------- | ---- | ------ | ----------- | | value | `Class<?>[]` | any classes | The mapper classes
+  that in case of failure should call the annotated method. |
 
 - `@Completer` - Annotation that connects argument with configured argument completer.
 
@@ -263,6 +268,7 @@ Possible listeners are:
 
 - `OnInsufficientPermissionsListener`
 - `OnUnknownSubCommandExecutionListener`
+- `OnMainCommandExecutionListener`
 
 Not configuring listeners don't result in any default. Nothing will happen.
 
@@ -274,8 +280,8 @@ can have its own fallback condition.
 It's allowed to configure argument mappers and type mappers. In case of collision, argument mappers has the priority as
 more precise.
 
-In case of mapping fail, there is possibility to catch the `@Fallback` annotated method with same name as "error
-handler". The fallback condition (never called by default) describes what "wrong value" is.
+In case of mapping fail, there is possibility to catch the fallback annotated method with matching value identifying
+mapper. The fallback condition (`NEVER` called by default) describes what "wrong value" is.
 
 #### Type mappers
 
@@ -327,8 +333,7 @@ type will have the same suggestions. The method `addArgumentCompleter` requires 
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
-    - `Function<CommandSender, Collection<String>>` as instruction how to produce suggestion basing on `CommandSender`
-      .
+    - `Function<CommandSender, Collection<String>>` as instruction how to produce suggestion basing on `CommandSender`.
 
 To have it working, we need to put `@Completer("someId")` before the parameter to get suggestions. Without this
 annotation, nothing will happen.

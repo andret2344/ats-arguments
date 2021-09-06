@@ -5,27 +5,33 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.entity.ExecutionCall;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
- * The interface to invoke the selected method.
+ * An interface to call methods.
+ *
+ * @param <E> The JavaPlugin instance.
  *
  * @author Andret
- * @since Apr 17, 2020
+ * @since Sep 03, 2021
  */
 public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
 	/**
-	 * Invokes one of  methods inside Execution call and correctly puts all arguments.
+	 * @param executionCall The execution call consisting of methods and its arguments.
+	 * @param sender The sender who executed the command.
+	 * @param executorClass The class containing {@link Argument} methods.
+	 * @param parameters The executor's constructor parameters.
 	 *
-	 * @param call The {@link ExecutionCall} containing method to be called.
-	 * @param command The real command arguments array.
-	 * @param sender The {@link CommandSender} who actually performed the command.
-	 * @param executor The class reference, where the method was written.
-	 * @param parameters The parameters that will be put into constructor of {@link AnnotatedCommandExecutor}
-	 *
-	 * @return The result of method's invocation providing sender and executorClass instance.
+	 * @return List with results from called methods.
 	 */
-	Object invokeMethod(ExecutionCall call, String[] command, CommandSender sender, Class<? extends AnnotatedCommandExecutor<E>> executor, Object... parameters);
+	List<Object> invokeMethods(@NotNull ExecutionCall executionCall,
+							   @NotNull CommandSender sender,
+							   @NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass,
+							   @NotNull Object... parameters);
 }

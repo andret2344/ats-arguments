@@ -5,128 +5,63 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.FallbackException;
-import eu.andret.arguments.Util;
-import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.api.annotation.Fallback;
-import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.entity.ExecutionCall;
-import eu.andret.arguments.entity.MappingConfig;
-import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IMethodInvoker;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * An implementation of {@link IMethodInvoker}.
+ * The interface to invoke the fallback method.
+ *
+ * @param <E> The JavaPlugin instance.
  *
  * @author Andret
- * @since Apr 17, 2020
+ * @since Sep 03, 2021
  */
 @Value
-@AllArgsConstructor
-@Getter(AccessLevel.NONE)
+@NonFinal
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	JavaPlugin plugin;
-	MappingConfig mappingConfig;
 
-	/**
-	 * Smallest acceptable constructor.
-	 *
-	 * @param plugin The plugin.
-	 */
-	public MethodInvoker(final JavaPlugin plugin) {
-		this(plugin, new MappingConfig());
-	}
-
+	@NotNull
 	@Override
-	@Nullable
 	@SneakyThrows
-	public Object invokeMethod(final ExecutionCall call, final String[] command, final CommandSender sender,
-							   final Class<? extends AnnotatedCommandExecutor<E>> executor, final Object... parameters) {
-		final AnnotatedCommandExecutor<E> instance = createInstance(sender, executor, parameters);
-		try {
-			final Object[] data = recalculateArguments(call.getMethod(), command);
-			return call.getMethod().invoke(instance, data);
-		} catch (final FallbackException ex) {
-			final Object[] data = recalculateArguments(call.getFallbackMethod(), command);
-			return call.getFallbackMethod().invoke(instance, data);
-		}
+	public List<Object> invokeMethods(@NotNull final ExecutionCall executionCall,
+									  @NotNull final CommandSender sender,
+									  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass,
+									  @NotNull final Object... parameters) {
+		final AnnotatedCommandExecutor<E> commandExecutor = createInstance(sender, executorClass, parameters);
+		return executionCall.getMethods().stream()
+				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
 	}
 
-	private Object[] recalculateArguments(final Method method, final String... args) {
-		final Argument argument = method.getAnnotation(Argument.class);
-		final Fallback fallback = method.getAnnotation(Fallback.class);
-		final Object[] data = new Object[method.getParameterCount()];
-		int skip = 0;
-		for (int i = 0; i < method.getParameterCount(); i++) {
-			if (fallback != null && i == 0 || i == argument.position()) {
-				skip++;
-			}
-			final Mapper mapper = method.getParameters()[i].getAnnotation(Mapper.class);
-			if (method.getParameters()[i].isVarArgs()) {
-				final Class<?> type = method.getParameters()[i].getType().getComponentType();
-				final int length = args.length - i + skip - 2;
-				final Object array = Array.newInstance(type, length);
-				for (int j = 0; j < length; j++) {
-					Array.set(array, j, map(mapper, type, args[j + i + skip]));
-				}
-				data[i] = array;
-				break;
-			} else {
-				data[i] = map(mapper, method.getParameters()[i].getType(), args[i + skip]);
-			}
-		}
-		return data;
-	}
-
-	private Object map(final Mapper mapper, final Class<?> type, final String value) {
-		return getMatchingMappingSet(mapper, type)
-				.map(mappingSet -> convert(mappingSet, type, value))
-				.orElseGet(() -> Util.convert(type, value));
-	}
-
-	private Optional<? extends MappingSet<?>> getMatchingMappingSet(final Mapper mapper, final Class<?> clazz) {
-		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
-				.map(Mapper::value)
-				.map(mappingConfig::get)
-				.filter(set -> set.getClazz().equals(clazz));
-		if (mappingSet.isPresent()) {
-			return mappingSet;
-		}
-		return Optional.of(clazz).map(mappingConfig::get);
-	}
-
-	private Object convert(final MappingSet<?> mappingSet, final Class<?> targetClass, final String value) {
-		final Object result = mappingSet.getFunction().apply(value);
-		if (mappingSet.getFallbackCondition().test(result)) {
-			throw new FallbackException("Fallback condition failed");
-		}
-		return targetClass.cast(result);
-	}
-
+	@NotNull
+	@SneakyThrows
 	@SuppressWarnings("unchecked")
-	@SneakyThrows
-	private <A extends AnnotatedCommandExecutor<E>> A createInstance(final CommandSender sender, final Class<A> executor, final Object... parameters) {
+	private <A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull final CommandSender sender,
+																	 @NotNull final Class<A> executor,
+																	 @NotNull final Object... parameters) {
 		if (executors.containsKey(sender)) {
 			return (A) executors.get(sender);
 		}
-		final Constructor<A> c = findMatchingConstructor(executor)
+		final Constructor<A> c = findConstructor(executor)
 				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
 		final Object[] o = new Object[parameters.length + 2];
 		o[0] = sender;
@@ -137,13 +72,22 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 		return result;
 	}
 
+	@NotNull
 	@SuppressWarnings({"unchecked", "java:S1612"})
-	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findMatchingConstructor(final Class<A> executor) {
+	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
+			@NotNull final Class<A> executor) {
 		return Arrays.stream(executor.getDeclaredConstructors())
 				.filter(c -> c.getParameterCount() >= 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
 				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()))
 				.map(x -> (Constructor<A>) x)
 				.findAny();
+	}
+
+	@SneakyThrows
+	private Object invokeMethod(@NotNull final Method method,
+								@NotNull final AnnotatedCommandExecutor<E> executor,
+								@NotNull final Object[] data) {
+		return method.invoke(executor, data);
 	}
 }
