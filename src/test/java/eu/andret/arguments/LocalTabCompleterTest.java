@@ -134,9 +134,9 @@ class LocalTabCompleterTest {
 		final LocalTabCompleter<JavaPlugin> completer = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 
 		// when
-		final boolean result1 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
-		final boolean result2 = completer.addTypeCompleter(Player.class, sender -> new ArrayList<>());
-		final boolean result3 = completer.addTypeCompleter(World.class, sender -> new ArrayList<>());
+		final boolean result1 = completer.addTypeCompleter(Player.class, (sender, collection) -> new ArrayList<>());
+		final boolean result2 = completer.addTypeCompleter(Player.class, (sender, collection) -> new ArrayList<>());
+		final boolean result3 = completer.addTypeCompleter(World.class, (sender, collection) -> new ArrayList<>());
 
 		// then
 		assertTrue(result1);
@@ -151,9 +151,9 @@ class LocalTabCompleterTest {
 		final LocalTabCompleter<JavaPlugin> completer = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 
 		// when
-		final boolean result1 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
-		final boolean result2 = completer.addArgumentCompleter("player", sender -> new ArrayList<>());
-		final boolean result3 = completer.addArgumentCompleter("world", sender -> new ArrayList<>());
+		final boolean result1 = completer.addArgumentCompleter("player", (sender, collection) -> new ArrayList<>());
+		final boolean result2 = completer.addArgumentCompleter("player", (sender, collection) -> new ArrayList<>());
+		final boolean result3 = completer.addArgumentCompleter("world", (sender, collection) -> new ArrayList<>());
 
 		// then
 		assertTrue(result1);
