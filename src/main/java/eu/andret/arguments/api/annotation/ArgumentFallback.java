@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ArgumentFallback {
 	/**
-	 * The array of {@link Mapper} values which will fall back into annotated method if they met their fallback
+	 * The array of {@link Mapper} values which will fall back into annotated method if they meet their fallback
 	 * conditions.
 	 *
 	 * @return The list of values.

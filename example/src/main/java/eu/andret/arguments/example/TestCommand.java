@@ -69,7 +69,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument(displayType = DisplayType.NONE)
 	public String notDisplayed() {
-		// Argument won't be displayed when "/test" will be executed
+		// Argument won't be displayed when "/test" is executed
 		return "Not displayed";
 	}
 
