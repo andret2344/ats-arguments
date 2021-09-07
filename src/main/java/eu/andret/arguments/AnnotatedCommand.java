@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -232,14 +233,26 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds a type completer that allows to suggest values on command writing.
 	 *
 	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param function The {@link BiFunction} that will be used to create the list of matching values.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
+	 */
+	public void addTypeCompleter(final Class<?> clazz, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
+			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
+		}
+	}
+
+	/**
+	 * Adds a type completer that allows to suggest values on command writing.
+	 *
+	 * @param clazz The {@link Class} that will be matched to completer.
 	 * @param function The {@link Function} that will be used to create the list of matching values.
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(final Class<?> clazz, final Function<CommandSender, Collection<String>> function) {
-		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
-		}
+		addTypeCompleter(clazz, (sender, collection) -> function.apply(sender));
 	}
 
 	/**
@@ -251,10 +264,11 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumCompleter(final Class<T> anEnum) {
-		final Function<CommandSender, Collection<String>> function = sender -> Arrays.stream(anEnum.getEnumConstants())
-				.map(String::valueOf)
-				.map(String::toUpperCase)
-				.collect(Collectors.toList());
+		final BiFunction<CommandSender, Collection<String>, Collection<String>> function = (sender, collection) ->
+				Arrays.stream(anEnum.getEnumConstants())
+						.map(String::valueOf)
+						.map(String::toUpperCase)
+						.collect(Collectors.toList());
 		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
 			throw new IllegalArgumentException("Completer for enum " + anEnum + " is already defined.");
 		}
@@ -269,7 +283,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(final Class<?> clazz, final Supplier<Collection<String>> supplier) {
-		addTypeCompleter(clazz, sender -> supplier.get());
+		addTypeCompleter(clazz, (sender, collection) -> supplier.get());
 	}
 
 	/**
@@ -293,10 +307,23 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(final String id, final Function<CommandSender, Collection<String>> function) {
+	public void addArgumentCompleter(final String id, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
 			throw new IllegalArgumentException("Completer with id \"" + id + "\" is already registered!");
 		}
+	}
+
+	/**
+	 * Adds an argument completer that allows to suggest values on command writing.
+	 *
+	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
+	 * 		select the created completer.
+	 * @param function The {@link Function} that will produce list of matching values.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated id.
+	 */
+	public void addArgumentCompleter(final String id, final Function<CommandSender, Collection<String>> function) {
+		addArgumentCompleter(id, (sender, collection) -> function.apply(sender));
 	}
 
 	/**

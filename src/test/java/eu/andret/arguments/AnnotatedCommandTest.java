@@ -209,7 +209,7 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void correctAddTypeCompleter() {
+	void correctAddTypeCompleterWithCollection() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestTabCompleter completer = mock(TestTabCompleter.class);
@@ -225,7 +225,27 @@ class AnnotatedCommandTest {
 
 		// then
 		verify(completer, times(1))
-				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null).equals(list)));
+				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null, null).equals(list)));
+	}
+
+	@Test
+	void correctAddTypeCompleterWithFunction() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
+		final ArrayList<String> list = new ArrayList<>();
+		list.add("one");
+		list.add("two");
+
+		// when
+		annotatedCommand.addTypeCompleter(World.class, (sender) -> list);
+
+		// then
+		verify(completer, times(1))
+				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
 	@Test
@@ -246,7 +266,7 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void correctAddArgumentCompleter() {
+	void correctAddArgumentCompleterWithCollection() {
 		// given
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestTabCompleter completer = mock(TestTabCompleter.class);
@@ -262,7 +282,27 @@ class AnnotatedCommandTest {
 
 		// then
 		verify(completer, times(1))
-				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null).equals(list)));
+				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null, null).equals(list)));
+	}
+
+	@Test
+	void correctAddArgumentCompleterWithFunction() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestTabCompleter completer = mock(TestTabCompleter.class);
+		when(command.getTabCompleter()).thenReturn(completer);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
+		final ArrayList<String> list = new ArrayList<>();
+		list.add("one");
+		list.add("two");
+
+		// when
+		annotatedCommand.addArgumentCompleter("testPlayerMapper", (sender) -> list);
+
+		// then
+		verify(completer, times(1))
+				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
 	@Test
@@ -299,7 +339,7 @@ class AnnotatedCommandTest {
 
 		// then
 		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class),
-				argThat(function -> function.apply(null).equals(values)));
+				argThat(function -> function.apply(null, null).equals(values)));
 	}
 
 	@Test

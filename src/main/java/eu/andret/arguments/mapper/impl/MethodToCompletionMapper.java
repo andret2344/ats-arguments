@@ -16,10 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * An implementation for {@link IMethodToCompletionMapper}.
@@ -30,8 +31,8 @@ import java.util.function.Function;
 @Value
 @Getter(AccessLevel.NONE)
 public class MethodToCompletionMapper implements IMethodToCompletionMapper {
-	Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap;
-	Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap;
+	Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap;
+	Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap;
 
 	@Override
 	public Collection<String> mapCommandToCompletion(final Method method, final String[] args, final CommandSender sender) {
@@ -39,20 +40,20 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 			return Collections.emptyList();
 		}
 		if (args.length - 1 <= method.getParameterCount()) {
-			return extractSuggestions(method.getParameters()[args.length - 2]).apply(sender);
+			return extractSuggestions(method.getParameters()[args.length - 2]).apply(sender, Arrays.asList(args));
 		}
 		final Parameter parameter = method.getParameters()[method.getParameterCount() - 1];
 		if (!parameter.isVarArgs()) {
 			return Collections.emptyList();
 		}
-		return extractSuggestions(parameter).apply(sender);
+		return extractSuggestions(parameter).apply(sender, Arrays.asList(args));
 	}
 
 	@NotNull
 	@NonNull
-	private Function<CommandSender, Collection<String>> extractSuggestions(final Parameter parameter) {
+	private BiFunction<CommandSender, Collection<String>, Collection<String>> extractSuggestions(final Parameter parameter) {
 		if (parameter.isAnnotationPresent(Ignore.class)) {
-			return sender -> Collections.emptyList();
+			return (sender, collection) -> Collections.emptyList();
 		}
 		if (!parameter.isAnnotationPresent(Completer.class)) {
 			return getTypeSuggestion(parameter);
@@ -64,10 +65,10 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 		return argumentCompleterMap.get(value);
 	}
 
-	private Function<CommandSender, Collection<String>> getTypeSuggestion(final Parameter parameter) {
+	private BiFunction<CommandSender, Collection<String>, Collection<String>> getTypeSuggestion(final Parameter parameter) {
 		if (typeCompleterMap.containsKey(parameter.getType())) {
 			return typeCompleterMap.get(parameter.getType());
 		}
-		return sender -> Collections.emptyList();
+		return (sender, collection) -> Collections.emptyList();
 	}
 }

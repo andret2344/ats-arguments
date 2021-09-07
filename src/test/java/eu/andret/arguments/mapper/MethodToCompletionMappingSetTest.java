@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,8 +26,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void typeCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-		typeCompleterMap.put(boolean.class, sender -> Arrays.asList("true", "false"));
+		final Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap = new HashMap<>();
+		typeCompleterMap.put(boolean.class, (sender, collection) -> Arrays.asList("true", "false"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(typeCompleterMap, new HashMap<>());
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
@@ -44,8 +44,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void typeIgnoredCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-		typeCompleterMap.put(boolean.class, sender -> Arrays.asList("true", "false"));
+		final Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap = new HashMap<>();
+		typeCompleterMap.put(boolean.class, (sender, collection) -> Arrays.asList("true", "false"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(typeCompleterMap, new HashMap<>());
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithIgnoredTypeCompletion", boolean.class);
@@ -61,8 +61,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void typeMismatchingCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-		typeCompleterMap.put(boolean.class, sender -> Arrays.asList("true", "false"));
+		final Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap = new HashMap<>();
+		typeCompleterMap.put(boolean.class, (sender, collection) -> Arrays.asList("true", "false"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(typeCompleterMap, new HashMap<>());
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMismatchedTypeCompletion", Player.class);
@@ -78,8 +78,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void argumentCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-		argumentCompleterMap.put("testWorldCompleter", sender -> Arrays.asList("world", "world_nether", "world_the_end"));
+		final Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap = new HashMap<>();
+		argumentCompleterMap.put("testWorldCompleter", (sender, collection) -> Arrays.asList("world", "world_nether", "world_the_end"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(new HashMap<>(), argumentCompleterMap);
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgumentCompletion", World.class);
@@ -96,8 +96,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void argumentExtraCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-		argumentCompleterMap.put("testWorldCompleter", sender -> Arrays.asList("world", "world_nether", "world_the_end"));
+		final Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap = new HashMap<>();
+		argumentCompleterMap.put("testWorldCompleter", (sender, collection) -> Arrays.asList("world", "world_nether", "world_the_end"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(new HashMap<>(), argumentCompleterMap);
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArgumentCompletion", World.class);
@@ -113,8 +113,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void argumentVarargCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-		argumentCompleterMap.put("testWorldCompleter", sender -> Arrays.asList("world", "world_nether", "world_the_end"));
+		final Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap = new HashMap<>();
+		argumentCompleterMap.put("testWorldCompleter", (sender, collection) -> Arrays.asList("world", "world_nether", "world_the_end"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(new HashMap<>(), argumentCompleterMap);
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVarArgArgumentCompletion", World[].class);
@@ -131,8 +131,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void argumentMismatchCompletionTest() throws NoSuchMethodException {
 		// given
-		final Map<String, Function<CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-		argumentCompleterMap.put("testWorldCompleter", sender -> Arrays.asList("world", "world_nether", "world_the_end"));
+		final Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap = new HashMap<>();
+		argumentCompleterMap.put("testWorldCompleter", (sender, collection) -> Arrays.asList("world", "world_nether", "world_the_end"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(new HashMap<>(), argumentCompleterMap);
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMismatchedArgumentCompletion", World.class);
@@ -148,8 +148,8 @@ class MethodToCompletionMappingSetTest {
 	@Test
 	void typeCompletionWithTooFewArgsTest() throws NoSuchMethodException {
 		// given
-		final Map<Class<?>, Function<CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-		typeCompleterMap.put(boolean.class, sender -> Arrays.asList("true", "false"));
+		final Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap = new HashMap<>();
+		typeCompleterMap.put(boolean.class, (sender, collection) -> Arrays.asList("true", "false"));
 		final IMethodToCompletionMapper mapper = new MethodToCompletionMapper(typeCompleterMap, new HashMap<>());
 		final CommandSender sender = mock(CommandSender.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
