@@ -4,139 +4,82 @@
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
-import eu.andret.arguments.provider.MalformedClass;
+import eu.andret.arguments.provider.ExceptionalClass;
+import eu.andret.arguments.provider.FewArgumentsClass;
+import eu.andret.arguments.provider.ManyArgumentsClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class MethodInvokerTest {
 	@Test
-	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
+	void createInstanceCorrectly() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		final ExecutionCall call = new ExecutionCall(List.of(method), new String[0]);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
 
 		// when
-		final List<Object> objects = invoker.invokeMethods(call, sender, commandClass);
+		final TestMethodsProvider provider = invoker.createInstance(sender, plugin, commandClass);
 
 		// then
-		assertEquals(Collections.emptyList(), objects);
-		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin));
+		assertNotNull(provider);
 	}
 
 	@Test
-	void invokeMethodOneArg() throws ReflectiveOperationException {
+	void createInstanceWithManyArguments() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
-		final ExecutionCall call = new ExecutionCall(List.of(method), new String[]{"test"});
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
 
 		// when
-		final List<Object> objects = invoker.invokeMethods(call, sender, commandClass);
-		assertEquals(Collections.emptyList(), objects);
+		final World world = mock(World.class);
+		final ManyArgumentsClass provider = invoker.createInstance(sender, plugin, commandClass, world);
 
 		// then
-		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin), "test");
+		assertNotNull(provider);
 	}
 
 	@Test
-	void throwExceptionOnMissingConstructor() throws ReflectiveOperationException {
+	void createInstanceWithException() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = MalformedClass.class;
-		final Method method = spy(commandClass.getDeclaredMethod("world"));
-		final ExecutionCall call = new ExecutionCall(List.of(method), new String[]{"world"});
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
-		final Executable result = () -> invoker.invokeMethods(call, sender, commandClass);
+		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+
+		// then
+		assertThrows(InvocationTargetException.class, result);
+	}
+
+	@Test
+	void createInstanceWithFewArguments() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
+
+		// when
+		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(IllegalStateException.class, result);
-		verify(method, times(0)).invoke(new TestMethodsProvider(sender, plugin), "test");
-	}
-
-	@Test
-	void invokeMethodTwiceWithNoArgs() throws ReflectiveOperationException {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
-		final ExecutionCall call = new ExecutionCall(List.of(method), new String[0]);
-
-		// when
-		invoker.invokeMethods(call, sender, commandClass);
-		invoker.invokeMethods(call, sender, commandClass);
-
-		// then
-		verify(method, times(2)).invoke(new TestMethodsProvider(sender, plugin));
-	}
-
-	@Test
-	void invokeMethodWithVarArg() throws ReflectiveOperationException {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
-		final ExecutionCall call = new ExecutionCall(List.of(method), new int[][]{{1, 2}});
-
-		// when
-		final List<Object> objects = invoker.invokeMethods(call, sender, commandClass);
-		assertEquals(Collections.emptyList(), objects);
-
-		// then
-		final Object args = new int[]{1, 2};
-		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin), args);
-	}
-
-	@Test
-	void invokeMethodWithException() throws ReflectiveOperationException {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>(plugin);
-		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithException"));
-		final Logger logger = mock(Logger.class);
-		when(plugin.getLogger()).thenReturn(logger);
-		final ExecutionCall call = new ExecutionCall(List.of(method), new String[0]);
-
-		// when
-		final Executable ex = () -> invoker.invokeMethods(call, sender, commandClass);
-
-		// then
-		assertThrows(InvocationTargetException.class, ex);
-		verify(method, times(1)).invoke(new TestMethodsProvider(sender, plugin));
 	}
 }

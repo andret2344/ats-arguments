@@ -8,7 +8,4 @@ import eu.andret.arguments.mapper.impl.MethodInvoker;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class LocalMethodInvoker extends MethodInvoker<JavaPlugin> {
-	public LocalMethodInvoker(final JavaPlugin plugin) {
-		super(plugin);
-	}
 }

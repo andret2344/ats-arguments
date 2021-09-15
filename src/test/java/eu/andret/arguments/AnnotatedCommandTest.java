@@ -5,8 +5,10 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.provider.TestEnum;
+import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -216,7 +219,7 @@ class AnnotatedCommandTest {
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
-		final ArrayList<String> list = new ArrayList<>();
+		final Collection<String> list = new ArrayList<>();
 		list.add("one");
 		list.add("two");
 
@@ -236,7 +239,7 @@ class AnnotatedCommandTest {
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(true);
-		final ArrayList<String> list = new ArrayList<>();
+		final Collection<String> list = new ArrayList<>();
 		list.add("one");
 		list.add("two");
 
@@ -273,7 +276,7 @@ class AnnotatedCommandTest {
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
-		final ArrayList<String> list = new ArrayList<>();
+		final Collection<String> list = new ArrayList<>();
 		list.add("one");
 		list.add("two");
 
@@ -293,7 +296,7 @@ class AnnotatedCommandTest {
 		when(command.getTabCompleter()).thenReturn(completer);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(true);
-		final ArrayList<String> list = new ArrayList<>();
+		final Collection<String> list = new ArrayList<>();
 		list.add("one");
 		list.add("two");
 
@@ -357,5 +360,24 @@ class AnnotatedCommandTest {
 		// then
 		assertThrows(IllegalArgumentException.class, result);
 		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class), any());
+	}
+
+	@Test
+	void incorrectAddsEnumCompleter() {
+		// given
+		final CommandSender sender = mock(CommandSender.class);
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final TestMethodsProvider testMethodsProvider = new TestMethodsProvider(sender, javaPlugin);
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getCommandExecutor(sender)).thenReturn(testMethodsProvider);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+
+		// when
+		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = annotatedCommand.getCommandExecutor(sender);
+
+		// then
+		assertEquals(testMethodsProvider, commandExecutor);
 	}
 }

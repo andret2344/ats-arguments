@@ -5,6 +5,7 @@
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommand;
+import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.CommandManager;
 import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.example.entity.SomeEnum;
@@ -39,6 +40,8 @@ public class TestPlugin extends JavaPlugin {
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
+		final AnnotatedCommandExecutor<TestPlugin> executor = testCommand.getCommandExecutor(getServer().getConsoleSender());
+		System.out.println(executor.getPlugin());
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);
