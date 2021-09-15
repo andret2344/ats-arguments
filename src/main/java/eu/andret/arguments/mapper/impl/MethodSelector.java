@@ -4,12 +4,10 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IFallbackSelector;
@@ -18,16 +16,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,8 +33,7 @@ import java.util.Optional;
 @Value
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)
-public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> {
-	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
+public class MethodSelector<E extends JavaPlugin> implements IMethodSelector {
 	IFallbackSelector<E> fallbackSelector;
 	MappingConfig mappingConfig;
 
@@ -49,25 +42,13 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector<E> 
 	 *
 	 * @param fallbackSelector The fallback selector.
 	 */
-	public MethodSelector(@NotNull final FallbackSelector<E> fallbackSelector) {
+	public MethodSelector(@NotNull final IFallbackSelector<E> fallbackSelector) {
 		this(fallbackSelector, new MappingConfig());
 	}
 
-	@NotNull
 	@Override
-	public ExecutionCall selectMethod(@NotNull final Method method, @NotNull final String[] command,
-									  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
-		try {
-			final Object[] data = recalculateArguments(method, command);
-			return new ExecutionCall(List.of(method), data);
-		} catch (final FallbackException ex) {
-			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), executorClass);
-			return new ExecutionCall(methods, new Object[]{ex.getValue()});
-		}
-	}
-
 	@NotNull
-	private Object[] recalculateArguments(@NotNull final Method method, @NotNull final String... args) {
+	public Object[] recalculateArguments(@NotNull final Method method, @NotNull final String... args) {
 		final Argument argument = method.getAnnotation(Argument.class);
 		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;

@@ -11,16 +11,13 @@ import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +32,6 @@ import java.util.stream.Collectors;
 @NonFinal
 public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector<E> {
 	private static final Class<?>[] VALID_PARAMETERS_ARRAY = {String.class};
-	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 
 	@NotNull
 	@Override

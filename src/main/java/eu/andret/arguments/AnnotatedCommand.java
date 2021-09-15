@@ -109,6 +109,16 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
+	 * @param sender The sender that is assigned to the desired CommandExecutor.
+	 *
+	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
+	 * 		command.
+	 */
+	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
+		return getLocalCommandExecutor().getCommandExecutor(sender);
+	}
+
+	/**
 	 * Sets an unknown sub command execution listener.
 	 *
 	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.

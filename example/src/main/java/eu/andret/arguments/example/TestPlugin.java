@@ -39,6 +39,8 @@ public class TestPlugin extends JavaPlugin {
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
+		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender());
+		getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);

@@ -26,6 +26,7 @@ import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
@@ -37,8 +38,12 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Local command executor, allows customization of commands behavior.
@@ -50,6 +55,8 @@ import java.util.Optional;
 @NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
+	JavaPlugin plugin;
+	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
 	MappingConfig mappingConfig = new MappingConfig();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
@@ -58,8 +65,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
 	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
-	IMethodSelector<E> methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
-	IMethodInvoker<E> methodInvoker;
+	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
+	IMethodInvoker<E> methodInvoker = new MethodInvoker<>();
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -77,7 +84,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.parameters = parameters;
-		methodInvoker = new MethodInvoker<>(plugin);
+		this.plugin = plugin;
 	}
 
 	@Override
@@ -154,11 +161,48 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
-			final ExecutionCall call = methodSelector.selectMethod(method, args, commandClass);
-			final List<Object> result = methodInvoker.invokeMethods(call, sender, commandClass, parameters);
+			final ExecutionCall call = selectMethod(method, args);
+			final List<Object> result = invokeMethods(call, sender);
 			result.forEach(element -> responseConsumer.consumeResponse(sender, element, annotatedCommand.getOptions()));
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}
+	}
+
+	@NotNull
+	private ExecutionCall selectMethod(@NotNull final Method method, @NotNull final String[] command) {
+		try {
+			final Object[] data = methodSelector.recalculateArguments(method, command);
+			return new ExecutionCall(List.of(method), data);
+		} catch (final FallbackException ex) {
+			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), commandClass);
+			return new ExecutionCall(methods, new Object[]{ex.getValue()});
+		}
+	}
+
+	@NotNull
+	private List<Object> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
+		final AnnotatedCommandExecutor<E> commandExecutor;
+		if (executors.containsKey(sender)) {
+			commandExecutor = executors.get(sender);
+		} else {
+			commandExecutor = methodInvoker.createInstance(sender, plugin, commandClass, parameters);
+			executors.put(sender, commandExecutor);
+		}
+		return executionCall.getMethods().stream()
+				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList());
+	}
+
+	@SneakyThrows
+	private Object invokeMethod(@NotNull final Method method,
+								@NotNull final AnnotatedCommandExecutor<E> executor,
+								@NotNull final Object[] data) {
+		return method.invoke(executor, data);
+	}
+
+	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
+		return executors.get(sender);
 	}
 }
