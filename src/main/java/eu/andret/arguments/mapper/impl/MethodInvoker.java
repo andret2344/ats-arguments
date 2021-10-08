@@ -14,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -49,11 +48,14 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
 			@NotNull final Class<A> executor,
 			@NotNull final JavaPlugin plugin) {
-		return Arrays.stream(executor.getDeclaredConstructors())
+		final Constructor<A>[] constructors = (Constructor<A>[]) executor.getDeclaredConstructors();
+		if (constructors.length != 1) {
+			throw new UnsupportedOperationException("The class " + executor.getName()
+					+ " has to have exactly one declared constructor");
+		}
+		return Optional.of(constructors[0])
 				.filter(c -> c.getParameterCount() >= 2)
 				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
-				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()))
-				.map(x -> (Constructor<A>) x)
-				.findAny();
+				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()));
 	}
 }
