@@ -8,6 +8,7 @@ import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.provider.ExceptionalClass;
 import eu.andret.arguments.provider.FewArgumentsClass;
 import eu.andret.arguments.provider.ManyArgumentsClass;
+import eu.andret.arguments.provider.ManyConstructorsClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -81,5 +82,20 @@ class MethodInvokerTest {
 
 		// then
 		assertThrows(IllegalStateException.class, result);
+	}
+
+	@Test
+	void createInstanceOfMultipleConstructors() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
+
+		// when
+		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+
+		// then
+		assertThrows(UnsupportedOperationException.class, result);
 	}
 }
