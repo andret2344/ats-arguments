@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.SubCommand;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +69,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
 	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
 	IMethodInvoker<E> methodInvoker = new MethodInvoker<>();
+	@Getter(AccessLevel.PACKAGE)
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -76,6 +79,16 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	AnnotatedCommand.OnMainCommandExecutionListener onMainCommandExecutionListener;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
+	@NotNull
+	Node root;
+
+	@Value
+	class Node {
+		@NotNull
+		Class<? extends AnnotatedCommandExecutor<E>> clazz;
+		@NotNull
+		List<Node> children = new ArrayList<>();
+	}
 
 	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
 						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
@@ -85,6 +98,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		this.commandClass = commandClass;
 		this.parameters = parameters;
 		this.plugin = plugin;
+		root = new Node(commandClass);
 	}
 
 	@Override
@@ -204,5 +218,32 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 
 	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
 		return executors.get(sender);
+	}
+
+	@SuppressWarnings("unchecked")
+	void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass) {
+		final SubCommand annotation = commandClass.getAnnotation(SubCommand.class);
+		final Class<? extends AnnotatedCommandExecutor<E>> parent
+				= (Class<? extends AnnotatedCommandExecutor<E>>) annotation.parent();
+		final Node found = search(parent);
+		if (found == null) {
+			throw new IllegalArgumentException("Parent class is not registered!");
+		}
+		found.children.add(new Node(commandClass));
+	}
+
+	private Node search(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return search(root, clazz);
+	}
+
+	private Node search(@NotNull final Node current, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		if (current.clazz.equals(clazz)) {
+			return current;
+		}
+		return current.children.stream()
+				.map(node -> search(node, clazz))
+				.filter(Objects::nonNull)
+				.findAny()
+				.orElse(null);
 	}
 }
