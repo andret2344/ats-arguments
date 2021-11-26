@@ -89,7 +89,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String colored(final boolean value) {
 		// automatic suggestions with "true" and "false" will appear.
-		// ArgumentResponse will be automatically colored.
+		// Response will be automatically colored.
 		if (value) {
 			return "&6You have found something. &dBye!";
 		}
@@ -99,7 +99,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String ignored(@Ignore final boolean value) {
 		// No suggestions will appear.
-		// ArgumentResponse will be automatically coloured.
+		// Response will be automatically coloured.
 		if (value) {
 			return "&6I'm ignored.";
 		}
