@@ -85,12 +85,12 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector {
 															@NotNull final Class<?> clazz) {
 		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
-				.map(mappingConfig::get)
+				.map(mappingConfig::getArgumentMapper)
 				.filter(set -> set.getClazz().equals(clazz));
 		if (mappingSet.isPresent()) {
 			return mappingSet;
 		}
-		return Optional.of(clazz).map(mappingConfig::get);
+		return Optional.of(clazz).map(mappingConfig::getTypeMapper);
 	}
 
 	@NotNull

@@ -42,6 +42,9 @@ public class TestPlugin extends JavaPlugin {
 		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender());
 		getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
 
+		testCommand.addTypeResponseMapper(Player.class, HumanEntity::getName);
+		testCommand.addArgumentResponseMapper("world", World.class, World::getName);
+
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);
 		paramCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));

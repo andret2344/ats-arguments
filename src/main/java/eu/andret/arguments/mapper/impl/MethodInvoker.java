@@ -5,57 +5,63 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.mapper.IMethodInvoker;
+import eu.andret.arguments.mapper.IResponseMapper;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
-import lombok.experimental.NonFinal;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * The interface to invoke the fallback method.
+ * The method invoker implementation.
  *
- * @param <E> The JavaPlugin instance.
+ * @param <E> The JavaPlugin
  *
  * @author Andret
- * @since Sep 03, 2021
+ * @since Nov 25, 2021
  */
 @Value
-@NonFinal
+@AllArgsConstructor
 public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
-	@Override
 	@NotNull
-	@SneakyThrows
-	public <A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull final CommandSender sender,
-																	@NotNull final JavaPlugin plugin,
-																	@NotNull final Class<A> executor,
-																	@NotNull final Object... parameters) {
-		final Constructor<A> c = findConstructor(executor, plugin)
-				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
-		final Object[] o = new Object[parameters.length + 2];
-		o[0] = sender;
-		o[1] = plugin;
-		System.arraycopy(parameters, 0, o, 2, parameters.length);
-		return c.newInstance(o);
+	IResponseMapper responseMapper;
+
+	/**
+	 * A constructor.
+	 *
+	 * @param mappingConfig The config.
+	 */
+	public MethodInvoker(@NotNull final MappingConfig mappingConfig) {
+		this(new ResponseMapper(mappingConfig));
 	}
 
 	@NotNull
-	@SuppressWarnings({"unchecked", "java:S1612"})
-	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
-			@NotNull final Class<A> executor,
-			@NotNull final JavaPlugin plugin) {
-		final Constructor<A>[] constructors = (Constructor<A>[]) executor.getDeclaredConstructors();
-		if (constructors.length != 1) {
-			throw new UnsupportedOperationException("The class " + executor.getName()
-					+ " has to have exactly one declared constructor");
-		}
-		return Optional.of(constructors[0])
-				.filter(c -> c.getParameterCount() >= 2)
-				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
-				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()));
+	@Override
+	public List<String> invokeMethod(@NotNull final Method method,
+									 @NotNull final AnnotatedCommandExecutor<E> executor,
+									 @NotNull final Object[] data) {
+		return Optional.ofNullable(invoke(method, executor, data))
+				.map(result -> responseMapper.mapResponse(method, result))
+				.stream()
+				.flatMap(Collection::stream)
+				.flatMap(String::lines)
+				.collect(Collectors.toList());
+	}
+
+	@Nullable
+	@SneakyThrows
+	private Object invoke(@NotNull final Method method,
+						  @NotNull final AnnotatedCommandExecutor<E> executor,
+						  @NotNull final Object[] data) {
+		return method.invoke(executor, data);
 	}
 }

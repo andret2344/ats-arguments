@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import java.util.Arrays;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -81,7 +79,7 @@ class ResponseConsumerTest {
 		final IResponseConsumer mapper = new ResponseConsumer();
 
 		// when
-		mapper.consumeResponse(sender, new String[]{"&7colored line", "clear line"}, new AnnotatedCommand.Options());
+		mapper.consumeResponse(sender, "&7colored line\nclear line", new AnnotatedCommand.Options());
 
 		// then
 		final InOrder inOrder = Mockito.inOrder(sender);
@@ -96,7 +94,7 @@ class ResponseConsumerTest {
 		final IResponseConsumer mapper = new ResponseConsumer();
 
 		// when
-		mapper.consumeResponse(sender, Arrays.asList("&7colored line", "clear line"), new AnnotatedCommand.Options());
+		mapper.consumeResponse(sender, "&7colored line\nclear line", new AnnotatedCommand.Options());
 
 		// then
 		final InOrder inOrder = Mockito.inOrder(sender);

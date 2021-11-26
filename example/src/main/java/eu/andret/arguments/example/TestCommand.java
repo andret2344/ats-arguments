@@ -7,6 +7,7 @@ package eu.andret.arguments.example;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.ArgumentFallback;
+import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Ignore;
@@ -88,7 +89,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String colored(final boolean value) {
 		// automatic suggestions with "true" and "false" will appear.
-		// Response will be automatically colored.
+		// ArgumentResponse will be automatically colored.
 		if (value) {
 			return "&6You have found something. &dBye!";
 		}
@@ -98,7 +99,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String ignored(@Ignore final boolean value) {
 		// No suggestions will appear.
-		// Response will be automatically coloured.
+		// ArgumentResponse will be automatically coloured.
 		if (value) {
 			return "&6I'm ignored.";
 		}
@@ -153,5 +154,16 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument
 	public String enumeration(final SomeEnum someEnum) {
 		return someEnum.name();
+	}
+
+	@Argument(executorType = ExecutorType.PLAYER)
+	public Player getMe() {
+		return ((Player) sender);
+	}
+
+	@ArgumentResponse("world")
+	@Argument(executorType = ExecutorType.PLAYER)
+	public World getMyWorld() {
+		return ((Player) sender).getWorld();
 	}
 }

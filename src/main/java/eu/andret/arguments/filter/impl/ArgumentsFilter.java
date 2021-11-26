@@ -70,9 +70,9 @@ public class ArgumentsFilter implements IArgumentsFilter {
 
 	private boolean isTypeMatchingParam(final Class<?> parameterClass, final Mapper mapper, final Class<?> clazz) {
 		if (mapper != null) {
-			return mappingConfig.get(mapper.value()).getClazz().isAssignableFrom(parameterClass);
+			return mappingConfig.getArgumentMapper(mapper.value()).getClazz().isAssignableFrom(parameterClass);
 		}
-		if (mappingConfig.exists(parameterClass)) {
+		if (mappingConfig.existsTypeResponseMapper(parameterClass)) {
 			return true;
 		}
 		return clazz.isAssignableFrom(parameterClass);

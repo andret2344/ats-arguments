@@ -10,23 +10,25 @@ import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IFallbackSelector;
+import eu.andret.arguments.mapper.IInstanceCreator;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.FallbackSelector;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
@@ -38,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +69,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
 	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
 	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
-	IMethodInvoker<E> methodInvoker = new MethodInvoker<>();
+	IInstanceCreator<E> instanceCreator = new InstanceCreator<>();
+	IMethodInvoker<E> methodInvoker = new MethodInvoker<>(mappingConfig);
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -138,18 +142,34 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	<M> boolean addArgumentMapper(@NotNull final String id, @NotNull final MappingSet<M> mappingSet) {
-		if (mappingConfig.exists(id)) {
+		if (mappingConfig.existsArgumentMapper(id)) {
 			return false;
 		}
-		mappingConfig.add(id, mappingSet);
+		mappingConfig.addArgumentMapper(id, mappingSet);
 		return true;
 	}
 
 	<M> boolean addTypeMapper(@NotNull final Class<M> clazz, @NotNull final MappingSet<M> mappingSet) {
-		if (mappingConfig.exists(clazz)) {
+		if (mappingConfig.existsTypeResponseMapper(clazz)) {
 			return false;
 		}
-		mappingConfig.add(clazz, mappingSet);
+		mappingConfig.addTypeMapper(clazz, mappingSet);
+		return true;
+	}
+
+	<T> boolean addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final ResponseMappingSet<T> responseMappingSet) {
+		if (mappingConfig.existsTypeResponseMapper(clazz)) {
+			return false;
+		}
+		mappingConfig.addTypeResponseMapper(clazz, responseMappingSet);
+		return true;
+	}
+
+	<T> boolean addArgumentResponseMapper(@NotNull final String id, @NotNull final ResponseMappingSet<T> responseMappingSet) {
+		if (mappingConfig.existsArgumentResponseMapper(id)) {
+			return false;
+		}
+		mappingConfig.addArgumentResponseMapper(id, responseMappingSet);
 		return true;
 	}
 
@@ -161,9 +181,11 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
-			final ExecutionCall call = selectMethod(method, args);
-			final List<Object> result = invokeMethods(call, sender);
-			result.forEach(element -> responseConsumer.consumeResponse(sender, element, annotatedCommand.getOptions()));
+			Optional.of(selectMethod(method, args))
+					.map(executionCall -> invokeMethods(executionCall, sender))
+					.stream()
+					.flatMap(Collection::stream)
+					.forEach(value -> responseConsumer.consumeResponse(sender, value, annotatedCommand.getOptions()));
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.insufficientPermissions(sender);
 		}
@@ -181,25 +203,22 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	@NotNull
-	private List<Object> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
-		final AnnotatedCommandExecutor<E> commandExecutor;
-		if (executors.containsKey(sender)) {
-			commandExecutor = executors.get(sender);
-		} else {
-			commandExecutor = methodInvoker.createInstance(sender, plugin, commandClass, parameters);
-			executors.put(sender, commandExecutor);
-		}
+	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
+		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
 		return executionCall.getMethods().stream()
-				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
+				.map(method -> methodInvoker.invokeMethod(method, commandExecutor, executionCall.getData()))
+				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
-	@SneakyThrows
-	private Object invokeMethod(@NotNull final Method method,
-								@NotNull final AnnotatedCommandExecutor<E> executor,
-								@NotNull final Object[] data) {
-		return method.invoke(executor, data);
+	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
+		if (executors.containsKey(sender)) {
+			return executors.get(sender);
+		}
+		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
+		executors.put(sender, commandExecutor);
+		return commandExecutor;
 	}
 
 	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
