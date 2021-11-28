@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Implementation for {@link IResponseConsumer}. *
+ * Implementation for {@link IResponseConsumer}.
  *
  * @author Andret
  * @since Apr 19, 2020
