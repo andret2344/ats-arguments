@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @NonFinal
 @AllArgsConstructor
 public class AnnotatedCommand<E extends JavaPlugin> {
+	@NotNull
 	PluginCommand command;
 	@NotNull
 	Options options;
@@ -46,7 +47,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @param command The plugin command.
 	 */
-	public AnnotatedCommand(final PluginCommand command) {
+	public AnnotatedCommand(@NotNull final PluginCommand command) {
 		this(command, new Options());
 	}
 
@@ -69,7 +70,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		 *
 		 * @param sender The sender that executed an unknown sub-command
 		 */
-		void unknownSubCommandExecuted(CommandSender sender);
+		void unknownSubCommandExecuted(@NotNull CommandSender sender);
 	}
 
 	/**
@@ -82,7 +83,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		 *
 		 * @param sender The sender that executed the command with no permissions.
 		 */
-		void insufficientPermissions(CommandSender sender);
+		void insufficientPermissions(@NotNull CommandSender sender);
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		 *
 		 * @param sender The sender that executed the command with no arguments.
 		 */
-		void mainCommandExecution(CommandSender sender);
+		void mainCommandExecution(@NotNull CommandSender sender);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -156,9 +157,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
+	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper,
+								  @NotNull final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper for this class is already registered!");
+			throw new IllegalArgumentException(String.format("Mapper with class %s is already registered!", clazz));
 		}
 	}
 
@@ -172,7 +174,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public <T> void addTypeMapper(final Class<T> clazz, final Function<String, T> mapper) {
+	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper) {
 		addTypeMapper(clazz, mapper, FallbackConstants.NEVER);
 	}
 
@@ -189,9 +191,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
+	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
+									  @NotNull final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper with this id is already registered!");
+			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
 	}
 
@@ -207,7 +210,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public <T> void addArgumentMapper(final String id, final Class<T> clazz, final Function<String, T> mapper) {
+	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
+									  @NotNull final Function<String, T> mapper) {
 		addArgumentMapper(id, clazz, mapper, FallbackConstants.NEVER);
 	}
 
@@ -220,10 +224,11 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
-	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum, final Predicate<Object> fallbackCondition) {
+	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
+												  @NotNull final Predicate<Object> fallbackCondition) {
 		final Function<String, T> mapper = name -> Enum.valueOf(anEnum, name.toUpperCase());
 		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper for this enum is already registered!");
+			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -235,7 +240,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
-	public <T extends Enum<T>> void addEnumMapper(final Class<T> anEnum) {
+	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum) {
 		addEnumMapper(anEnum, FallbackConstants.NEVER);
 	}
 
@@ -247,9 +252,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(final Class<?> clazz, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	public void addTypeCompleter(@NotNull final Class<?> clazz,
+								 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
+			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
 		}
 	}
 
@@ -261,7 +267,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(final Class<?> clazz, final Function<CommandSender, Collection<String>> function) {
+	public void addTypeCompleter(@NotNull final Class<?> clazz,
+								 @NotNull final Function<CommandSender, Collection<String>> function) {
 		addTypeCompleter(clazz, (sender, collection) -> function.apply(sender));
 	}
 
@@ -273,14 +280,14 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
-	public <T extends Enum<T>> void addEnumCompleter(final Class<T> anEnum) {
+	public <T extends Enum<T>> void addEnumCompleter(@NotNull final Class<T> anEnum) {
 		final BiFunction<CommandSender, Collection<String>, Collection<String>> function = (sender, collection) ->
 				Arrays.stream(anEnum.getEnumConstants())
 						.map(String::valueOf)
 						.map(String::toUpperCase)
 						.collect(Collectors.toList());
 		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
-			throw new IllegalArgumentException("Completer for enum " + anEnum + " is already defined.");
+			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -292,7 +299,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(final Class<?> clazz, final Supplier<Collection<String>> supplier) {
+	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Supplier<Collection<String>> supplier) {
 		addTypeCompleter(clazz, (sender, collection) -> supplier.get());
 	}
 
@@ -304,7 +311,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(final Class<?> clazz, final Collection<String> collection) {
+	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Collection<String> collection) {
 		addTypeCompleter(clazz, () -> collection);
 	}
 
@@ -317,9 +324,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(final String id, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
-			throw new IllegalArgumentException("Completer with id \"" + id + "\" is already registered!");
+			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
 	}
 
@@ -332,7 +339,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(final String id, final Function<CommandSender, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id,
+									 @NotNull final Function<CommandSender, Collection<String>> function) {
 		addArgumentCompleter(id, (sender, collection) -> function.apply(sender));
 	}
 
@@ -345,7 +353,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(final String id, final Supplier<Collection<String>> supplier) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final Supplier<Collection<String>> supplier) {
 		addArgumentCompleter(id, sender -> supplier.get());
 	}
 
@@ -358,7 +366,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(final String id, final Collection<String> collection) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
 	}
 }

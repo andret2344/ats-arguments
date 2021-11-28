@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.provider.ExceptionalClass;
 import eu.andret.arguments.provider.FewArgumentsClass;
 import eu.andret.arguments.provider.ManyArgumentsClass;
@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-class MethodInvokerTest {
+class InstanceCreatorTest {
 	@Test
 	void createInstanceCorrectly() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
 		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
 
 		// when
@@ -43,7 +43,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
 		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
 
 		// when
@@ -59,7 +59,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
 		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
@@ -74,7 +74,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
 		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
 
 		// when
@@ -89,7 +89,7 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
 		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
 
 		// when

@@ -5,7 +5,7 @@
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.mapper.IMethodInvoker;
+import eu.andret.arguments.mapper.IInstanceCreator;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 @Value
 @NonFinal
-public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
+public class InstanceCreator<E extends JavaPlugin> implements IInstanceCreator<E> {
 	@Override
 	@NotNull
 	@SneakyThrows
