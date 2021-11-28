@@ -17,7 +17,7 @@ import java.lang.reflect.Constructor;
 import java.util.Optional;
 
 /**
- * The interface to invoke the fallback method.
+ * The implementation of {@link InstanceCreator}.
  *
  * @param <E> The JavaPlugin instance.
  *

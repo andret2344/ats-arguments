@@ -9,7 +9,7 @@ import eu.andret.arguments.mapper.IMapper;
 import org.bukkit.command.CommandSender;
 
 /**
- * A mapper interface to mapping response generated from method.
+ * A consumer that accepts the response and presents it to sender.
  *
  * @author Andret
  * @since Apr 19, 2020

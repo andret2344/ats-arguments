@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An interface to call methods.
+ * An interface to create {@link AnnotatedCommandExecutor} instance.
  *
  * @param <E> The JavaPlugin instance.
  *
