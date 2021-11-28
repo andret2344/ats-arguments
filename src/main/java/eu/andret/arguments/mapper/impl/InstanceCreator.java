@@ -17,7 +17,7 @@ import java.lang.reflect.Constructor;
 import java.util.Optional;
 
 /**
- * The interface to invoke the fallback method.
+ * The implementation of {@link InstanceCreator}.
  *
  * @param <E> The JavaPlugin instance.
  *
@@ -27,8 +27,8 @@ import java.util.Optional;
 @Value
 @NonFinal
 public class InstanceCreator<E extends JavaPlugin> implements IInstanceCreator<E> {
-	@NotNull
 	@Override
+	@NotNull
 	@SneakyThrows
 	public <A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull final CommandSender sender,
 																	@NotNull final JavaPlugin plugin,

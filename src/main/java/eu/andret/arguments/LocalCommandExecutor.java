@@ -150,7 +150,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	<M> boolean addTypeMapper(@NotNull final Class<M> clazz, @NotNull final MappingSet<M> mappingSet) {
-		if (mappingConfig.existsTypeResponseMapper(clazz)) {
+		if (mappingConfig.existsTypeMapper(clazz)) {
 			return false;
 		}
 		mappingConfig.addTypeMapper(clazz, mappingSet);
