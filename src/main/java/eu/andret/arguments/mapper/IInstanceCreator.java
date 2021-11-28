@@ -11,14 +11,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An interface to call methods.
+ * An interface to create {@link AnnotatedCommandExecutor} instance.
  *
  * @param <E> The JavaPlugin instance.
  *
  * @author Andret
  * @since Sep 03, 2021
  */
-public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
+public interface IInstanceCreator<E extends JavaPlugin> extends IMapper {
 	/**
 	 * @param sender The sender who executed the command.
 	 * @param plugin The {@link JavaPlugin}.

@@ -4,8 +4,8 @@
 
 package eu.andret.arguments.local;
 
-import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public abstract class LocalMethodInvoker extends MethodInvoker<JavaPlugin> {
+public abstract class LocalInstanceCreator extends InstanceCreator<JavaPlugin> {
 }

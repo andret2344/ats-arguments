@@ -52,7 +52,7 @@ class MethodSelectorTest {
 		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.ALWAYS));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.ALWAYS));
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector<>(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
@@ -123,7 +123,7 @@ class MethodSelectorTest {
 		final World world = mock(World.class);
 		when(getWorld.apply("world")).thenReturn(world);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.add("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);

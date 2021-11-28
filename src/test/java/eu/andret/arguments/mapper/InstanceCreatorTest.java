@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.provider.ExceptionalClass;
 import eu.andret.arguments.provider.FewArgumentsClass;
 import eu.andret.arguments.provider.ManyArgumentsClass;
@@ -22,17 +22,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-class MethodInvokerTest {
+class InstanceCreatorTest {
 	@Test
 	void createInstanceCorrectly() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
 
 		// when
-		final TestMethodsProvider provider = invoker.createInstance(sender, plugin, commandClass);
+		final TestMethodsProvider provider = creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertNotNull(provider);
@@ -43,12 +43,12 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
 
 		// when
 		final World world = mock(World.class);
-		final ManyArgumentsClass provider = invoker.createInstance(sender, plugin, commandClass, world);
+		final ManyArgumentsClass provider = creator.createInstance(sender, plugin, commandClass, world);
 
 		// then
 		assertNotNull(provider);
@@ -59,11 +59,11 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(InvocationTargetException.class, result);
@@ -74,11 +74,11 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(IllegalStateException.class, result);
@@ -89,11 +89,11 @@ class MethodInvokerTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);

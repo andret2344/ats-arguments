@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 
 /**
  * Implementation for {@link IResponseConsumer}.
+ *
+ * @author Andret
+ * @since Apr 19, 2020
  */
 public class ResponseConsumer implements IResponseConsumer {
 	@Override
