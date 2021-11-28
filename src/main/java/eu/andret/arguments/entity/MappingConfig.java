@@ -27,7 +27,7 @@ public class MappingConfig {
 	 * @param key The identification.
 	 * @param set The mapping set/
 	 */
-	public void addArgumentMapper(@NotNull final String key, @NotNull final MappingSet<?> set) {
+	public void addArgumentMapper(final String key, final MappingSet<?> set) {
 		argumentMappers.put(key, set);
 	}
 
@@ -37,7 +37,7 @@ public class MappingConfig {
 	 * @param clazz The identifying class.
 	 * @param set The mapping set.
 	 */
-	public void addTypeMapper(@NotNull final Class<?> clazz, @NotNull final MappingSet<?> set) {
+	public void addTypeMapper(final Class<?> clazz, final MappingSet<?> set) {
 		typeMappers.put(clazz, set);
 	}
 
@@ -79,7 +79,7 @@ public class MappingConfig {
 	 *
 	 * @return The found mapping set if found, {@code null} otherwise.
 	 */
-	public MappingSet<?> getTypeMapper(@NotNull final Class<?> clazz) {
+	public MappingSet<?> getTypeMapper(final Class<?> clazz) {
 		return typeMappers.get(clazz);
 	}
 
@@ -112,7 +112,7 @@ public class MappingConfig {
 	 *
 	 * @return {@code true} if mapping set is found, {@code false} otherwise.
 	 */
-	public boolean existsArgumentMapper(@NotNull final String key) {
+	public boolean existsArgumentMapper(final String key) {
 		return argumentMappers.containsKey(key);
 	}
 
@@ -123,7 +123,7 @@ public class MappingConfig {
 	 *
 	 * @return {@code true} if mapping set is found, {@code false} otherwise.
 	 */
-	public boolean existsTypeMapper(@NotNull final Class<?> clazz) {
+	public boolean existsTypeMapper(final Class<?> clazz) {
 		return typeMappers.containsKey(clazz);
 	}
 

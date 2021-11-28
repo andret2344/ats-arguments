@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A mapper interface to mapping response generated from method.
+ * A consumer that accepts the response and presents it to sender.
  *
  * @author Andret
  * @since Apr 19, 2020

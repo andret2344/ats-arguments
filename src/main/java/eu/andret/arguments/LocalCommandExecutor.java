@@ -18,13 +18,13 @@ import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
-import eu.andret.arguments.mapper.IMethodInvoker;
+import eu.andret.arguments.mapper.IInstanceCreator;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.mapper.impl.InstanceCreator;
-import eu.andret.arguments.mapper.impl.MethodInvoker;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
@@ -212,6 +212,21 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 				.collect(Collectors.toList());
 	}
 
+	@NotNull
+	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
+		if (executors.containsKey(sender)) {
+			return executors.get(sender);
+		}
+		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
+		executors.put(sender, commandExecutor);
+		return commandExecutor;
+	}
+
+	@SneakyThrows
+	private Object invokeMethod(@NotNull final Method method,
+								@NotNull final AnnotatedCommandExecutor<E> executor,
+								@NotNull final Object[] data) {
+		return method.invoke(executor, data);
 	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
 		if (executors.containsKey(sender)) {
 			return executors.get(sender);

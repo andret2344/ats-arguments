@@ -193,10 +193,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public <T> void addArgumentMapper(@NotNull final String id,
-									  @NotNull final Class<T> clazz,
-									  @NotNull final Function<String, T> mapper,
-									  @NotNull final Predicate<Object> fallbackCondition) {
+	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
+									  @NotNull final Function<String, T> mapper, @NotNull final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
@@ -232,7 +230,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 												  @NotNull final Predicate<Object> fallbackCondition) {
 		final Function<String, T> mapper = name -> Enum.valueOf(anEnum, name.toUpperCase());
 		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException(String.format("Mapper for enum %s is already defined!", anEnum));
+			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -259,7 +257,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
 								 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException(String.format("Completer for type %s is already defined!", clazz));
+			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
 		}
 	}
 
@@ -291,7 +289,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 						.map(String::toUpperCase)
 						.collect(Collectors.toList());
 		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
-			throw new IllegalArgumentException(String.format("Completer for enum %s is already defined!", anEnum));
+			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -328,8 +326,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(@NotNull final String id,
-									 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
 			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
