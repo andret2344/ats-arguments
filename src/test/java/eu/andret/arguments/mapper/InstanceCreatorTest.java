@@ -28,11 +28,11 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
 
 		// when
-		final TestMethodsProvider provider = invoker.createInstance(sender, plugin, commandClass);
+		final TestMethodsProvider provider = creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertNotNull(provider);
@@ -43,12 +43,12 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
 
 		// when
 		final World world = mock(World.class);
-		final ManyArgumentsClass provider = invoker.createInstance(sender, plugin, commandClass, world);
+		final ManyArgumentsClass provider = creator.createInstance(sender, plugin, commandClass, world);
 
 		// then
 		assertNotNull(provider);
@@ -59,11 +59,11 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(InvocationTargetException.class, result);
@@ -74,11 +74,11 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(IllegalStateException.class, result);
@@ -89,11 +89,11 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> invoker = new InstanceCreator<>();
+		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
 		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
 
 		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
+		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
 		assertThrows(UnsupportedOperationException.class, result);
