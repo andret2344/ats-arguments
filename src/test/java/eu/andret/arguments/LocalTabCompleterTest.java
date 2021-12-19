@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -14,9 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,41 +43,19 @@ class LocalTabCompleterTest {
 		final TabCompleter tabCompleter = new LocalTabCompleter<>(testCommand, TestMethodsProvider.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final Command command = mock(Command.class);
+		final List<String> providerMethodNames = Arrays.stream(TestMethodsProvider.class.getDeclaredMethods())
+				.filter(method -> method.isAnnotationPresent(Argument.class))
+				.filter(method -> !Modifier.isStatic(method.getModifiers()))
+				.map(Method::getName)
+				.collect(Collectors.toList());
 
 		// when
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
 
 		// then
 		assertNotNull(result);
-		assertEquals(28, result.size());
-		assertTrue(result.containsAll(Arrays.asList(
-				"testMethod",
-				"testMethodWithCorrectPosition",
-				"testMethodWithIntVararg",
-				"testMethodWithArray",
-				"testMethodWithExceededPosition",
-				"testMethodWithExecutorTypeConsole",
-				"testMethodWithPermission",
-				"testMethodWithArgument",
-				"testMethodWithVararg",
-				"testMethodWithParamVarArg",
-				"testMethodWithAliases",
-				"testMethodWithMultipleArguments",
-				"testMethodWithParam",
-				"testMethodWithExecutorTypeAll",
-				"testMethodWithDescription",
-				"testMethodWithExecutorTypePlayer",
-				"testMethodWithException",
-				"testMethodDisplayedAlways",
-				"testMethodDisplayedConditionally",
-				"testMethodDisplayedNever",
-				"testMethodWithTypeCompletion",
-				"testMethodWithIgnoredTypeCompletion",
-				"testMethodWithMismatchedTypeCompletion",
-				"testMethodWithArgumentCompletion",
-				"testMethodWithVarArgArgumentCompletion",
-				"testMethodWithMismatchedArgumentCompletion"
-		)));
+		assertEquals(37, result.size());
+		assertEquals(result, providerMethodNames);
 	}
 
 	@Test

@@ -363,7 +363,73 @@ class AnnotatedCommandTest {
 	}
 
 	@Test
-	void incorrectAddsEnumCompleter() {
+	void correctAddTypeResponseMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeResponseMapper(eq(boolean.class), any())).thenReturn(true);
+
+		// when
+		annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
+
+		// then
+		verify(executor, times(1)).addTypeResponseMapper(eq(boolean.class), any());
+	}
+
+	@Test
+	void incorrectAddTypeResponseMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addTypeResponseMapper(eq(boolean.class), any())).thenReturn(false);
+
+		// when
+		final Executable result = () -> annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(executor, times(1)).addTypeResponseMapper(eq(boolean.class), any());
+	}
+
+	@Test
+	void correctAddArgumentResponseMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addArgumentResponseMapper(eq("test"), any())).thenReturn(true);
+
+		// when
+		annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
+
+		// then
+		verify(executor, times(1)).addArgumentResponseMapper(eq("test"), any());
+	}
+
+	@Test
+	void incorrectAddArgumentResponseMapper() {
+		// given
+		final PluginCommand command = mock(PluginCommand.class);
+		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
+		when(command.getExecutor()).thenReturn(executor);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		when(executor.addArgumentResponseMapper(eq("test"), any())).thenReturn(false);
+
+		// when
+		final Executable result = () -> annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
+
+		// then
+		assertThrows(IllegalArgumentException.class, result);
+		verify(executor, times(1)).addArgumentResponseMapper(eq("test"), any());
+	}
+
+	@Test
+	void getCommandExecutorTest() {
 		// given
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);

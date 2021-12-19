@@ -11,6 +11,7 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.local.LocalFallbackSelector;
 import eu.andret.arguments.local.LocalInstanceCreator;
@@ -66,7 +67,7 @@ class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(27)).sendMessage("/test testString");
+		verify(sender, times(36)).sendMessage("/test testString");
 	}
 
 	@Test
@@ -267,6 +268,25 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
+	void addArgumentResponseMapper() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
+
+		// when
+		final boolean result1 = executor.addArgumentResponseMapper("test1", new ResponseMappingSet<>(World.class, String::valueOf));
+		final boolean result2 = executor.addArgumentResponseMapper("test1", new ResponseMappingSet<>(World.class, String::valueOf));
+		final boolean result3 = executor.addArgumentResponseMapper("test3", new ResponseMappingSet<>(World.class, String::valueOf));
+
+		// then
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
+	}
+
+	@Test
 	void addTypeMapper() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -278,6 +298,25 @@ class LocalCommandExecutorTest {
 		final boolean result1 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final boolean result2 = executor.addTypeMapper(World.class, new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
 		final boolean result3 = executor.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, FallbackConstants.NEVER));
+
+		// then
+		assertTrue(result1);
+		assertFalse(result2);
+		assertTrue(result3);
+	}
+
+	@Test
+	void addTypeResponseMapper() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
+
+		// when
+		final boolean result1 = executor.addTypeResponseMapper(World.class, new ResponseMappingSet<>(World.class, String::valueOf));
+		final boolean result2 = executor.addTypeResponseMapper(World.class, new ResponseMappingSet<>(World.class, String::valueOf));
+		final boolean result3 = executor.addTypeResponseMapper(boolean.class, new ResponseMappingSet<>(boolean.class, String::valueOf));
 
 		// then
 		assertTrue(result1);
