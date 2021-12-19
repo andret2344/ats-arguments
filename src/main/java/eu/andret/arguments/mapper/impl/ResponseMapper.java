@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,18 +31,24 @@ import java.util.stream.Collectors;
  */
 @Value
 public class ResponseMapper implements IResponseMapper {
+	@NotNull
 	MappingConfig mappingConfig;
 
 	@NotNull
 	@Override
+	public List<String> mapResponse(@NotNull final Method method, @NotNull final Object result) {
+		return createResponseList(result).stream()
+				.map(getMappingFunction(method))
+				.collect(Collectors.toList());
+	}
+
+	@NotNull
 	@SuppressWarnings("unchecked")
-	public List<String> mapResponse(@NotNull final Method method, @NotNull final Object object) {
-		final ResponseMappingSet<?> mapper = getResponseMapper(method);
-		if (mapper == null) {
-			return createResponseStream(object);
-		}
-		final Function<Object, String> function = (Function<Object, String>) mapper.getFunction();
-		return Collections.singletonList(function.apply(object));
+	private Function<Object, String> getMappingFunction(@NotNull final Method method) {
+		return (Function<Object, String>) Optional.of(method)
+				.map(this::getResponseMapper)
+				.map(ResponseMappingSet::getFunction)
+				.orElse(String::valueOf);
 	}
 
 	@Nullable
@@ -49,17 +57,24 @@ public class ResponseMapper implements IResponseMapper {
 		if (annotation != null) {
 			return mappingConfig.getArgumentResponseMapper(annotation.value());
 		}
-		return mappingConfig.getTypeResponseMapper(method.getReturnType());
+		final Class<?> returnType = method.getReturnType();
+		if (returnType.isArray()) {
+			return mappingConfig.getTypeResponseMapper(returnType.getComponentType());
+		}
+		if (Collection.class.isAssignableFrom(returnType)) {
+			final Type[] arguments = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments();
+			return mappingConfig.getTypeResponseMapper((Class<?>) arguments[0]);
+		}
+		return mappingConfig.getTypeResponseMapper(returnType);
 	}
 
 	@NotNull
-	private List<String> createResponseStream(@NotNull final Object result) {
+	private List<Object> createResponseList(@NotNull final Object result) {
 		if (result.getClass().isArray()) {
 			return Optional.of(result)
 					.map(Object[].class::cast)
 					.stream()
 					.flatMap(Arrays::stream)
-					.map(String::valueOf)
 					.collect(Collectors.toList());
 		}
 		if (Collection.class.isAssignableFrom(result.getClass())) {
@@ -67,9 +82,8 @@ public class ResponseMapper implements IResponseMapper {
 					.map(x -> (Collection<?>) x)
 					.stream()
 					.flatMap(Collection::stream)
-					.map(String::valueOf)
 					.collect(Collectors.toList());
 		}
-		return Collections.singletonList(String.valueOf(result));
+		return Collections.singletonList(result);
 	}
 }
