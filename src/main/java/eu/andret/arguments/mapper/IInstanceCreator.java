@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.IMapper;
 import eu.andret.arguments.api.annotation.Argument;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;

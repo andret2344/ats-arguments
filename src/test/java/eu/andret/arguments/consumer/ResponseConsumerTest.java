@@ -9,8 +9,6 @@ import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -32,19 +30,6 @@ class ResponseConsumerTest {
 	}
 
 	@Test
-	void methodWithSenderResponse() {
-		// given
-		final CommandSender sender = mock(CommandSender.class);
-		final IResponseConsumer mapper = new ResponseConsumer();
-
-		// when
-		mapper.consumeResponse(sender, "test response", new AnnotatedCommand.Options());
-
-		// then
-		verify(sender, times(1)).sendMessage("test response");
-	}
-
-	@Test
 	void methodWithColoredResponse() {
 		// given
 		final CommandSender sender = mock(CommandSender.class);
@@ -56,7 +41,8 @@ class ResponseConsumerTest {
 		mapper.consumeResponse(sender, "&7test&a response", options);
 
 		// then
-		verify(sender, times(1)).sendMessage(ChatColor.translateAlternateColorCodes('&', "&7test&a response"));
+		verify(sender, times(1))
+				.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7test&a response"));
 	}
 
 	@Test
@@ -70,53 +56,5 @@ class ResponseConsumerTest {
 
 		// then
 		verify(sender, times(1)).sendMessage("&7test&a response");
-	}
-
-	@Test
-	void methodReturningArray() {
-		// given
-		final CommandSender sender = mock(CommandSender.class);
-		final IResponseConsumer mapper = new ResponseConsumer();
-
-		// when
-		mapper.consumeResponse(sender, "&7colored line\nclear line", new AnnotatedCommand.Options());
-
-		// then
-		final InOrder inOrder = Mockito.inOrder(sender);
-		inOrder.verify(sender, times(1)).sendMessage("&7colored line");
-		inOrder.verify(sender, times(1)).sendMessage("clear line");
-	}
-
-	@Test
-	void methodReturningCollection() {
-		// given
-		final CommandSender sender = mock(CommandSender.class);
-		final IResponseConsumer mapper = new ResponseConsumer();
-
-		// when
-		mapper.consumeResponse(sender, "&7colored line\nclear line", new AnnotatedCommand.Options());
-
-		// then
-		final InOrder inOrder = Mockito.inOrder(sender);
-		inOrder.verify(sender, times(1)).sendMessage("&7colored line");
-		inOrder.verify(sender, times(1)).sendMessage("clear line");
-	}
-
-	@Test
-	void methodReturningMultiline() {
-		// given
-		final CommandSender sender = mock(CommandSender.class);
-		final IResponseConsumer mapper = new ResponseConsumer();
-
-		// when
-		mapper.consumeResponse(sender, "one\rtwo\nthree\r\nfour\n\rfive", new AnnotatedCommand.Options());
-
-		// then
-		final InOrder inOrder = Mockito.inOrder(sender);
-		inOrder.verify(sender, times(1)).sendMessage("one");
-		inOrder.verify(sender, times(1)).sendMessage("two");
-		inOrder.verify(sender, times(1)).sendMessage("three");
-		inOrder.verify(sender, times(1)).sendMessage("four");
-		inOrder.verify(sender, times(1)).sendMessage("five");
 	}
 }

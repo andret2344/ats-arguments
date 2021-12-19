@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.FallbackException;
+import eu.andret.arguments.IMapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;

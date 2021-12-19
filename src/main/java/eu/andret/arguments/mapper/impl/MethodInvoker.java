@@ -24,14 +24,12 @@ import java.util.stream.Collectors;
 /**
  * The method invoker implementation.
  *
- * @param <E> The JavaPlugin
- *
  * @author Andret
  * @since Nov 25, 2021
  */
 @Value
 @AllArgsConstructor
-public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
+public class MethodInvoker implements IMethodInvoker {
 	@NotNull
 	IResponseMapper responseMapper;
 
@@ -46,9 +44,9 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 
 	@NotNull
 	@Override
-	public List<String> invokeMethod(@NotNull final Method method,
-									 @NotNull final AnnotatedCommandExecutor<E> executor,
-									 @NotNull final Object[] data) {
+	public <E extends JavaPlugin> List<String> invokeMethod(@NotNull final Method method,
+															@NotNull final AnnotatedCommandExecutor<E> executor,
+															@NotNull final Object[] data) {
 		return Optional.ofNullable(invoke(method, executor, data))
 				.map(result -> responseMapper.mapResponse(method, result))
 				.stream()
@@ -59,9 +57,9 @@ public class MethodInvoker<E extends JavaPlugin> implements IMethodInvoker<E> {
 
 	@Nullable
 	@SneakyThrows
-	private Object invoke(@NotNull final Method method,
-						  @NotNull final AnnotatedCommandExecutor<E> executor,
-						  @NotNull final Object[] data) {
+	private <E extends JavaPlugin> Object invoke(@NotNull final Method method,
+												 @NotNull final AnnotatedCommandExecutor<E> executor,
+												 @NotNull final Object[] data) {
 		return method.invoke(executor, data);
 	}
 }

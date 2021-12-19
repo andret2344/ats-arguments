@@ -70,7 +70,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
 	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
 	IInstanceCreator<E> instanceCreator = new InstanceCreator<>();
-	IMethodInvoker<E> methodInvoker = new MethodInvoker<>(mappingConfig);
+	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;

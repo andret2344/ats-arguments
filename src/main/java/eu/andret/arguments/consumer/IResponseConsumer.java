@@ -5,7 +5,7 @@
 package eu.andret.arguments.consumer;
 
 import eu.andret.arguments.AnnotatedCommand;
-import eu.andret.arguments.mapper.IMapper;
+import eu.andret.arguments.IMapper;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

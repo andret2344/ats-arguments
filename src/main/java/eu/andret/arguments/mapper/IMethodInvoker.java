@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.IMapper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,12 +15,10 @@ import java.util.List;
 /**
  * The method invoker interface.
  *
- * @param <E> The JavaPlugin
- *
  * @author Andret
  * @since Nov 25, 2021
  */
-public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
+public interface IMethodInvoker extends IMapper {
 	/**
 	 * Invokes the selected method using passed executor and using the data as arguments.
 	 *
@@ -30,8 +29,7 @@ public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
 	 * @return The list of values returned from method split by end of line or when returned list or array, or used a
 	 * 		return mapper.
 	 */
-	@NotNull
-	List<String> invokeMethod(@NotNull Method method,
-							  @NotNull AnnotatedCommandExecutor<E> executor,
-							  @NotNull Object[] data);
+	@NotNull <E extends JavaPlugin> List<String> invokeMethod(@NotNull Method method,
+															  @NotNull AnnotatedCommandExecutor<E> executor,
+															  @NotNull Object[] data);
 }

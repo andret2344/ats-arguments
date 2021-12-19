@@ -18,7 +18,7 @@ import eu.andret.arguments.local.LocalMethodSelector;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
-import eu.andret.arguments.mapper.IMapper;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
@@ -336,7 +336,7 @@ class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void invokeMethodTwice() throws InvocationTargetException, IllegalAccessException {
+	void invokeMethodTwice() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
@@ -347,27 +347,30 @@ class LocalCommandExecutorTest {
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator<JavaPlugin> instanceCreator = mock(LocalInstanceCreator.class);
 		final IResponseConsumer consumer = mock(IResponseConsumer.class);
+		final IMethodInvoker invoker = mock(IMethodInvoker.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
+		final Object[] args = {"abc", "test"};
 		injectMapper(executor, mapper, "commandToMethodMapper");
 		injectMapper(executor, filter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
 		injectMapper(executor, consumer, "responseConsumer");
+		injectMapper(executor, invoker, "methodInvoker");
 		when(mapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
 		when(filter.filterPermission(method, sender)).thenReturn(true);
-		when(methodSelector.recalculateArguments(any(), any())).thenReturn(new Object[]{"abc", "test"});
+		when(methodSelector.recalculateArguments(any(), any())).thenReturn(args);
 		when(instanceCreator.createInstance(sender, plugin, TestMethodsProvider.class)).thenReturn(provider);
-		when(method.invoke(any(), any())).thenReturn("test");
+		when(invoker.invokeMethod(eq(method), any(), eq(args))).thenReturn(List.of("result", "value"));
 
 		// when
-		executor.onCommand(sender, command, "test", new String[]{"test"});
-		executor.onCommand(sender, command, "test", new String[]{"test"});
+		executor.onCommand(sender, command, "test", new String[]{"abc", "test"});
+		executor.onCommand(sender, command, "test", new String[]{"abc", "test"});
 
 		// then
-		verify(method, times(2)).invoke(any(), any());
-		verify(consumer, times(2)).consumeResponse(eq(sender), any(), any());
+		verify(consumer, times(2)).consumeResponse(eq(sender), eq("result"), any());
+		verify(consumer, times(2)).consumeResponse(eq(sender), eq("value"), any());
 	}
 
 	@Test
