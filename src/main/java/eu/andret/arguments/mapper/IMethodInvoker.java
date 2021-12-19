@@ -25,6 +25,7 @@ public interface IMethodInvoker extends IMapper {
 	 * @param method The method to be invoked.
 	 * @param executor Executor that will be the method invoked on.
 	 * @param data The array of values that will be passed as method parameters,
+	 * @param <E> The {@link JavaPlugin} subclass.
 	 *
 	 * @return The list of values returned from method split by end of line or when returned list or array, or used a
 	 * 		return mapper.
