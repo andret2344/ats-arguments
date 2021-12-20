@@ -24,6 +24,40 @@ apply plugin: 'checkstyle'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
+sourceSets {
+	integration {
+		java.srcDir "$projectDir/src/integration/java"
+		resources.srcDir "$projectDir/src/integration/resources"
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
+	}
+}
+
+configurations {
+	integrationImplementation.extendsFrom testImplementation
+	integrationImplementation.canBeResolved true
+	integrationRuntimeOnly.extendsFrom testRuntimeOnly
+	integrationRuntimeOnly.canBeResolved true
+}
+
+task integrationTest(type: Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.integration.output.classesDirs
+	classpath = sourceSets.integration.runtimeClasspath
+	outputs.upToDateWhen { false }
+	useJUnitPlatform()
+}
+
+idea {
+	module {
+		testSourceDirs += sourceSets.integration.java.srcDirs
+		testResourceDirs += sourceSets.integration.resources.srcDirs
+	}
+}
+
+check.dependsOn integrationTest
+
 repositories {
 	mavenCentral()
 	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
