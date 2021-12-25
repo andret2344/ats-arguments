@@ -373,9 +373,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds a response mapper that allows to map return value to  {@link String}.
+	 * Adds a response mapper that allows to map return value to {@link String}.
 	 *
-	 * @param clazz The {@link Class} that will be returned from mapper function,
+	 * @param clazz The {@link Class} that will be returned from mapper function.
 	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
 	 * 		object.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
@@ -389,10 +389,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds a response mapper that allows to map return value to  {@link String}.
+	 * Adds a response mapper that allows to map return value to {@link String}.
 	 *
 	 * @param id The id of the response mapper. The id has to be unique.
-	 * @param clazz The {@link Class} that will be returned from mapper function,
+	 * @param clazz The {@link Class} that will be returned from mapper function.
 	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
 	 * 		object.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.

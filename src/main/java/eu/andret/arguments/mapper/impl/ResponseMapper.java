@@ -79,7 +79,7 @@ public class ResponseMapper implements IResponseMapper {
 		}
 		if (Collection.class.isAssignableFrom(result.getClass())) {
 			return Optional.of(result)
-					.map(x -> (Collection<?>) x)
+					.map(object -> (Collection<?>) object)
 					.stream()
 					.flatMap(Collection::stream)
 					.collect(Collectors.toList());

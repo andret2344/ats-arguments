@@ -9,7 +9,7 @@ import lombok.Value;
 import java.util.function.Function;
 
 /**
- * This class stores the return mapping settings  It was needed to have such a class, because generic type is lost after
+ * This class stores the return mapping settings. It was needed to have such a class, because generic type is lost after
  * compilation.
  *
  * @param <T> The returned from function type;

@@ -42,7 +42,7 @@ public class MappingConfig {
 	}
 
 	/**
-	 * Adds a argument response mapper.
+	 * Adds an argument response mapper.
 	 *
 	 * @param id The identifier.
 	 * @param set The response mapping set.
@@ -86,9 +86,9 @@ public class MappingConfig {
 	/**
 	 * Gets the argument response mapper.
 	 *
-	 * @param id The identifier..
+	 * @param id The identifier.
 	 *
-	 * @return The found mapper if found, {@code null} otherwise.
+	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	public ResponseMappingSet<?> getArgumentResponseMapper(@NotNull final String id) {
 		return argumentResponseMappers.get(id);
@@ -99,7 +99,7 @@ public class MappingConfig {
 	 *
 	 * @param clazz The identifying class.
 	 *
-	 * @return The found mapper if found, {@code null} otherwise.
+	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	public ResponseMappingSet<?> getTypeResponseMapper(@NotNull final Class<?> clazz) {
 		return typeResponseMappers.get(clazz);

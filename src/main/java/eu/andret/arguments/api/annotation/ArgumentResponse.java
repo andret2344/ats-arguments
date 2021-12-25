@@ -15,7 +15,7 @@ import java.util.function.Function;
  * Function)}.
  *
  * @author Andret
- * @since Nov 125, 2021
+ * @since Nov 25, 2021
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
