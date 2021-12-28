@@ -80,7 +80,7 @@ publish:
     - master
   when: manual
 
-javadoc:
+pages:
   stage: deploy
   script:
     - ./gradlew javadoc
