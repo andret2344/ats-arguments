@@ -10,6 +10,7 @@ import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -99,6 +100,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		void mainCommandExecution(@NotNull CommandSender sender);
 	}
 
+	@NotNull
 	@SuppressWarnings("unchecked")
 	private LocalCommandExecutor<E> getLocalCommandExecutor() {
 		return (LocalCommandExecutor<E>) command.getExecutor();
@@ -192,7 +194,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
-									  @NotNull final Function<String, T> mapper, final Predicate<Object> fallbackCondition) {
+									  @NotNull final Function<String, T> mapper, @NotNull final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
@@ -368,5 +370,39 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public void addArgumentCompleter(@NotNull final String id, @NotNull final Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
+	}
+
+	/**
+	 * Adds a response mapper that allows to map return value to {@link String}.
+	 *
+	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
+	 * 		object.
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated class.
+	 */
+	public <T> void addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final Function<T, String> function) {
+		if (!getLocalCommandExecutor().addTypeResponseMapper(clazz, new ResponseMappingSet<>(clazz, function))) {
+			throw new IllegalArgumentException(String.format("Response mapper with class %s is already registered!", clazz));
+		}
+	}
+
+	/**
+	 * Adds a response mapper that allows to map return value to {@link String}.
+	 *
+	 * @param id The id of the response mapper. The id has to be unique.
+	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
+	 * 		object.
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated class.
+	 */
+	public <T> void addArgumentResponseMapper(@NotNull final String id, @NotNull final Class<T> clazz,
+											  @NotNull final Function<T, String> function) {
+		if (!getLocalCommandExecutor().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
+			throw new IllegalArgumentException(String.format("Response mapper with id %s is already registered!", id));
+		}
 	}
 }

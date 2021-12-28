@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.filter;
 
-import eu.andret.arguments.mapper.IMapper;
+import eu.andret.arguments.IMapper;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;

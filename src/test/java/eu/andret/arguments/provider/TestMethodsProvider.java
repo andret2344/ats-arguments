@@ -7,6 +7,7 @@ package eu.andret.arguments.provider;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.ArgumentFallback;
+import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Ignore;
@@ -16,10 +17,14 @@ import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.FallbackPriority;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @BaseCommand("test")
@@ -180,5 +185,53 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@TypeFallback(Location.class)
 	public void testMethodWithMappedArgumentTypeFallbackWrongArgs(final String text, final World wrong) {
+	}
+
+	@Argument
+	public String testMethodReturningString() {
+		return "test";
+	}
+
+	@Argument
+	public String[] testMethodReturningStringArray() {
+		return new String[]{"one", "two"};
+	}
+
+	@Argument
+	public List<String> testMethodReturningStringList() {
+		return Arrays.asList("one", "two");
+	}
+
+	@Argument
+	@ArgumentResponse("worldResponse")
+	public World testMethodReturningWorld() {
+		return plugin.getServer().getWorlds().get(0);
+	}
+
+	@Argument
+	@ArgumentResponse("worldResponse")
+	public World[] testMethodReturningWorldArray() {
+		return plugin.getServer().getWorlds().toArray(new World[0]);
+	}
+
+	@Argument
+	@ArgumentResponse("worldResponse")
+	public List<World> testMethodReturningWorldList() {
+		return plugin.getServer().getWorlds();
+	}
+
+	@Argument
+	public OfflinePlayer testMethodReturningPlayer() {
+		return plugin.getServer().getOfflinePlayers()[0];
+	}
+
+	@Argument
+	public OfflinePlayer[] testMethodReturningPlayerArray() {
+		return plugin.getServer().getOfflinePlayers();
+	}
+
+	@Argument
+	public List<OfflinePlayer> testMethodReturningPlayerList() {
+		return Arrays.asList(plugin.getServer().getOfflinePlayers());
 	}
 }

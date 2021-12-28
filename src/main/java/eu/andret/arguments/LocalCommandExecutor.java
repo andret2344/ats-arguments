@@ -10,6 +10,7 @@ import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
@@ -17,16 +18,17 @@ import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
+import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.mapper.impl.InstanceCreator;
+import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
@@ -68,6 +70,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
 	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
 	IInstanceCreator<E> instanceCreator = new InstanceCreator<>();
+	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
@@ -154,6 +157,22 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		return true;
 	}
 
+	<T> boolean addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final ResponseMappingSet<T> responseMappingSet) {
+		if (mappingConfig.existsTypeResponseMapper(clazz)) {
+			return false;
+		}
+		mappingConfig.addTypeResponseMapper(clazz, responseMappingSet);
+		return true;
+	}
+
+	<T> boolean addArgumentResponseMapper(@NotNull final String id, @NotNull final ResponseMappingSet<T> responseMappingSet) {
+		if (mappingConfig.existsArgumentResponseMapper(id)) {
+			return false;
+		}
+		mappingConfig.addArgumentResponseMapper(id, responseMappingSet);
+		return true;
+	}
+
 	private void noneMethodFound(@NotNull final CommandSender sender) {
 		Optional.ofNullable(onUnknownSubCommandExecutionListener)
 				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
@@ -184,10 +203,11 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	@NotNull
-	private List<Object> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
+	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
 		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
 		return executionCall.getMethods().stream()
-				.map(method -> invokeMethod(method, commandExecutor, executionCall.getData()))
+				.map(method -> methodInvoker.invokeMethod(method, commandExecutor, executionCall.getData()))
+				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
@@ -200,13 +220,6 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
 		executors.put(sender, commandExecutor);
 		return commandExecutor;
-	}
-
-	@SneakyThrows
-	private Object invokeMethod(@NotNull final Method method,
-								@NotNull final AnnotatedCommandExecutor<E> executor,
-								@NotNull final Object[] data) {
-		return method.invoke(executor, data);
 	}
 
 	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
