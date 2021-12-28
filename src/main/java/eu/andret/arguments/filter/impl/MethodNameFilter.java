@@ -54,9 +54,6 @@ public class MethodNameFilter implements IMethodNameFilter {
 
 	private boolean verifyArgumentPosition(final Method method, final String[] command) {
 		final Argument argument = method.getAnnotation(Argument.class);
-		if (argument.position() > command.length) {
-			throw new IllegalArgumentException("@Argument.position() cannot be greater than methods arguments count. Method: " + method);
-		}
-		return true;
+		return argument.position() < command.length;
 	}
 }

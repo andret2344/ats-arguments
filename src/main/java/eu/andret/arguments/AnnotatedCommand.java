@@ -19,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -117,6 +118,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
 	 * 		command.
 	 */
+	@Nullable
 	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
 		return getLocalCommandExecutor().getCommandExecutor(sender);
 	}
