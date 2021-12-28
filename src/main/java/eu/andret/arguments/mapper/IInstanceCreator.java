@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.IMapper;
 import eu.andret.arguments.api.annotation.Argument;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,8 +29,8 @@ public interface IInstanceCreator<E extends JavaPlugin> extends IMapper {
 	 *
 	 * @return List with results from called methods.
 	 */
-	<A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull CommandSender sender,
-															 @NotNull JavaPlugin plugin,
-															 @NotNull Class<A> executorClass,
-															 @NotNull Object... parameters);
+	@NotNull <A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull CommandSender sender,
+																	  @NotNull JavaPlugin plugin,
+																	  @NotNull Class<A> executorClass,
+																	  @NotNull Object... parameters);
 }

@@ -200,21 +200,26 @@ Ok, but what exactly can you do?
 The most meaningful part of `atsArguments` is the `@Argument` annotation. It has plenty of settings you can use, but
 first, look at rules that apply:
 
-- The name of the method (case-insensitive) is a command argument.
+- The name of the method (case sensitivity is a setting) is a command argument.
 - Return value will be sent automatically, unless changed (`void` return type or `null` return value don't send
   anything).
+    - Primitive types and String will be sent "as is".
+    - Complex types will be parsed to `String` via `toString` method.
+        - The behavior can be overwritten using `@ArgumentResponse` or by configuring type response (analogically
+          to `@Mapper` behavior, but the opposite way).
 - Method can have multiple arguments of any primitive type or String. Library will be trying to parse command arguments
   into method ones. In order to use other types, there is a possibility to configure mappers.
     - Type Mapper will instruct how to parse text into certain class independently
     - Argument Mapper will be used only with explicit `@Mapper` annotation.
     - When using `@Mapper` and parsing failed, you can access the raw value using `@Fallback`
       annotation.
-- Method cannot have an array, only vararg is possible, rules as the point above.
+- Method cannot have an array parameter, but only a VarArg is possible, rules as the point above.
 - There can be multiple methods with the same name, api will treat missing arguments as obsolete.
 - Library automatically uses tab completion for method names.
     - You can configure more precise completers for methods parameters with `@Completer` annotation.
 - In case of mismatching argument (method's name) or length of others, it'll result in error sent to sender.
 - No argument after base command will produce simple syntax of available arguments.
+    - The behavior can be overwritten.
 
 ### Annotations
 
@@ -244,13 +249,23 @@ API provides a few quite useful annotations.
 | ------- | ---- | ------ |  ----------- |
 | value | `String` | any string | The mapper id to find exact registered mapper. |
 
-- `@ArgumentFallback` - Annotation allowing catching not mapped correctly with argument mapper values. | setting | type
-  | values | description | | ------- | ---- | ------ | ----------- | | value | `String[]` | any strings | The mapper ids
-  that in case of failure should call the annotated method. |
+- `@ArgumentResponse` - Allows connection return value with "to `String`" mapper.
 
-- `@TypeFallback` - Annotation allowing catching not mapped correctly with type mapper values. | setting | type | values
-  | description | | ------- | ---- | ------ | ----------- | | value | `Class<?>[]` | any classes | The mapper classes
-  that in case of failure should call the annotated method. |
+| setting | type | values | description |
+| ------- | ---- | ------ | ----------- |
+| value | `String` | any string | The mapper id to find exact registered response mapper. |
+
+- `@ArgumentFallback` - Annotation allowing catching not mapped correctly with argument mapper values.
+
+| setting | type | values | description |
+| ------- | ---- | ------ | ----------- |
+| value | `String[]` | any strings | The mapper ids that in case of failure should call the annotated method. |
+
+- `@TypeFallback` - Annotation allowing catching not mapped correctly with type mapper values.
+
+| setting | type | values | description | 
+| ------- | ---- | ------ | ----------- |
+| value | `Class<?>[]` | any classes | The mapper classes that in case of failure should call the annotated method. |
 
 - `@Completer` - Annotation that connects argument with configured argument completer.
 
@@ -299,12 +314,33 @@ solution if the same type requires different mappings in dependency on method's 
 requires following data:
 
 - The unique id of mapper.
-- The target return type (e.g. `Player.class`)
+- The target return type (e.g. `Player.class`).
 - The `Function<String, E>` where the second method's argument is the `E` type.
 - (optionally) The fallback condition determining when fallback method will be executed (by default it's not called).
 
 Then you can use `@Mapper("someId")` as an `@Argument` method parameter's annotation. If found and executed command, the
 function created in here will run.
+
+#### Type response mappers
+
+Type response mappers allow specifying how to convert provided class object into `String`. Use this mapper if always
+mapping from certain type is the same. The method `addTypeResponseMapper` requires following data:
+
+- The target return type (e.g. `World.class`)
+- The `Function<E, String>` where the first method's argument is the `E` type.
+
+#### Argument response mappers
+
+Argument response mappers allow specifying how to map returned complex type value into `String`. It's a perfect solution
+when you want to return an object and always be converting it to string in the same way. The
+method `addArgumentResponseMapper` takes 3 arguments:
+
+- The unique id of the mapper.
+- The source return type (i.e. `World.class`).
+- The `Function<E, String>` where the second method's argument is the `E` type.
+
+You can use `@ArgumentResponse("someId")` along with `@Argument` annotation on method. If the method executed properly,
+the function will be called on the returned value to convert it to `String` just before sending the response.
 
 ### Completers
 

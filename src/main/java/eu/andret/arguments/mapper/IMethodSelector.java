@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.FallbackException;
+import eu.andret.arguments.IMapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -17,7 +18,7 @@ import java.lang.reflect.Method;
  */
 public interface IMethodSelector extends IMapper {
 	/**
-	 * Invokes one of  methods inside method and correctly puts all arguments.
+	 * Invokes one of methods inside method and correctly puts all arguments.
 	 *
 	 * @param method The {@link Method} containing method to be called.
 	 * @param args The real command arguments array.

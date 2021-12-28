@@ -208,9 +208,6 @@ class ArgumentsFilterTest {
 	void methodWithMoreParamsThanCommand() throws NoSuchMethodException {
 		// given
 		final IArgumentsFilter mapper = new ArgumentsFilter(new MappingConfig());
-		abstract class LocalFunction implements Function<String, Location> {
-		}
-		final LocalFunction getLocation = mock(LocalFunction.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
@@ -224,9 +221,6 @@ class ArgumentsFilterTest {
 	void methodWithFewerParamsThanCommand() throws NoSuchMethodException {
 		// given
 		final IArgumentsFilter mapper = new ArgumentsFilter(new MappingConfig());
-		abstract class LocalFunction implements Function<String, Location> {
-		}
-		final LocalFunction getLocation = mock(LocalFunction.class);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when

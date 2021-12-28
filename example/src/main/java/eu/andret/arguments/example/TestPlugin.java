@@ -40,7 +40,12 @@ public class TestPlugin extends JavaPlugin {
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
 		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender());
-		getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
+		if (executor != null) {
+			getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
+		}
+
+		testCommand.addTypeResponseMapper(Player.class, HumanEntity::getName);
+		testCommand.addArgumentResponseMapper("world", World.class, World::getName);
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);
