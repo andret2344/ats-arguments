@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.executor.IntegrationTestCommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class BasicTest {
+class PositionTest {
 	public static Collection<Object[]> getDataSourceForPositionTest() {
 		final Object[][] objects = {
 				{new String[]{"testWithoutParameters"}, "none"},

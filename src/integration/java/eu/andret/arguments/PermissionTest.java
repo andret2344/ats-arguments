@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.executor.IntegrationTestCommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;

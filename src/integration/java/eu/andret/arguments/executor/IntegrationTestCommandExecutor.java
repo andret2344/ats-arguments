@@ -2,8 +2,9 @@
  * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
  */
 
-package eu.andret.arguments;
+package eu.andret.arguments.executor;
 
+import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import org.bukkit.command.CommandSender;

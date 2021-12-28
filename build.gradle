@@ -76,6 +76,7 @@ compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:depreca
 
 checkstyleMain.exclude('example/**.java')
 checkstyleTest.exclude('**')
+checkstyleIntegration.exclude("**")
 
 test {
 	useJUnitPlatform()
