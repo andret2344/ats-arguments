@@ -36,6 +36,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -222,6 +223,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		return commandExecutor;
 	}
 
+	@Nullable
 	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
 		return executors.get(sender);
 	}

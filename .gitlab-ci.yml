@@ -56,6 +56,14 @@ junit:
     reports:
       junit: build/test-results/test/**.xml
 
+integration:
+  stage: verify
+  dependencies:
+    - compile
+  script:
+    - ./gradlew integrationTest
+  when: on_success
+
 checkstyle:
   stage: verify
   dependencies:
@@ -72,7 +80,7 @@ publish:
     - master
   when: manual
 
-javadoc:
+pages:
   stage: deploy
   script:
     - ./gradlew javadoc

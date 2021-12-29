@@ -1,5 +1,26 @@
 # atsArguments changelog
 
+## 0.1.2
+
+### Fixed
+
+* An exception could occur in common with wrong parameters count.
+* Fallback method ignored method name.
+
+### Added
+
+* Type mappers allowing to use, e.g. boolean mapper with no `@Mapper` annotation. Completers work as well.
+* It's now possible to pass additional constructor arguments to `AnnotatedCommandExecutor` subclass.
+* Main command behavior can be overloaded with custom tasks.
+* Returning a string with `\r\n` (etc.) in it, makes it sends multiple messages.
+* Returning array or collection does it as well.
+* Added enum mappers and completers, no additional logic must be applied.
+* Now it's possible to decide if commands should be case-sensitive or case-insensitive.
+
+## 0.1.1.2 (patch)
+
+* Fixed fallbacks
+
 ## 0.1.1.1 (patch)
 
 * Fixed critical incident with parameters count mismatch

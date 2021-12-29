@@ -55,10 +55,10 @@ class MethodNameFilterTest {
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final Executable result = () -> mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, command, options);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertFalse(result);
 	}
 
 	@Test
