@@ -10,8 +10,6 @@ import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
-import eu.andret.arguments.local.LocalFallbackSelector;
-import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
@@ -33,8 +31,8 @@ class MethodSelectorTest {
 	@Test
 	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
 		// given
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
 
@@ -53,8 +51,8 @@ class MethodSelectorTest {
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.ALWAYS));
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector, mappingConfig);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
 		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
 		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
@@ -72,8 +70,8 @@ class MethodSelectorTest {
 	@Test
 	void invokeMethodOneArg() throws ReflectiveOperationException {
 		// given
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
 
@@ -87,8 +85,8 @@ class MethodSelectorTest {
 	@Test
 	void invokeMethodPosition() throws ReflectiveOperationException {
 		// given
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class));
 
@@ -102,8 +100,8 @@ class MethodSelectorTest {
 	@Test
 	void invokeMethodWithVarArg() throws ReflectiveOperationException {
 		// given
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
 
@@ -126,8 +124,8 @@ class MethodSelectorTest {
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.NEVER));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
-		final FallbackSelector<JavaPlugin> fallbackSelector = mock(LocalFallbackSelector.class);
-		final IMethodSelector selector = new MethodSelector<>(fallbackSelector, mappingConfig);
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "world");

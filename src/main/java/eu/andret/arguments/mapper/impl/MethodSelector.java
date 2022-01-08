@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,8 +32,8 @@ import java.util.Optional;
 @Value
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)
-public class MethodSelector<E extends JavaPlugin> implements IMethodSelector {
-	IFallbackSelector<E> fallbackSelector;
+public class MethodSelector implements IMethodSelector {
+	IFallbackSelector fallbackSelector;
 	MappingConfig mappingConfig;
 
 	/**
@@ -42,7 +41,7 @@ public class MethodSelector<E extends JavaPlugin> implements IMethodSelector {
 	 *
 	 * @param fallbackSelector The fallback selector.
 	 */
-	public MethodSelector(@NotNull final IFallbackSelector<E> fallbackSelector) {
+	public MethodSelector(@NotNull final IFallbackSelector fallbackSelector) {
 		this(fallbackSelector, new MappingConfig());
 	}
 

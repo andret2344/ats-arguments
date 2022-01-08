@@ -18,17 +18,23 @@ import java.util.Map;
 public class MappingConfig {
 	private final Map<String, MappingSet<?>> argumentMappers = new HashMap<>();
 	private final Map<Class<?>, MappingSet<?>> typeMappers = new HashMap<>();
-	private final Map<Class<?>, ResponseMappingSet<?>> typeResponseMappers = new HashMap<>();
 	private final Map<String, ResponseMappingSet<?>> argumentResponseMappers = new HashMap<>();
+	private final Map<Class<?>, ResponseMappingSet<?>> typeResponseMappers = new HashMap<>();
 
 	/**
 	 * Adds an argument mapper.
 	 *
 	 * @param key The identification.
-	 * @param set The mapping set/
+	 * @param set The mapping set.
+	 *
+	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this key exists.
 	 */
-	public void addArgumentMapper(final String key, final MappingSet<?> set) {
+	public boolean addArgumentMapper(final String key, final MappingSet<?> set) {
+		if (argumentMappers.containsKey(key)) {
+			return false;
+		}
 		argumentMappers.put(key, set);
+		return true;
 	}
 
 	/**
@@ -36,9 +42,15 @@ public class MappingConfig {
 	 *
 	 * @param clazz The identifying class.
 	 * @param set The mapping set.
+	 *
+	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this class exists.
 	 */
-	public void addTypeMapper(final Class<?> clazz, final MappingSet<?> set) {
+	public boolean addTypeMapper(final Class<?> clazz, final MappingSet<?> set) {
+		if (typeMappers.containsKey(clazz)) {
+			return false;
+		}
 		typeMappers.put(clazz, set);
+		return true;
 	}
 
 	/**
@@ -46,9 +58,15 @@ public class MappingConfig {
 	 *
 	 * @param id The identifier.
 	 * @param set The response mapping set.
+	 *
+	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this key exists.
 	 */
-	public void addArgumentResponseMapper(@NotNull final String id, @NotNull final ResponseMappingSet<?> set) {
+	public boolean addArgumentResponseMapper(@NotNull final String id, @NotNull final ResponseMappingSet<?> set) {
+		if (argumentResponseMappers.containsKey(id)) {
+			return false;
+		}
 		argumentResponseMappers.put(id, set);
+		return true;
 	}
 
 	/**
@@ -56,9 +74,15 @@ public class MappingConfig {
 	 *
 	 * @param clazz The identifying class.
 	 * @param set The response mapping set.
+	 *
+	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this class exists.
 	 */
-	public void addTypeResponseMapper(@NotNull final Class<?> clazz, @NotNull final ResponseMappingSet<?> set) {
+	public boolean addTypeResponseMapper(@NotNull final Class<?> clazz, @NotNull final ResponseMappingSet<?> set) {
+		if (typeResponseMappers.containsKey(clazz)) {
+			return false;
+		}
 		typeResponseMappers.put(clazz, set);
+		return true;
 	}
 
 	/**
@@ -103,49 +127,5 @@ public class MappingConfig {
 	 */
 	public ResponseMappingSet<?> getTypeResponseMapper(@NotNull final Class<?> clazz) {
 		return typeResponseMappers.get(clazz);
-	}
-
-	/**
-	 * Checks if the argument mapper exists.
-	 *
-	 * @param key The identification.
-	 *
-	 * @return {@code true} if mapping set is found, {@code false} otherwise.
-	 */
-	public boolean existsArgumentMapper(final String key) {
-		return argumentMappers.containsKey(key);
-	}
-
-	/**
-	 * Checks if the type mapper exists.
-	 *
-	 * @param clazz The identifying class.
-	 *
-	 * @return {@code true} if mapping set is found, {@code false} otherwise.
-	 */
-	public boolean existsTypeMapper(final Class<?> clazz) {
-		return typeMappers.containsKey(clazz);
-	}
-
-	/**
-	 * Checks if the argument response mapper exists.
-	 *
-	 * @param id The identifier.
-	 *
-	 * @return {@code true} if mapper is found, {@code false} otherwise.
-	 */
-	public boolean existsArgumentResponseMapper(@NotNull final String id) {
-		return argumentResponseMappers.containsKey(id);
-	}
-
-	/**
-	 * Checks if the type response mapper exists.
-	 *
-	 * @param clazz The identifying class.
-	 *
-	 * @return {@code true} if mapper is found, {@code false} otherwise.
-	 */
-	public boolean existsTypeResponseMapper(@NotNull final Class<?> clazz) {
-		return typeResponseMappers.containsKey(clazz);
 	}
 }

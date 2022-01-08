@@ -4,6 +4,9 @@
 
 package eu.andret.arguments;
 
+import eu.andret.arguments.entity.MappingConfig;
+import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.provider.TestEnum;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
@@ -21,6 +24,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -117,14 +121,16 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentMapper(eq("test"), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
-		verify(executor, times(1)).addArgumentMapper(eq("test"), any());
+		final MappingSet<?> test = executor.getMappingConfig().getArgumentMapper("test");
+		assertNotNull(test);
+		assertEquals(int.class, test.getClazz());
 	}
 
 	@Test
@@ -133,15 +139,18 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentMapper(eq("test"), any())).thenReturn(false);
+		annotatedCommand.addArgumentMapper("test", double.class, Double::parseDouble);
 
 		// when
 		final Executable result = () -> annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addArgumentMapper(eq("test"), any());
+		final MappingSet<?> test = executor.getMappingConfig().getArgumentMapper("test");
+		assertNotNull(test);
+		assertEquals(double.class, test.getClazz());
 	}
 
 	@Test
@@ -150,14 +159,16 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// then
-		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
+		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(boolean.class);
+		assertNotNull(test);
+		assertEquals(boolean.class, test.getClazz());
 	}
 
 	@Test
@@ -166,15 +177,18 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeMapper(eq(boolean.class), any())).thenReturn(false);
+		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// when
 		final Executable result = () -> annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addTypeMapper(eq(boolean.class), any());
+		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(boolean.class);
+		assertNotNull(test);
+		assertEquals(boolean.class, test.getClazz());
 	}
 
 	@Test
@@ -183,15 +197,16 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeMapper(eq(TestEnum.class), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// then
-		verify(executor, times(1)).addTypeMapper(eq(TestEnum.class),
-				argThat(function -> function.getFunction().apply("TEST_ONE").equals(TestEnum.TEST_ONE)));
+		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(TestEnum.class);
+		assertNotNull(test);
+		assertEquals(TestEnum.class, test.getClazz());
 	}
 
 	@Test
@@ -200,15 +215,18 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeMapper(eq(TestEnum.class), any())).thenReturn(false);
+		annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// when
 		final Executable result = () -> annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addTypeMapper(eq(TestEnum.class), any());
+		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(TestEnum.class);
+		assertNotNull(test);
+		assertEquals(TestEnum.class, test.getClazz());
 	}
 
 	@Test
@@ -368,14 +386,16 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeResponseMapper(eq(boolean.class), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// then
-		verify(executor, times(1)).addTypeResponseMapper(eq(boolean.class), any());
+		final ResponseMappingSet<?> test = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
+		assertNotNull(test);
+		assertEquals(boolean.class, test.getClazz());
 	}
 
 	@Test
@@ -384,15 +404,18 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addTypeResponseMapper(eq(boolean.class), any())).thenReturn(false);
+		annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// when
 		final Executable result = () -> annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addTypeResponseMapper(eq(boolean.class), any());
+		final ResponseMappingSet<?> test = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
+		assertNotNull(test);
+		assertEquals(boolean.class, test.getClazz());
 	}
 
 	@Test
@@ -401,14 +424,16 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentResponseMapper(eq("test"), any())).thenReturn(true);
 
 		// when
 		annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
 
 		// then
-		verify(executor, times(1)).addArgumentResponseMapper(eq("test"), any());
+		final ResponseMappingSet<?> test = executor.getMappingConfig().getArgumentResponseMapper("test");
+		assertNotNull(test);
+		assertEquals(int.class, test.getClazz());
 	}
 
 	@Test
@@ -417,15 +442,18 @@ class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
+		when(executor.getMappingConfig()).thenReturn(new MappingConfig());
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		when(executor.addArgumentResponseMapper(eq("test"), any())).thenReturn(false);
+		annotatedCommand.addArgumentResponseMapper("test", double.class, String::valueOf);
 
 		// when
 		final Executable result = () -> annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
 
 		// then
 		assertThrows(IllegalArgumentException.class, result);
-		verify(executor, times(1)).addArgumentResponseMapper(eq("test"), any());
+		final ResponseMappingSet<?> test = executor.getMappingConfig().getArgumentResponseMapper("test");
+		assertNotNull(test);
+		assertEquals(double.class, test.getClazz());
 	}
 
 	@Test

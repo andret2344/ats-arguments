@@ -72,7 +72,7 @@ public class ArgumentsFilter implements IArgumentsFilter {
 		if (mapper != null) {
 			return mappingConfig.getArgumentMapper(mapper.value()).getClazz().isAssignableFrom(parameterClass);
 		}
-		if (mappingConfig.existsTypeMapper(parameterClass)) {
+		if (mappingConfig.getTypeMapper(parameterClass) != null) {
 			return true;
 		}
 		return clazz.isAssignableFrom(parameterClass);

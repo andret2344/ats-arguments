@@ -19,33 +19,32 @@ import java.util.Optional;
 /**
  * The implementation of {@link InstanceCreator}.
  *
- * @param <E> The JavaPlugin instance.
- *
  * @author Andret
  * @since Sep 03, 2021
  */
 @Value
 @NonFinal
-public class InstanceCreator<E extends JavaPlugin> implements IInstanceCreator<E> {
+public class InstanceCreator implements IInstanceCreator {
 	@Override
 	@NotNull
 	@SneakyThrows
-	public <A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull final CommandSender sender,
-																	@NotNull final JavaPlugin plugin,
-																	@NotNull final Class<A> executor,
-																	@NotNull final Object... parameters) {
+	public <E extends JavaPlugin, A extends AnnotatedCommandExecutor<E>> A createInstance(
+			@NotNull final CommandSender sender,
+			@NotNull final JavaPlugin plugin,
+			@NotNull final Class<A> executor,
+			@NotNull final Object... parameters) {
 		final Constructor<A> c = findConstructor(executor, plugin)
 				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
-		final Object[] o = new Object[parameters.length + 2];
-		o[0] = sender;
-		o[1] = plugin;
-		System.arraycopy(parameters, 0, o, 2, parameters.length);
-		return c.newInstance(o);
+		final Object[] arguments = new Object[parameters.length + 2];
+		arguments[0] = sender;
+		arguments[1] = plugin;
+		System.arraycopy(parameters, 0, arguments, 2, parameters.length);
+		return c.newInstance(arguments);
 	}
 
 	@NotNull
 	@SuppressWarnings({"unchecked", "java:S1612"})
-	private <A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
+	private <E extends JavaPlugin, A extends AnnotatedCommandExecutor<E>> Optional<Constructor<A>> findConstructor(
 			@NotNull final Class<A> executor,
 			@NotNull final JavaPlugin plugin) {
 		final Constructor<A>[] constructors = (Constructor<A>[]) executor.getDeclaredConstructors();
