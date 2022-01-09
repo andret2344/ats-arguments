@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -62,45 +63,6 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		private boolean caseSensitive;
 	}
 
-	/**
-	 * Listener to define an action when the sender performs an unknown sub-command.
-	 */
-	public interface OnUnknownSubCommandExecutionListener {
-
-		/**
-		 * Unknown sub-command executed.
-		 *
-		 * @param sender The sender that executed an unknown sub-command
-		 */
-		void unknownSubCommandExecuted(@NotNull CommandSender sender);
-	}
-
-	/**
-	 * Listener to define an action when the sender has insufficient permissions.
-	 */
-	public interface OnInsufficientPermissionsListener {
-
-		/**
-		 * Insufficient permissions.
-		 *
-		 * @param sender The sender that executed the command with no permissions.
-		 */
-		void insufficientPermissions(@NotNull CommandSender sender);
-	}
-
-	/**
-	 * Listener to define action when sender executes command with no arguments.
-	 */
-	public interface OnMainCommandExecutionListener {
-
-		/**
-		 * Main command.
-		 *
-		 * @param sender The sender that executed the command with no arguments.
-		 */
-		void mainCommandExecution(@NotNull CommandSender sender);
-	}
-
 	@NotNull
 	@SuppressWarnings("unchecked")
 	private LocalCommandExecutor<E> getLocalCommandExecutor() {
@@ -126,27 +88,27 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Sets an unknown sub command execution listener.
 	 *
-	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnUnknownSubCommandExecutionListener(final OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
 	}
 
 	/**
 	 * Sets an insufficient permissions' listener.
 	 *
-	 * @param listener The {@link OnInsufficientPermissionsListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnInsufficientPermissionsListener(final OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
 	}
 
 	/**
 	 * Sets the main command execution listener.
 	 *
-	 * @param listener The {@link OnMainCommandExecutionListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnMainCommandExecutionListener(final OnMainCommandExecutionListener listener) {
+	public void setOnMainCommandExecutionListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnMainCommandExecutionListener(listener);
 	}
 
@@ -163,7 +125,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper,
 								  @NotNull final Predicate<Object> fallbackCondition) {
-		if (!getLocalCommandExecutor().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with class %s is already registered!", clazz));
 		}
 	}
@@ -197,7 +159,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
 									  @NotNull final Function<String, T> mapper, @NotNull final Predicate<Object> fallbackCondition) {
-		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
+		if (!getLocalCommandExecutor().getMappingConfig().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
 	}
@@ -231,7 +193,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
 												  @NotNull final Predicate<Object> fallbackCondition) {
 		final Function<String, T> mapper = name -> Enum.valueOf(anEnum, name.toUpperCase());
-		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
 		}
 	}
@@ -385,7 +347,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated class.
 	 */
 	public <T> void addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final Function<T, String> function) {
-		if (!getLocalCommandExecutor().addTypeResponseMapper(clazz, new ResponseMappingSet<>(clazz, function))) {
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeResponseMapper(clazz, new ResponseMappingSet<>(clazz, function))) {
 			throw new IllegalArgumentException(String.format("Response mapper with class %s is already registered!", clazz));
 		}
 	}
@@ -403,7 +365,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addArgumentResponseMapper(@NotNull final String id, @NotNull final Class<T> clazz,
 											  @NotNull final Function<T, String> function) {
-		if (!getLocalCommandExecutor().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
+		if (!getLocalCommandExecutor().getMappingConfig().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
 			throw new IllegalArgumentException(String.format("Response mapper with id %s is already registered!", id));
 		}
 	}

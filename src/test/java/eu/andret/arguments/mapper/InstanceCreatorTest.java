@@ -28,7 +28,7 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
+		final IInstanceCreator creator = new InstanceCreator();
 		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
 
 		// when
@@ -43,7 +43,7 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
+		final IInstanceCreator creator = new InstanceCreator();
 		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
 
 		// when
@@ -59,7 +59,7 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
+		final IInstanceCreator creator = new InstanceCreator();
 		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
@@ -74,7 +74,7 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
+		final IInstanceCreator creator = new InstanceCreator();
 		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
 
 		// when
@@ -89,7 +89,7 @@ class InstanceCreatorTest {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IInstanceCreator<JavaPlugin> creator = new InstanceCreator<>();
+		final IInstanceCreator creator = new InstanceCreator();
 		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
 
 		// when

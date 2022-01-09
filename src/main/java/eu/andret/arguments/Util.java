@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Simple utility class for type mappings.
@@ -24,12 +25,15 @@ import java.util.function.Predicate;
 @Value
 @Getter(AccessLevel.NONE)
 public class Util {
+	private static final Pattern PATTERN_INTEGER = Pattern.compile("\\d+");
+	private static final Pattern PATTERN_DOUBLE = Pattern.compile("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)");
+
 	Map<Class<?>, Predicate<String>> realClassPredicates = new HashMap<>();
 	Map<Predicate<Class<?>>, Function<String, ?>> convertFunctions = new HashMap<>();
 
 	static {
-		realClassPredicates.put(int.class, value -> value.matches("\\d+"));
-		realClassPredicates.put(double.class, value -> value.matches("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)"));
+		realClassPredicates.put(int.class, value -> PATTERN_INTEGER.matcher(value).matches());
+		realClassPredicates.put(double.class, value -> PATTERN_DOUBLE.matcher(value).matches());
 		realClassPredicates.put(boolean.class, value -> value.equals("false") || value.equals("true"));
 
 		convertFunctions.put(Class::isArray, value -> value);
@@ -44,7 +48,7 @@ public class Util {
 	/**
 	 * Method that tries to convert value in string into class type provides.
 	 *
-	 * @param clazz The {@link java.lang.Class} which type variable is trying to be made
+	 * @param clazz The {@link Class} which type variable is trying to be made
 	 * @param value The string containing possible to convert value, e.g. "1", "false" or "0.009".
 	 *
 	 * @return The converted value, or not if no possible assignment found, or is an array.
