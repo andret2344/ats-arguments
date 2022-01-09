@@ -207,6 +207,7 @@ class AnnotatedCommandTest {
 		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(TestEnum.class);
 		assertNotNull(test);
 		assertEquals(TestEnum.class, test.getClazz());
+		assertEquals(TestEnum.TEST_ONE, test.getFunction().apply("TEST_ONE"));
 	}
 
 	@Test

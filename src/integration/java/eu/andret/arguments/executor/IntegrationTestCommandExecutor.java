@@ -7,7 +7,10 @@ package eu.andret.arguments.executor;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.BaseCommand;
+import eu.andret.arguments.api.annotation.Mapper;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @BaseCommand("IntegrationTest")
@@ -39,5 +42,30 @@ public class IntegrationTestCommandExecutor extends AnnotatedCommandExecutor<Jav
 	@Argument(permission = "test")
 	public String testWithPermission() {
 		return "permission";
+	}
+
+	@Argument
+	public String testWithInt(final int i) {
+		return "An int: " + i;
+	}
+
+	@Argument
+	public String testWithWorld(final World w) {
+		return "The world: " + w.getName();
+	}
+
+	@Argument
+	public String testWithPlayer(final Player p) {
+		return "The player: " + p.getName();
+	}
+
+	@Argument
+	public String testWithWorldMapper(@Mapper("world") final World w) {
+		return "The mapped world: " + w.getName();
+	}
+
+	@Argument
+	public String testWithPlayerMapper(@Mapper("player") final Player p) {
+		return "The mapped player: " + p.getName();
 	}
 }
