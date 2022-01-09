@@ -23,21 +23,20 @@ import java.util.stream.Collectors;
 /**
  * An implementation of {@link IFallbackSelector}.
  *
- * @param <E> The JavaPlugin instance.
- *
  * @author Andret
  * @since Sep 02, 2021
  */
 @Value
 @NonFinal
-public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector<E> {
+public class FallbackSelector implements IFallbackSelector {
 	private static final Class<?>[] VALID_PARAMETERS_ARRAY = {String.class};
 
 	@NotNull
 	@Override
-	public List<Method> selectFallback(@Nullable final Mapper mapper,
-									   @NotNull final Class<?> targetClass,
-									   @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
+	public <E extends JavaPlugin> List<Method> selectFallback(
+			@Nullable final Mapper mapper,
+			@NotNull final Class<?> targetClass,
+			@NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
 		if (mapper == null) {
 			return getTypeFallbacks(targetClass, executorClass);
 		}
@@ -45,8 +44,8 @@ public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector
 	}
 
 	@NotNull
-	private List<Method> getArgumentFallbacks(@NotNull final String argument,
-											  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
+	private <E extends JavaPlugin> List<Method> getArgumentFallbacks(
+			@NotNull final String argument, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
 		return Arrays.stream(executor.getDeclaredMethods())
 				.filter(method -> method.isAnnotationPresent(ArgumentFallback.class))
 				.filter(method -> Arrays.asList(method.getAnnotation(ArgumentFallback.class).value())
@@ -58,8 +57,8 @@ public class FallbackSelector<E extends JavaPlugin> implements IFallbackSelector
 	}
 
 	@NotNull
-	private List<Method> getTypeFallbacks(@NotNull final Class<?> type,
-										  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
+	private <E extends JavaPlugin> List<Method> getTypeFallbacks(
+			@NotNull final Class<?> type, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
 		return Arrays.stream(executor.getDeclaredMethods())
 				.filter(method -> method.isAnnotationPresent(TypeFallback.class))
 				.filter(method -> Arrays.asList(method.getAnnotation(TypeFallback.class).value())

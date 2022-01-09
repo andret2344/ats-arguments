@@ -3,15 +3,8 @@
  */
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
-buildscript {
-	repositories {
-		maven { url 'https://plugins.gradle.org/m2/' }
-	}
-	dependencies { classpath 'io.franzbecker:gradle-lombok:2.0' }
-}
-
 plugins {
-	id 'io.franzbecker.gradle-lombok' version '4.0.0'
+	id 'io.franzbecker.gradle-lombok' version '5.0.0'
 	id 'de.jansauer.printcoverage' version '2.0.0'
 }
 
@@ -24,21 +17,55 @@ apply plugin: 'checkstyle'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
+sourceSets {
+	integration {
+		java.srcDir "$projectDir/src/integration/java"
+		resources.srcDir "$projectDir/src/integration/resources"
+		compileClasspath += main.output + test.output
+		runtimeClasspath += main.output + test.output
+	}
+}
+
+configurations {
+	integrationImplementation.extendsFrom testImplementation
+	integrationImplementation.canBeResolved true
+	integrationRuntimeOnly.extendsFrom testRuntimeOnly
+	integrationRuntimeOnly.canBeResolved true
+}
+
+task integrationTest(type: Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.integration.output.classesDirs
+	classpath = sourceSets.integration.runtimeClasspath
+	outputs.upToDateWhen { false }
+	useJUnitPlatform()
+}
+
+idea {
+	module {
+		testSourceDirs += sourceSets.integration.java.srcDirs
+		testResourceDirs += sourceSets.integration.resources.srcDirs
+	}
+}
+
+check.dependsOn integrationTest
+
 repositories {
 	mavenCentral()
 	maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 }
 
 dependencies {
-	compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.16.5-R0.1-SNAPSHOT'
-	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.18'
-	compileOnly group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.18'
+	compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.18.1-R0.1-SNAPSHOT'
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+	compileOnly group: 'org.jetbrains', name: 'annotations', version: '23.0.0'
+	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
 
-	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
-	testImplementation group: 'org.spigotmc', name: 'spigot-api', version: '1.16.5-R0.1-SNAPSHOT'
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.7.0'
+	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
+	testImplementation group: 'org.spigotmc', name: 'spigot-api', version: '1.18.1-R0.1-SNAPSHOT'
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.2'
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.4.6'
 	testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.4.6'
 	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.4.6'
@@ -49,6 +76,7 @@ compileTestJava.options.compilerArgs << '-parameters' << '-g' << '-Xlint:depreca
 
 checkstyleMain.exclude('example/**.java')
 checkstyleTest.exclude('**')
+checkstyleIntegration.exclude("**")
 
 test {
 	useJUnitPlatform()
@@ -62,7 +90,6 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: ['example/**'])
 		}))
 	}
-
 }
 
 jacocoTestCoverageVerification {
@@ -84,7 +111,7 @@ javadoc {
 		setMemberLevel JavadocMemberLevel.PUBLIC
 		setAuthor true
 
-		links 'https://docs.oracle.com/en/java/javase/14/docs/api/'
+		links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
 	}
 }
 

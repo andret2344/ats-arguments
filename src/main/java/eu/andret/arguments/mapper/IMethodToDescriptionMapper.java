@@ -4,6 +4,8 @@
 
 package eu.andret.arguments.mapper;
 
+import eu.andret.arguments.IMapper;
+
 import java.lang.reflect.Method;
 
 /**

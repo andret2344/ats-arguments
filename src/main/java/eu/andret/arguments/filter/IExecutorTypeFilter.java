@@ -4,8 +4,8 @@
 
 package eu.andret.arguments.filter;
 
+import eu.andret.arguments.IMapper;
 import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.mapper.IMapper;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;

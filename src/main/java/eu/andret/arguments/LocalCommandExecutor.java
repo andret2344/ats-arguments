@@ -10,24 +10,24 @@ import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
-import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IFallbackSelector;
+import eu.andret.arguments.mapper.IInstanceCreator;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
 import eu.andret.arguments.mapper.impl.FallbackSelector;
+import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
@@ -35,16 +35,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -60,23 +63,25 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	JavaPlugin plugin;
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
+	@Getter
 	MappingConfig mappingConfig = new MappingConfig();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
 	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
-	IFallbackSelector<E> fallbackSelector = new FallbackSelector<>();
-	IMethodSelector methodSelector = new MethodSelector<>(fallbackSelector, mappingConfig);
-	IMethodInvoker<E> methodInvoker = new MethodInvoker<>();
+	IFallbackSelector fallbackSelector = new FallbackSelector();
+	IMethodSelector methodSelector = new MethodSelector(fallbackSelector, mappingConfig);
+	IInstanceCreator instanceCreator = new InstanceCreator();
+	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	@Getter(AccessLevel.PACKAGE)
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
-	AnnotatedCommand.OnUnknownSubCommandExecutionListener onUnknownSubCommandExecutionListener;
+	Consumer<CommandSender> onUnknownSubCommandExecutionListener;
 	@NonFinal
-	AnnotatedCommand.OnInsufficientPermissionsListener onInsufficientPermissionsListener;
+	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
-	AnnotatedCommand.OnMainCommandExecutionListener onMainCommandExecutionListener;
+	Consumer<CommandSender> onMainCommandExecutionListener;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
 	@NotNull
@@ -106,7 +111,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 							 @NotNull final String label, @NotNull final String[] args) {
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
-					.ifPresentOrElse(listener -> listener.mainCommandExecution(sender), () ->
+					.ifPresentOrElse(listener -> listener.accept(sender), () ->
 							Arrays.stream(commandClass.getDeclaredMethods())
 									.filter(method -> !Modifier.isStatic(method.getModifiers()))
 									.filter(method -> method.isAnnotationPresent(Argument.class))
@@ -124,62 +129,44 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	/**
 	 * Sets on unknown sub command execution listener.
 	 *
-	 * @param listener The {@link AnnotatedCommand.OnUnknownSubCommandExecutionListener}
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnUnknownSubCommandExecutionListener(
-			@NotNull final AnnotatedCommand.OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(@NotNull final Consumer<CommandSender> listener) {
 		onUnknownSubCommandExecutionListener = listener;
 	}
 
 	/**
 	 * Sets on insufficient permissions' listener.
 	 *
-	 * @param listener The {@link AnnotatedCommand.OnInsufficientPermissionsListener}
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnInsufficientPermissionsListener(
-			@NotNull final AnnotatedCommand.OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(@NotNull final Consumer<CommandSender> listener) {
 		onInsufficientPermissionsListener = listener;
 	}
 
 	/**
 	 * Sets on main command execution listener.
 	 *
-	 * @param listener The {@link AnnotatedCommand.OnMainCommandExecutionListener}
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnMainCommandExecutionListener(
-			@NotNull final AnnotatedCommand.OnMainCommandExecutionListener listener) {
+	public void setOnMainCommandExecutionListener(@NotNull final Consumer<CommandSender> listener) {
 		onMainCommandExecutionListener = listener;
 	}
 
-	<M> boolean addArgumentMapper(@NotNull final String id, @NotNull final MappingSet<M> mappingSet) {
-		if (mappingConfig.exists(id)) {
-			return false;
-		}
-		mappingConfig.add(id, mappingSet);
-		return true;
-	}
-
-	<M> boolean addTypeMapper(@NotNull final Class<M> clazz, @NotNull final MappingSet<M> mappingSet) {
-		if (mappingConfig.exists(clazz)) {
-			return false;
-		}
-		mappingConfig.add(clazz, mappingSet);
-		return true;
-	}
-
 	private void noneMethodFound(@NotNull final CommandSender sender) {
-		Optional.ofNullable(onUnknownSubCommandExecutionListener)
-				.ifPresent(listener -> listener.unknownSubCommandExecuted(sender));
+		Optional.ofNullable(onUnknownSubCommandExecutionListener).ifPresent(listener -> listener.accept(sender));
 	}
 
 	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
-			final ExecutionCall call = selectMethod(method, args);
-			final List<Object> result = invokeMethods(call, sender);
-			result.forEach(element -> responseConsumer.consumeResponse(sender, element, annotatedCommand.getOptions()));
+			Optional.of(selectMethod(method, args))
+					.map(executionCall -> invokeMethods(executionCall, sender))
+					.stream()
+					.flatMap(Collection::stream)
+					.forEach(value -> responseConsumer.consumeResponse(sender, value, annotatedCommand.getOptions()));
 		} else if (onInsufficientPermissionsListener != null) {
-			onInsufficientPermissionsListener.insufficientPermissions(sender);
+			onInsufficientPermissionsListener.accept(sender);
 		}
 	}
 
@@ -195,27 +182,26 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	}
 
 	@NotNull
-	private List<Object> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
-		final AnnotatedCommandExecutor<E> commandExecutor;
-		if (executors.containsKey(sender)) {
-			commandExecutor = executors.get(sender);
-		} else {
-			commandExecutor = methodInvoker.createInstance(sender, plugin, commandClass, parameters);
-			executors.put(sender, commandExecutor);
-		}
+	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
+		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
 		return executionCall.getMethods().stream()
-				.map(x -> invokeMethod(x, commandExecutor, executionCall.getData()))
+				.map(method -> methodInvoker.invokeMethod(method, commandExecutor, executionCall.getData()))
+				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
-	@SneakyThrows
-	private Object invokeMethod(@NotNull final Method method,
-								@NotNull final AnnotatedCommandExecutor<E> executor,
-								@NotNull final Object[] data) {
-		return method.invoke(executor, data);
+	@NotNull
+	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
+		if (executors.containsKey(sender)) {
+			return executors.get(sender);
+		}
+		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
+		executors.put(sender, commandExecutor);
+		return commandExecutor;
 	}
 
+	@Nullable
 	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
 		return executors.get(sender);
 	}

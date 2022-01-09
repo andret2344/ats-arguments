@@ -11,6 +11,7 @@ import eu.andret.arguments.api.annotation.SubCommand;
 import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingSet;
+import eu.andret.arguments.entity.ResponseMappingSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
@@ -19,10 +20,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -61,45 +64,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		private boolean caseSensitive;
 	}
 
-	/**
-	 * Listener to define an action when the sender performs an unknown sub-command.
-	 */
-	public interface OnUnknownSubCommandExecutionListener {
-
-		/**
-		 * Unknown sub-command executed.
-		 *
-		 * @param sender The sender that executed an unknown sub-command
-		 */
-		void unknownSubCommandExecuted(@NotNull CommandSender sender);
-	}
-
-	/**
-	 * Listener to define an action when the sender has insufficient permissions.
-	 */
-	public interface OnInsufficientPermissionsListener {
-
-		/**
-		 * Insufficient permissions.
-		 *
-		 * @param sender The sender that executed the command with no permissions.
-		 */
-		void insufficientPermissions(@NotNull CommandSender sender);
-	}
-
-	/**
-	 * Listener to define action when sender executes command with no arguments.
-	 */
-	public interface OnMainCommandExecutionListener {
-
-		/**
-		 * Main command.
-		 *
-		 * @param sender The sender that executed the command with no arguments.
-		 */
-		void mainCommandExecution(@NotNull CommandSender sender);
-	}
-
+	@NotNull
 	@SuppressWarnings("unchecked")
 	private LocalCommandExecutor<E> getLocalCommandExecutor() {
 		return (LocalCommandExecutor<E>) command.getExecutor();
@@ -116,6 +81,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
 	 * 		command.
 	 */
+	@Nullable
 	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
 		return getLocalCommandExecutor().getCommandExecutor(sender);
 	}
@@ -123,27 +89,27 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Sets an unknown sub command execution listener.
 	 *
-	 * @param listener The {@link OnUnknownSubCommandExecutionListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnUnknownSubCommandExecutionListener(final OnUnknownSubCommandExecutionListener listener) {
+	public void setOnUnknownSubCommandExecutionListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnUnknownSubCommandExecutionListener(listener);
 	}
 
 	/**
 	 * Sets an insufficient permissions' listener.
 	 *
-	 * @param listener The {@link OnInsufficientPermissionsListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnInsufficientPermissionsListener(final OnInsufficientPermissionsListener listener) {
+	public void setOnInsufficientPermissionsListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnInsufficientPermissionsListener(listener);
 	}
 
 	/**
 	 * Sets the main command execution listener.
 	 *
-	 * @param listener The {@link OnMainCommandExecutionListener}.
+	 * @param listener The {@link Consumer}.
 	 */
-	public void setOnMainCommandExecutionListener(final OnMainCommandExecutionListener listener) {
+	public void setOnMainCommandExecutionListener(final Consumer<CommandSender> listener) {
 		getLocalCommandExecutor().setOnMainCommandExecutionListener(listener);
 	}
 
@@ -160,8 +126,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper,
 								  @NotNull final Predicate<Object> fallbackCondition) {
-		if (!getLocalCommandExecutor().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper for this class is already registered!");
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
+			throw new IllegalArgumentException(String.format("Mapper with class %s is already registered!", clazz));
 		}
 	}
 
@@ -196,8 +162,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 									  @NotNull final Class<T> clazz,
 									  @NotNull final Function<String, T> mapper,
 									  @NotNull final Predicate<Object> fallbackCondition) {
-		if (!getLocalCommandExecutor().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper with this id is already registered!");
+		if (!getLocalCommandExecutor().getMappingConfig().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
+			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
 	}
 
@@ -230,8 +196,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
 												  @NotNull final Predicate<Object> fallbackCondition) {
 		final Function<String, T> mapper = name -> Enum.valueOf(anEnum, name.toUpperCase());
-		if (!getLocalCommandExecutor().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException("Mapper for this enum is already registered!");
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
+			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -258,7 +224,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
 								 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException("Completer for type " + clazz + " is already defined.");
+			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
 		}
 	}
 
@@ -290,7 +256,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 						.map(String::toUpperCase)
 						.collect(Collectors.toList());
 		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
-			throw new IllegalArgumentException("Completer for enum " + anEnum + " is already defined.");
+			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum));
 		}
 	}
 
@@ -314,7 +280,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
-	public void addTypeCompleter(@NotNull final Class<?> clazz, final Collection<String> collection) {
+	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Collection<String> collection) {
 		addTypeCompleter(clazz, () -> collection);
 	}
 
@@ -330,7 +296,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public void addArgumentCompleter(@NotNull final String id,
 									 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
-			throw new IllegalArgumentException("Completer with id \"" + id + "\" is already registered!");
+			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
 	}
 
@@ -370,8 +336,42 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(@NotNull final String id, final Collection<String> collection) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final Collection<String> collection) {
 		addArgumentCompleter(id, () -> collection);
+	}
+
+	/**
+	 * Adds a response mapper that allows to map return value to {@link String}.
+	 *
+	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
+	 * 		object.
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated class.
+	 */
+	public <T> void addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final Function<T, String> function) {
+		if (!getLocalCommandExecutor().getMappingConfig().addTypeResponseMapper(clazz, new ResponseMappingSet<>(clazz, function))) {
+			throw new IllegalArgumentException(String.format("Response mapper with class %s is already registered!", clazz));
+		}
+	}
+
+	/**
+	 * Adds a response mapper that allows to map return value to {@link String}.
+	 *
+	 * @param id The id of the response mapper. The id has to be unique.
+	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
+	 * 		object.
+	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
+	 *
+	 * @throws IllegalArgumentException if tried to register duplicated class.
+	 */
+	public <T> void addArgumentResponseMapper(@NotNull final String id, @NotNull final Class<T> clazz,
+											  @NotNull final Function<T, String> function) {
+		if (!getLocalCommandExecutor().getMappingConfig().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
+			throw new IllegalArgumentException(String.format("Response mapper with id %s is already registered!", id));
+		}
 	}
 
 	public void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass) {

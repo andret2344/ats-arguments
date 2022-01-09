@@ -5,11 +5,13 @@
 package eu.andret.arguments.consumer;
 
 import eu.andret.arguments.AnnotatedCommand;
-import eu.andret.arguments.mapper.IMapper;
+import eu.andret.arguments.IMapper;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * A mapper interface to mapping response generated from method.
+ * A consumer that accepts the response and presents it to sender.
  *
  * @author Andret
  * @since Apr 19, 2020
@@ -22,5 +24,6 @@ public interface IResponseConsumer extends IMapper {
 	 * @param result The result returned from called method.
 	 * @param options The {@link AnnotatedCommand.Options}.
 	 */
-	void consumeResponse(CommandSender sender, Object result, AnnotatedCommand.Options options);
+	void consumeResponse(@NotNull CommandSender sender, @Nullable String result,
+						 @NotNull AnnotatedCommand.Options options);
 }

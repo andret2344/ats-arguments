@@ -38,8 +38,7 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
-		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand, options);
+		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand);
 		pluginCommand.setExecutor(new LocalCommandExecutor<>(annotatedCommand, commandClass, plugin, arguments));
 		pluginCommand.setTabCompleter(new LocalTabCompleter<>(annotatedCommand, commandClass));
 		return annotatedCommand;

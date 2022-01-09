@@ -5,31 +5,32 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.api.annotation.Argument;
-import org.bukkit.command.CommandSender;
+import eu.andret.arguments.IMapper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 /**
- * An interface to call methods.
- *
- * @param <E> The JavaPlugin instance.
+ * The method invoker interface.
  *
  * @author Andret
- * @since Sep 03, 2021
+ * @since Nov 25, 2021
  */
-public interface IMethodInvoker<E extends JavaPlugin> extends IMapper {
+public interface IMethodInvoker extends IMapper {
 	/**
-	 * @param sender The sender who executed the command.
-	 * @param plugin The {@link JavaPlugin}.
-	 * @param executorClass The class containing {@link Argument} methods.
-	 * @param parameters The executor's constructor parameters.
-	 * @param <A> The {@link AnnotatedCommandExecutor} class.
+	 * Invokes the selected method using passed executor and passing the data as arguments.
 	 *
-	 * @return List with results from called methods.
+	 * @param method The method to be invoked.
+	 * @param executor Executor that will be the method invoked on.
+	 * @param data The array of values that will be passed as method parameters.
+	 * @param <E> The {@link JavaPlugin} subclass.
+	 *
+	 * @return The list of values returned from method split by end of line or when returned list or array, or used a
+	 * 		return mapper.
 	 */
-	<A extends AnnotatedCommandExecutor<E>> A createInstance(@NotNull CommandSender sender,
-															 @NotNull JavaPlugin plugin,
-															 @NotNull Class<A> executorClass,
-															 @NotNull Object... parameters);
+	@NotNull <E extends JavaPlugin> List<String> invokeMethod(@NotNull Method method,
+															  @NotNull AnnotatedCommandExecutor<E> executor,
+															  @NotNull Object[] data);
 }

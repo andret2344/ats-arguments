@@ -27,22 +27,23 @@ public class MethodNameFilter implements IMethodNameFilter {
 	@Override
 	public boolean filterMethodName(final Method method, final String[] command, final AnnotatedCommand.Options options) {
 		return Optional.of(method)
-				.filter(m -> m.isAnnotationPresent(Argument.class))
+				.filter(theMethod -> theMethod.isAnnotationPresent(Argument.class))
 				.filter(this::verifyNonStatic)
-				.filter(m -> verifyArgumentPosition(m, command))
-				.map(m -> m.getAnnotation(Argument.class))
-				.map(a -> nameMatches(a, method, command, options))
+				.map(theMethod -> theMethod.getAnnotation(Argument.class))
+				.filter(argument -> verifyArgumentPosition(argument, command))
+				.map(argument -> nameMatches(argument, method, command, options))
 				.orElse(false);
 	}
 
-	private boolean nameMatches(final Argument a, final Method method, final String[] command, final AnnotatedCommand.Options options) {
-		final String name = command[a.position()];
+	private boolean nameMatches(final Argument argument, final Method method, final String[] command,
+								final AnnotatedCommand.Options options) {
+		final String name = command[argument.position()];
 		final Predicate<String> predicate = options.isCaseSensitive() ? name::equals : name::equalsIgnoreCase;
-		return getAllNamesStream(a, method).anyMatch(predicate);
+		return getAllNamesStream(argument, method).anyMatch(predicate);
 	}
 
-	private Stream<String> getAllNamesStream(final Argument a, final Method method) {
-		return Stream.concat(Arrays.stream(a.aliases()), Stream.of(method.getName()));
+	private Stream<String> getAllNamesStream(final Argument argument, final Method method) {
+		return Stream.concat(Arrays.stream(argument.aliases()), Stream.of(method.getName()));
 	}
 
 	private boolean verifyNonStatic(final Method method) {
@@ -52,11 +53,7 @@ public class MethodNameFilter implements IMethodNameFilter {
 		return true;
 	}
 
-	private boolean verifyArgumentPosition(final Method method, final String[] command) {
-		final Argument argument = method.getAnnotation(Argument.class);
-		if (argument.position() > command.length) {
-			throw new IllegalArgumentException("@Argument.position() cannot be greater than methods arguments count. Method: " + method);
-		}
-		return true;
+	private boolean verifyArgumentPosition(final Argument argument, final String[] command) {
+		return argument.position() < command.length;
 	}
 }

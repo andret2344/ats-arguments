@@ -5,81 +5,63 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.mapper.impl.MethodInvoker;
-import eu.andret.arguments.provider.ExceptionalClass;
-import eu.andret.arguments.provider.FewArgumentsClass;
-import eu.andret.arguments.provider.ManyArgumentsClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class MethodInvokerTest {
 	@Test
-	void createInstanceCorrectly() {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
+	void invokeMethodCorrectly() throws InvocationTargetException, IllegalAccessException {
+		final Method method = mock(Method.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
-		final Class<TestMethodsProvider> commandClass = TestMethodsProvider.class;
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final IResponseMapper responseMapper = mock(IResponseMapper.class);
+		final String[] data = {"test", "result"};
+		final List<String> resultList = List.of(data);
+		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
+		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
+
+		when(method.invoke(eq(provider), any())).thenReturn(resultList);
+		when(responseMapper.mapResponse(method, resultList)).thenReturn(resultList);
 
 		// when
-		final TestMethodsProvider provider = invoker.createInstance(sender, plugin, commandClass);
+		final List<String> list = methodInvoker.invokeMethod(method, provider, data);
 
 		// then
-		assertNotNull(provider);
+		assertEquals(2, list.size());
+		assertEquals("test", list.get(0));
+		assertEquals("result", list.get(1));
 	}
 
 	@Test
-	void createInstanceWithManyArguments() {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
+	void invokeMethodIncorrectly() throws InvocationTargetException, IllegalAccessException {
+		final Method method = mock(Method.class);
 		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
-		final Class<ManyArgumentsClass> commandClass = ManyArgumentsClass.class;
+		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
+		final IResponseMapper responseMapper = mock(IResponseMapper.class);
+		final String[] data = {"test", "result"};
+		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
+		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
+
+		when(method.invoke(eq(provider), any())).thenThrow(new IllegalAccessException());
 
 		// when
-		final World world = mock(World.class);
-		final ManyArgumentsClass provider = invoker.createInstance(sender, plugin, commandClass, world);
+		final Executable result = () -> methodInvoker.invokeMethod(method, provider, data);
 
 		// then
-		assertNotNull(provider);
-	}
-
-	@Test
-	void createInstanceWithException() {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
-		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
-
-		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
-
-		// then
-		assertThrows(InvocationTargetException.class, result);
-	}
-
-	@Test
-	void createInstanceWithFewArguments() {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final IMethodInvoker<JavaPlugin> invoker = new MethodInvoker<>();
-		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
-
-		// when
-		final Executable result = () -> invoker.createInstance(sender, plugin, commandClass);
-
-		// then
-		assertThrows(IllegalStateException.class, result);
+		assertThrows(IllegalAccessException.class, result);
 	}
 }

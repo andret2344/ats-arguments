@@ -33,11 +33,11 @@ class UtilTest {
 
 	static Collection<Object[]> realClassData() {
 		final Object[][] objects = {
-				{"123", int.class, 123},
-				{"false", boolean.class, false},
-				{"true", boolean.class, true},
-				{"12.34", double.class, 12.34},
-				{"other", String.class, "other"}
+				{"123", int.class},
+				{"false", boolean.class},
+				{"true", boolean.class},
+				{"12.34", double.class},
+				{"other", String.class}
 		};
 		return Arrays.asList(objects);
 	}
@@ -63,7 +63,7 @@ class UtilTest {
 
 	@ParameterizedTest
 	@MethodSource("realClassData")
-	void getRealClass(final String input, final Class<?> targetClass, final Object realValue) {
+	void getRealClass(final String input, final Class<?> targetClass) {
 		// when
 		final Class<?> realClass = Util.getRealClass(input);
 

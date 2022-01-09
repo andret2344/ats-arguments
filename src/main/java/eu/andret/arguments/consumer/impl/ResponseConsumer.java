@@ -8,44 +8,28 @@ import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Implementation for {@link IResponseConsumer}.
+ *
+ * @author Andret
+ * @since Apr 19, 2020
  */
 public class ResponseConsumer implements IResponseConsumer {
 	@Override
-	public void consumeResponse(final CommandSender sender, final Object result, final AnnotatedCommand.Options options) {
+	public void consumeResponse(@NotNull final CommandSender sender, @Nullable final String result,
+								@NotNull final AnnotatedCommand.Options options) {
 		Optional.ofNullable(result)
-				.map(this::createResponseStream)
-				.orElse(Stream.empty())
 				.map(message -> mapToColored(message, options))
-				.forEach(sender::sendMessage);
+				.ifPresent(sender::sendMessage);
 	}
 
-	private Stream<String> createResponseStream(final Object result) {
-		if (result.getClass().isArray()) {
-			return Optional.of(result)
-					.map(Object[].class::cast)
-					.stream()
-					.flatMap(Arrays::stream)
-					.map(String::valueOf);
-		}
-		if (Collection.class.isAssignableFrom(result.getClass())) {
-			return Optional.of(result)
-					.map(x -> (Collection<?>) x)
-					.stream()
-					.flatMap(Collection::stream)
-					.map(String::valueOf);
-		}
-		return String.valueOf(result).lines();
-	}
-
-	private String mapToColored(final String message, final AnnotatedCommand.Options options) {
+	@NotNull
+	private String mapToColored(@NotNull final String message, @NotNull final AnnotatedCommand.Options options) {
 		if (!options.isAutoTranslateColors()) {
 			return message;
 		}

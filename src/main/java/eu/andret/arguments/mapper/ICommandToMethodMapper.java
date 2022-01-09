@@ -5,6 +5,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommand;
+import eu.andret.arguments.IMapper;
 import eu.andret.arguments.api.annotation.Argument;
 import org.bukkit.command.CommandSender;
 
@@ -12,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
- * Interface for mapping  command to exact method to be called.
+ * Interface for mapping command to exact method to be called.
  *
  * @author Andret
  * @since Apr 17, 2020

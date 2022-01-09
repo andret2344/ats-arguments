@@ -58,19 +58,19 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 		if (args.length == 1) {
 			return Stream.concat(
 							Stream.of(commandClass.getDeclaredMethods())
-									.filter(m -> m.getAnnotation(Argument.class) != null)
+									.filter(method -> method.getAnnotation(Argument.class) != null)
 									.map(Method::getName),
 							Stream.of(commandClass.getDeclaredMethods())
-									.filter(m -> m.getAnnotation(Argument.class) != null)
-									.flatMap(m -> Stream.of(m.getDeclaredAnnotation(Argument.class).aliases())))
-					.filter(s -> s.startsWith(args[0]))
+									.filter(method -> method.getAnnotation(Argument.class) != null)
+									.flatMap(method -> Stream.of(method.getDeclaredAnnotation(Argument.class).aliases())))
+					.filter(text -> text.startsWith(args[0]))
 					.collect(Collectors.toList());
 		}
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
-				.filter(m -> !Modifier.isStatic(m.getModifiers()))
-				.filter(m -> methodNameMapper.filterMethodName(m, args, annotatedCommand.getOptions()))
-				.map(m -> methodToCompletionMapper.mapCommandToCompletion(m, args, sender))
+				.filter(method -> !Modifier.isStatic(method.getModifiers()))
+				.filter(method -> methodNameMapper.filterMethodName(method, args, annotatedCommand.getOptions()))
+				.map(method -> methodToCompletionMapper.mapCommandToCompletion(method, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
 	}
