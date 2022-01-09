@@ -33,13 +33,13 @@ public class InstanceCreator implements IInstanceCreator {
 			@NotNull final JavaPlugin plugin,
 			@NotNull final Class<A> executor,
 			@NotNull final Object... parameters) {
-		final Constructor<A> c = findConstructor(executor, plugin)
+		final Constructor<A> constructor = findConstructor(executor, plugin)
 				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
 		final Object[] arguments = new Object[parameters.length + 2];
 		arguments[0] = sender;
 		arguments[1] = plugin;
 		System.arraycopy(parameters, 0, arguments, 2, parameters.length);
-		return c.newInstance(arguments);
+		return constructor.newInstance(arguments);
 	}
 
 	@NotNull

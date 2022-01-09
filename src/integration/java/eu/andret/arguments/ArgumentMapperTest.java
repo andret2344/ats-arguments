@@ -23,7 +23,7 @@ class ArgumentMapperTest {
 	@Test
 	void customArgumentMapperCorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
+		final CommandSender commandSender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final World world = mock(World.class);
 		when(world.getName()).thenReturn("testMappedWorldName");
@@ -34,21 +34,21 @@ class ArgumentMapperTest {
 		annotatedCommand.addArgumentMapper("world", World.class, ignored -> world);
 		final String[] args = {"testWithWorldMapper", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("unknown"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
 		assertTrue(result);
-		verify(sender, times(1)).sendMessage("The mapped world: testMappedWorldName");
-		verify(sender, times(0)).sendMessage("unknown");
+		verify(commandSender, times(1)).sendMessage("The mapped world: testMappedWorldName");
+		verify(commandSender, times(0)).sendMessage("unknown");
 	}
 
 	@Test
 	void customArgumentMapperIncorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final CommandSender sender = mock(CommandSender.class);
+		final CommandSender commandSender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final Player player = mock(Player.class);
 		when(player.getName()).thenReturn("testMappedPlayerName");
@@ -58,14 +58,14 @@ class ArgumentMapperTest {
 
 		final String[] args = {"testWithPlayerMapper", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("unknown"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
 		assertTrue(result);
-		verify(sender, times(1)).sendMessage("unknown");
-		verifyNoMoreInteractions(sender);
+		verify(commandSender, times(1)).sendMessage("unknown");
+		verifyNoMoreInteractions(commandSender);
 	}
 }

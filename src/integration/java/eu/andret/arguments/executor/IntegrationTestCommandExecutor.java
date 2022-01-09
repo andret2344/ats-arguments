@@ -25,18 +25,18 @@ public class IntegrationTestCommandExecutor extends AnnotatedCommandExecutor<Jav
 	}
 
 	@Argument
-	public int testWithParameter(final int x) {
-		return x;
+	public int testWithParameter(final int number) {
+		return number;
 	}
 
 	@Argument
-	public String testWithParameter(final String s) {
-		return s;
+	public String testWithParameter(final String text) {
+		return text;
 	}
 
 	@Argument(position = 1)
-	public String testWithChangedPosition(final String x) {
-		return x;
+	public String testWithChangedPosition(final String text) {
+		return text;
 	}
 
 	@Argument(permission = "test")
@@ -45,27 +45,27 @@ public class IntegrationTestCommandExecutor extends AnnotatedCommandExecutor<Jav
 	}
 
 	@Argument
-	public String testWithInt(final int i) {
-		return "An int: " + i;
+	public String testWithInt(final int number) {
+		return "An int: " + number;
 	}
 
 	@Argument
-	public String testWithWorld(final World w) {
-		return "The world: " + w.getName();
+	public String testWithWorld(final World world) {
+		return "The world: " + world.getName();
 	}
 
 	@Argument
-	public String testWithPlayer(final Player p) {
-		return "The player: " + p.getName();
+	public String testWithPlayer(final Player player) {
+		return "The player: " + player.getName();
 	}
 
 	@Argument
-	public String testWithWorldMapper(@Mapper("world") final World w) {
-		return "The mapped world: " + w.getName();
+	public String testWithWorldMapper(@Mapper("world") final World world) {
+		return "The mapped world: " + world.getName();
 	}
 
 	@Argument
-	public String testWithPlayerMapper(@Mapper("player") final Player p) {
-		return "The mapped player: " + p.getName();
+	public String testWithPlayerMapper(@Mapper("player") final Player player) {
+		return "The mapped player: " + player.getName();
 	}
 }
