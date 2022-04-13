@@ -87,13 +87,13 @@ public class MethodSelector implements IMethodSelector {
 				.map(Mapper::value)
 				.map(mappingConfig::getArgumentMapper)
 				.filter(set -> set.getClazz().equals(clazz))
-				.map(x -> (MappingSet<T>) x);
+				.map(set -> (MappingSet<T>) set);
 		if (mappingSet.isPresent()) {
 			return mappingSet;
 		}
 		return Optional.of(clazz)
 				.map(mappingConfig::getTypeMapper)
-				.map(x -> (MappingSet<T>) x);
+				.map(set -> (MappingSet<T>) set);
 	}
 
 	@NotNull
