@@ -193,7 +193,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
 												  @NotNull final Predicate<Object> fallbackCondition) {
 		final Function<String, T> mapper = name -> Arrays.stream(anEnum.getEnumConstants())
-				.filter(t -> t.name().equalsIgnoreCase(name))
+				.filter(enumValue -> enumValue.name().equalsIgnoreCase(name))
 				.findAny()
 				.orElse(null);
 		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {

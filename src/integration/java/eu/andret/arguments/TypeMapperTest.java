@@ -34,7 +34,7 @@ class TypeMapperTest {
 		annotatedCommand.addTypeMapper(World.class, ignored -> world);
 		final String[] args = {"testWithWorld", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
@@ -58,7 +58,7 @@ class TypeMapperTest {
 
 		final String[] args = {"testWithPlayer", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
@@ -82,7 +82,7 @@ class TypeMapperTest {
 
 		final String[] args = {"testWithInt", "1"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
