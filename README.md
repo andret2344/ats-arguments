@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 
