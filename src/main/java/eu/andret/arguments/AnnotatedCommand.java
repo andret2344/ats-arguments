@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -8,7 +8,6 @@ import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
-import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import lombok.AllArgsConstructor;
@@ -23,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,12 +30,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-/**
- * Wrapper class for classical {@link PluginCommand}.
- *
- * @author Andret
- * @since Jun 02, 2019
- */
 @Value
 @NonFinal
 @AllArgsConstructor
@@ -116,8 +110,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
-	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
-	 *        String}.
+	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
+	 *        {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
 	 *
@@ -134,14 +128,14 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
 	 * @param clazz The {@link Class} that will be returned from mapper function,
-	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
-	 *        String}.
+	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
+	 *        {@link String}.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper) {
-		addTypeMapper(clazz, mapper, FallbackConstants.NEVER);
+		addTypeMapper(clazz, mapper, Objects::isNull);
 	}
 
 	/**
@@ -150,8 +144,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
 	 * @param clazz The {@link Class} that will be returned from mapper function,
-	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of {@link
-	 *        String}.
+	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
+	 *        {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
 	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
 	 *
@@ -165,8 +159,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	}
 
 	/**
-	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}. {@link
-	 * TypeFallback} method will never be called.
+	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
+	 * {@link TypeFallback} method will never be called.
 	 *
 	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
 	 * 		the created mapper.
@@ -178,7 +172,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
 									  @NotNull final Function<String, T> mapper) {
-		addArgumentMapper(id, clazz, mapper, FallbackConstants.NEVER);
+		addArgumentMapper(id, clazz, mapper, Objects::isNull);
 	}
 
 	/**
@@ -192,7 +186,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
 												  @NotNull final Predicate<Object> fallbackCondition) {
-		final Function<String, T> mapper = name -> Enum.valueOf(anEnum, name.toUpperCase());
+		final Function<String, T> mapper = name -> Arrays.stream(anEnum.getEnumConstants())
+				.filter(t -> t.name().equalsIgnoreCase(name))
+				.findAny()
+				.orElse(null);
 		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
 		}
@@ -207,7 +204,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum) {
-		addEnumMapper(anEnum, FallbackConstants.NEVER);
+		addEnumMapper(anEnum, Objects::isNull);
 	}
 
 	/**

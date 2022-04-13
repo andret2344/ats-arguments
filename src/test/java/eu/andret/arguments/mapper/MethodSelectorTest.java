@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -7,11 +7,11 @@ package eu.andret.arguments.mapper;
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.api.annotation.Mapper;
-import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -50,7 +51,7 @@ class MethodSelectorTest {
 		}
 		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.ALWAYS));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
@@ -80,6 +81,24 @@ class MethodSelectorTest {
 
 		// then
 		assertArrayEquals(new Object[]{"test"}, result);
+	}
+
+	@Test
+	void invokeMethodOneArgMapper() throws ReflectiveOperationException {
+		// given
+		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
+		final MappingConfig mappingConfig = new MappingConfig();
+		final Location location = mock(Location.class);
+		mappingConfig.addTypeMapper(Location.class, new MappingSet<>(Location.class, s -> location, Objects::isNull));
+		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
+		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
+		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithMappedArgument", Location.class));
+
+		// when
+		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
+
+		// then
+		assertArrayEquals(new Location[]{location}, result);
 	}
 
 	@Test
@@ -121,7 +140,7 @@ class MethodSelectorTest {
 		final World world = mock(World.class);
 		when(getWorld.apply("world")).thenReturn(world);
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
