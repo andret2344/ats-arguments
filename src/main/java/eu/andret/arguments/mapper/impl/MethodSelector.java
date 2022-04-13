@@ -23,6 +23,12 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+/**
+ * An implementation of {@link IMethodSelector}.
+ *
+ * @author Andret
+ * @since Sep 03, 2021
+ */
 @Value
 @AllArgsConstructor
 @Getter(AccessLevel.NONE)

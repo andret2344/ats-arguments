@@ -17,6 +17,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+/**
+ * Simple utility class for type mappings.
+ *
+ * @author Andret
+ * @since Apr 28, 2020
+ */
 @UtilityClass
 @Value
 @Getter(AccessLevel.NONE)
