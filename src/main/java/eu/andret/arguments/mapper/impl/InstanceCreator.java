@@ -53,8 +53,8 @@ public class InstanceCreator implements IInstanceCreator {
 					+ " has to have exactly one declared constructor");
 		}
 		return Optional.of(constructors[0])
-				.filter(c -> c.getParameterCount() >= 2)
-				.filter(c -> c.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
-				.filter(c -> c.getParameterTypes()[1].isAssignableFrom(plugin.getClass()));
+				.filter(constructor -> constructor.getParameterCount() >= 2)
+				.filter(constructor -> constructor.getParameterTypes()[0].isAssignableFrom(CommandSender.class))
+				.filter(constructor -> constructor.getParameterTypes()[1].isAssignableFrom(plugin.getClass()));
 	}
 }

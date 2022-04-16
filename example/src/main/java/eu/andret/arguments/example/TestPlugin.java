@@ -1,12 +1,11 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
 
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.CommandManager;
-import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.example.entity.SomeEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -24,14 +23,14 @@ public class TestPlugin extends JavaPlugin {
 		final AnnotatedCommand<TestPlugin> testCommand = CommandManager.registerCommand(TestCommand.class, this);
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-		testCommand.addTypeMapper(World.class, Bukkit::getWorld, FallbackConstants.ON_NULL);
+		testCommand.addTypeMapper(World.class, Bukkit::getWorld);
 		testCommand.addTypeCompleter(World.class, Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
 				.collect(Collectors.toList()));
-		testCommand.addEnumMapper(SomeEnum.class, FallbackConstants.ON_NULL);
+		testCommand.addEnumMapper(SomeEnum.class);
 		testCommand.addEnumCompleter(SomeEnum.class);
-		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer, FallbackConstants.ON_NULL);
+		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
 		testCommand.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
 		testCommand.addArgumentCompleter("playerCompleter", () -> Bukkit.getOnlinePlayers()
 				.stream()

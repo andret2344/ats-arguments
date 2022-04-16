@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -204,10 +205,11 @@ class AnnotatedCommandTest {
 		annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// then
-		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(TestEnum.class);
-		assertNotNull(test);
-		assertEquals(TestEnum.class, test.getClazz());
-		assertEquals(TestEnum.TEST_ONE, test.getFunction().apply("TEST_ONE"));
+		final MappingSet<?> mappingSet = executor.getMappingConfig().getTypeMapper(TestEnum.class);
+		assertNotNull(mappingSet);
+		assertEquals(TestEnum.class, mappingSet.getClazz());
+		assertEquals(TestEnum.TEST_ONE, mappingSet.getFunction().apply("TEST_ONE"));
+		assertNull(mappingSet.getFunction().apply("UNKNOWN"));
 	}
 
 	@Test

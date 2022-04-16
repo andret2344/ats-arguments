@@ -1,10 +1,9 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter;
 
-import eu.andret.arguments.api.entity.FallbackConstants;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.impl.ArgumentsFilter;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import javax.xml.stream.Location;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -119,7 +119,7 @@ class ArgumentsFilterTest {
 	void methodWithParamArgumentsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Objects::isNull));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParam", World.class);
 
@@ -160,7 +160,7 @@ class ArgumentsFilterTest {
 	void methodWithParamVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Objects::isNull));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
@@ -175,7 +175,7 @@ class ArgumentsFilterTest {
 	void methodWithPrimitiveVarArgsWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, Bukkit::getWorld, Objects::isNull));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithVararg", String[].class);
 
@@ -194,7 +194,7 @@ class ArgumentsFilterTest {
 		abstract class LocalFunction implements Function<String, Location> {
 		}
 		final LocalFunction getLocation = mock(LocalFunction.class);
-		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(Location.class, getLocation, FallbackConstants.NEVER));
+		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(Location.class, getLocation, Objects::isNull));
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 
 		// when
@@ -234,7 +234,7 @@ class ArgumentsFilterTest {
 	void methodWithTypeMapperWithMatchingCommandArguments() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, FallbackConstants.NEVER));
+		mappingConfig.addTypeMapper(boolean.class, new MappingSet<>(boolean.class, Boolean::parseBoolean, Objects::isNull));
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithTypeCompletion", boolean.class);
 

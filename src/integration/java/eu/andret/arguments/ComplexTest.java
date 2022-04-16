@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -9,6 +9,8 @@ import eu.andret.arguments.executor.ComplexIntegrationTestCommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -22,12 +24,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ComplexTest {
+	@NotNull
+	@Contract(pure = true)
 	static Collection<Object[]> getParameters() {
 		final Object[][] objects = {
 				{new String[]{"list"}, "I've got 1"},
 				{new String[]{"list", "2"}, "I've got 2"},
 				{new String[]{"list", "TWO"}, "I've got TWO 1 times"},
-				{new String[]{"list", "3", "ONE"}, "I've got ONE 3 times"}
+				{new String[]{"list", "3", "ONE"}, "I've got ONE 3 times"},
+				{new String[]{"list", "X"}, "X is not a valid value!"}
 		};
 		return Arrays.asList(objects);
 	}

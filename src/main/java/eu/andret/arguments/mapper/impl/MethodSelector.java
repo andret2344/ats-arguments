@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -73,28 +73,32 @@ public class MethodSelector implements IMethodSelector {
 	}
 
 	@NotNull
-	private Object map(@Nullable final Mapper mapper, @NotNull final Class<?> type, @NotNull final String value) {
+	private <T> T map(@Nullable final Mapper mapper, @NotNull final Class<T> type, @NotNull final String value) {
 		return getMappingSet(mapper, type)
 				.map(mappingSet -> convert(mapper, mappingSet, type, value))
 				.orElseGet(() -> Util.convert(type, value));
 	}
 
 	@NotNull
-	private Optional<? extends MappingSet<?>> getMappingSet(@Nullable final Mapper mapper,
-															@NotNull final Class<?> clazz) {
-		final Optional<? extends MappingSet<?>> mappingSet = Optional.ofNullable(mapper)
+	@SuppressWarnings("unchecked")
+	private <T> Optional<? extends MappingSet<T>> getMappingSet(@Nullable final Mapper mapper,
+																@NotNull final Class<T> clazz) {
+		final Optional<? extends MappingSet<T>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
 				.map(mappingConfig::getArgumentMapper)
-				.filter(set -> set.getClazz().equals(clazz));
+				.filter(set -> set.getClazz().equals(clazz))
+				.map(set -> (MappingSet<T>) set);
 		if (mappingSet.isPresent()) {
 			return mappingSet;
 		}
-		return Optional.of(clazz).map(mappingConfig::getTypeMapper);
+		return Optional.of(clazz)
+				.map(mappingConfig::getTypeMapper)
+				.map(set -> (MappingSet<T>) set);
 	}
 
 	@NotNull
-	private Object convert(@Nullable final Mapper mapper, @NotNull final MappingSet<?> mappingSet,
-						   @NotNull final Class<?> targetClass, @NotNull final String value) {
+	private <T> T convert(@Nullable final Mapper mapper, @NotNull final MappingSet<T> mappingSet,
+						  @NotNull final Class<T> targetClass, @NotNull final String value) {
 		final Object result = mappingSet.getFunction().apply(value);
 		if (mappingSet.getFallbackCondition().test(result)) {
 			throw new FallbackException("Fallback condition failed", mapper, targetClass, value);
