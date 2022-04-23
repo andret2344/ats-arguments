@@ -6,6 +6,7 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Ignore;
+import eu.andret.arguments.entity.CompletingConfig;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +20,6 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
@@ -31,8 +31,7 @@ import java.util.function.BiFunction;
 @Value
 @Getter(AccessLevel.NONE)
 public class MethodToCompletionMapper implements IMethodToCompletionMapper {
-	Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap;
-	Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap;
+	CompletingConfig completingConfig;
 
 	@Override
 	public Collection<String> mapCommandToCompletion(final Method method, final String[] args, final CommandSender sender) {
@@ -59,15 +58,19 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 			return getTypeSuggestion(parameter);
 		}
 		final String value = parameter.getAnnotation(Completer.class).value();
-		if (!argumentCompleterMap.containsKey(value)) {
-			return getTypeSuggestion(parameter);
+		final BiFunction<CommandSender, Collection<String>, Collection<String>> argumentCompleter
+				= completingConfig.getArgumentCompleter(value);
+		if (argumentCompleter != null) {
+			return argumentCompleter;
 		}
-		return argumentCompleterMap.get(value);
+		return getTypeSuggestion(parameter);
 	}
 
 	private BiFunction<CommandSender, Collection<String>, Collection<String>> getTypeSuggestion(final Parameter parameter) {
-		if (typeCompleterMap.containsKey(parameter.getType())) {
-			return typeCompleterMap.get(parameter.getType());
+		final BiFunction<CommandSender, Collection<String>, Collection<String>> typeCompleter
+				= completingConfig.getTypeCompleter(parameter.getType());
+		if (typeCompleter != null) {
+			return typeCompleter;
 		}
 		return (sender, collection) -> Collections.emptyList();
 	}

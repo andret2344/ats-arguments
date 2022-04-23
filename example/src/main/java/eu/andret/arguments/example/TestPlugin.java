@@ -23,16 +23,16 @@ public class TestPlugin extends JavaPlugin {
 		final AnnotatedCommand<TestPlugin> testCommand = CommandManager.registerCommand(TestCommand.class, this);
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
-		testCommand.addTypeMapper(World.class, Bukkit::getWorld);
-		testCommand.addTypeCompleter(World.class, Bukkit.getWorlds()
+		testCommand.getMappingConfig().addTypeMapper(World.class, Bukkit::getWorld);
+		testCommand.getCompletingConfig().addTypeCompleter(World.class, Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
 				.collect(Collectors.toList()));
-		testCommand.addEnumMapper(SomeEnum.class);
-		testCommand.addEnumCompleter(SomeEnum.class);
-		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
-		testCommand.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
-		testCommand.addArgumentCompleter("playerCompleter", () -> Bukkit.getOnlinePlayers()
+		testCommand.getMappingConfig().addEnumMapper(SomeEnum.class);
+		testCommand.getCompletingConfig().addEnumCompleter(SomeEnum.class);
+		testCommand.getMappingConfig().addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
+		testCommand.getCompletingConfig().addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
+		testCommand.getCompletingConfig().addArgumentCompleter("playerCompleter", () -> Bukkit.getOnlinePlayers()
 				.stream()
 				.map(HumanEntity::getName)
 				.collect(Collectors.toList()));
@@ -43,8 +43,8 @@ public class TestPlugin extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
 		}
 
-		testCommand.addTypeResponseMapper(Player.class, HumanEntity::getName);
-		testCommand.addArgumentResponseMapper("world", World.class, World::getName);
+		testCommand.getMappingConfig().addTypeResponseMapper(Player.class, HumanEntity::getName);
+		testCommand.getMappingConfig().addArgumentResponseMapper("world", World.class, World::getName);
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);

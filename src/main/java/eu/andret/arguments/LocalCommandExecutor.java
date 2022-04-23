@@ -58,11 +58,10 @@ import java.util.stream.Collectors;
 @NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
-	JavaPlugin plugin;
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
-	@Getter
-	MappingConfig mappingConfig = new MappingConfig();
+	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
+	MappingConfig mappingConfig;
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
@@ -72,25 +71,15 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IMethodSelector methodSelector = new MethodSelector(fallbackSelector, mappingConfig);
 	IInstanceCreator instanceCreator = new InstanceCreator();
 	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
-	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	Consumer<CommandSender> onUnknownSubCommandExecutionListener;
 	@NonFinal
 	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
 	Consumer<CommandSender> onMainCommandExecutionListener;
+	JavaPlugin plugin;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
-
-	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
-						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
-						 @NotNull final E plugin,
-						 @NotNull final Object... parameters) {
-		this.annotatedCommand = annotatedCommand;
-		this.commandClass = commandClass;
-		this.parameters = parameters;
-		this.plugin = plugin;
-	}
 
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
