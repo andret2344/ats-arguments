@@ -358,12 +358,12 @@ requires 2 arguments:
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
-    - `Function<List<String>. Collection<String>>` as instruction how to produce suggestion basing on currently typed
+    - `Function<List<String>. Collection<String>>` as instruction how to produce suggestion based on currently typed
       words.
-    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions basing on
+    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions based on
       currently typed words and the typist.
 
-That's it. Just call the described method and completers will start suggesting values basing on parameter type.
+That's it. Just call the described method and completers will start suggesting values based on parameter type.
 
 #### Argument completers
 
@@ -374,9 +374,9 @@ type will have the same suggestions. The method `addArgumentCompleter` requires 
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
-    - `Function<List<String>, Collection<String>>` as instruction how to produce suggestion basing on currently typed
+    - `Function<List<String>, Collection<String>>` as instruction how to produce suggestion based on currently typed
       words.
-    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions basing on
+    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions based on
       currently typed words and the typist.
 
 To have it working, we need to put `@Completer("someId")` before the parameter to get suggestions. Without this
