@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -222,7 +223,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
-								 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+								 @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
 			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
 		}
@@ -237,8 +238,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
-								 @NotNull final Function<CommandSender, Collection<String>> function) {
-		addTypeCompleter(clazz, (sender, collection) -> function.apply(sender));
+								 @NotNull final Function<List<String>, Collection<String>> function) {
+		addTypeCompleter(clazz, (list, sender) -> function.apply(list));
 	}
 
 	/**
@@ -250,7 +251,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumCompleter(@NotNull final Class<T> anEnum) {
-		final BiFunction<CommandSender, Collection<String>, Collection<String>> function = (sender, collection) ->
+		final BiFunction<List<String>, CommandSender, Collection<String>> function = (collection, sender) ->
 				Arrays.stream(anEnum.getEnumConstants())
 						.map(String::valueOf)
 						.map(String::toUpperCase)
@@ -269,7 +270,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Supplier<Collection<String>> supplier) {
-		addTypeCompleter(clazz, (sender, collection) -> supplier.get());
+		addTypeCompleter(clazz, (list, sender) -> supplier.get());
 	}
 
 	/**
@@ -293,7 +294,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
 			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
@@ -309,8 +310,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id,
-									 @NotNull final Function<CommandSender, Collection<String>> function) {
-		addArgumentCompleter(id, (sender, collection) -> function.apply(sender));
+									 @NotNull final Function<List<String>, Collection<String>> function) {
+		addArgumentCompleter(id, (list, sender) -> function.apply(list));
 	}
 
 	/**

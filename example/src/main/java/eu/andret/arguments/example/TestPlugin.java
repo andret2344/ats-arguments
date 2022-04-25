@@ -24,17 +24,19 @@ public class TestPlugin extends JavaPlugin {
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
 		testCommand.addTypeMapper(World.class, Bukkit::getWorld);
-		testCommand.addTypeCompleter(World.class, Bukkit.getWorlds()
+		testCommand.addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
+				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.collect(Collectors.toList()));
 		testCommand.addEnumMapper(SomeEnum.class);
 		testCommand.addEnumCompleter(SomeEnum.class);
 		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
 		testCommand.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
-		testCommand.addArgumentCompleter("playerCompleter", () -> Bukkit.getOnlinePlayers()
+		testCommand.addArgumentCompleter("playerCompleter", strings -> Bukkit.getOnlinePlayers()
 				.stream()
 				.map(HumanEntity::getName)
+				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));

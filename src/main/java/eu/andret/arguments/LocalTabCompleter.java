@@ -45,8 +45,8 @@ import java.util.stream.Stream;
 class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 	AnnotatedCommand<E> annotatedCommand;
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleterMap = new HashMap<>();
-	Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleterMap = new HashMap<>();
+	Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
+	Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
 	IMethodNameFilter methodNameMapper = new MethodNameFilter();
 	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
 
@@ -75,7 +75,7 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 				.collect(Collectors.toList());
 	}
 
-	boolean addArgumentCompleter(final String id, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	boolean addArgumentCompleter(final String id, final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (argumentCompleterMap.containsKey(id)) {
 			return false;
 		}
@@ -83,7 +83,7 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 		return true;
 	}
 
-	boolean addTypeCompleter(final Class<?> clazz, final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	boolean addTypeCompleter(final Class<?> clazz, final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (typeCompleterMap.containsKey(clazz)) {
 			return false;
 		}
