@@ -17,7 +17,7 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,7 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class LocalCommandExecutorTest {
+public class LocalCommandExecutorTest {
 	private interface CommandSenderConsumer extends Consumer<CommandSender> {
 	}
 
@@ -101,7 +100,7 @@ class LocalCommandExecutorTest {
 		final boolean result = executor.onCommand(sender, command, "test", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(insufficientPermissionsListener, times(0)).accept(any(CommandSender.class));
 	}
 
@@ -127,7 +126,7 @@ class LocalCommandExecutorTest {
 		final boolean result = executor.onCommand(sender, command, "test", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(unknownSubCommandExecutionListener, times(1)).accept(sender);
 		verify(insufficientPermissionsListener, times(0)).accept(any(CommandSender.class));
 	}
@@ -156,7 +155,7 @@ class LocalCommandExecutorTest {
 		final boolean result = executor.onCommand(sender, command, "test", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(unknownSubCommandExecutionListener, times(0)).accept(any(CommandSender.class));
 	}
 
@@ -186,7 +185,7 @@ class LocalCommandExecutorTest {
 		final boolean result = executor.onCommand(sender, command, "test", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(unknownSubCommandExecutionListener, times(0)).accept(any(CommandSender.class));
 		verify(insufficientPermissionsListener, times(1)).accept(sender);
 	}
@@ -235,7 +234,7 @@ class LocalCommandExecutorTest {
 		final boolean result = executor.onCommand(sender, command, "test", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(unknownSubCommandExecutionListener, times(0)).accept(any());
 		verify(insufficientPermissionsListener, times(0)).accept(any());
 	}
@@ -253,7 +252,7 @@ class LocalCommandExecutorTest {
 		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = executor.getCommandExecutor(sender);
 
 		// then
-		assertNull(commandExecutor);
+		assertThat(commandExecutor).isNull();
 	}
 
 	@Test

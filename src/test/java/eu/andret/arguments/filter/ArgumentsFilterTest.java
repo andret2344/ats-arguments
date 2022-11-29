@@ -8,22 +8,21 @@ import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.impl.ArgumentsFilter;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import javax.xml.stream.Location;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-class ArgumentsFilterTest {
+public class ArgumentsFilterTest {
 	@Test
 	void methodWithoutArguments() throws NoSuchMethodException {
 		// given
@@ -34,7 +33,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -47,7 +46,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -60,7 +59,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -73,7 +72,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -86,7 +85,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "1", "false"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -99,7 +98,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -109,10 +108,12 @@ class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArray", String[].class);
 
 		// when
-		final Executable result = () -> mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		final ThrowableAssert.ThrowingCallable callable = () -> mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Cannot be the array! Use VarArg instead. Method: eu.andret.arguments.provider.TestMethodsProvider#testMethodWithArray");
 	}
 
 	@Test
@@ -127,7 +128,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "AIR"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -140,7 +141,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "test", "test2"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -153,7 +154,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "test", "1"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -168,7 +169,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "world_nether"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -183,7 +184,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "1", "2"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -201,7 +202,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "world_nether"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -214,7 +215,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "1"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -227,7 +228,7 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "world", "1", "false", "test"});
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -242,6 +243,6 @@ class ArgumentsFilterTest {
 		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "true"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 }

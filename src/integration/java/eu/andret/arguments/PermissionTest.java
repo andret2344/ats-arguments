@@ -9,9 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -35,7 +34,7 @@ class PermissionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(0)).sendMessage("permission");
 		verify(sender, times(1)).sendMessage("no perms");
 	}
@@ -56,7 +55,7 @@ class PermissionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("permission");
 		verify(sender, times(0)).sendMessage("no perms");
 	}
@@ -77,7 +76,7 @@ class PermissionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("permission");
 		verify(sender, times(0)).sendMessage("no perms");
 	}
@@ -98,7 +97,7 @@ class PermissionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("permission");
 		verify(sender, times(0)).sendMessage("no perms");
 	}

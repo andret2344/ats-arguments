@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,7 +43,7 @@ class PositionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage(expectedResult);
 	}
 }

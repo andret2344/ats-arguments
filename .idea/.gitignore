@@ -1,0 +1,16 @@
+/dataSources/
+/shelf/
+/sonarlint/
+
+/checkstyle-idea.xml
+/codestream.xml
+/dataSources.local.xml
+/dataSources.xml
+/discord.xml
+/gradle.xml
+/intellij-javadocs-4.0.1.xml
+/jarRepositories.xml
+/jpa-buddy.xml
+/misc.xml
+/uiDesigner.xml
+/workspace.xml

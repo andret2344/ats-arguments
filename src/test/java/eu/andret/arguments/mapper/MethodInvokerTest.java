@@ -6,23 +6,23 @@ package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class MethodInvokerTest {
+public class MethodInvokerTest {
 	@Test
 	void invokeMethodCorrectly() throws InvocationTargetException, IllegalAccessException {
 		final Method method = mock(Method.class);
@@ -31,7 +31,7 @@ class MethodInvokerTest {
 		final IResponseMapper responseMapper = mock(IResponseMapper.class);
 		final String[] data = {"test", "result"};
 		final List<String> resultList = List.of(data);
-		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
+		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
 
 		when(method.invoke(eq(provider), any())).thenReturn(resultList);
@@ -41,9 +41,9 @@ class MethodInvokerTest {
 		final List<String> list = methodInvoker.invokeMethod(method, provider, data);
 
 		// then
-		assertEquals(2, list.size());
-		assertEquals("test", list.get(0));
-		assertEquals("result", list.get(1));
+		assertThat(list)
+				.hasSize(2)
+				.containsExactly("test", "result");
 	}
 
 	@Test
@@ -53,15 +53,15 @@ class MethodInvokerTest {
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		final IResponseMapper responseMapper = mock(IResponseMapper.class);
 		final String[] data = {"test", "result"};
-		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
+		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
 
 		when(method.invoke(eq(provider), any())).thenThrow(new IllegalAccessException());
 
 		// when
-		final Executable result = () -> methodInvoker.invokeMethod(method, provider, data);
+		final ThrowableAssert.ThrowingCallable callable = () -> methodInvoker.invokeMethod(method, provider, data);
 
 		// then
-		assertThrows(IllegalAccessException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(IllegalAccessException.class);
 	}
 }

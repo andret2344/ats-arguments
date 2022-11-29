@@ -9,7 +9,7 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class MethodToCompletionMappingSetTest {
+public class MethodToCompletionMappingSetTest {
 	@Test
 	void typeCompletionTest() throws NoSuchMethodException {
 		// given
@@ -38,8 +37,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertEquals(2, collection.size());
-		assertTrue(collection.containsAll(Arrays.asList("false", "true")));
+		assertThat(collection).containsExactlyInAnyOrder("false", "true");
 	}
 
 	@Test
@@ -56,7 +54,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertTrue(collection.isEmpty());
+		assertThat(collection).isEmpty();
 	}
 
 	@Test
@@ -73,7 +71,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertTrue(collection.isEmpty());
+		assertThat(collection).isEmpty();
 	}
 
 	@Test
@@ -90,8 +88,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertEquals(3, collection.size());
-		assertTrue(collection.containsAll(Arrays.asList("world_nether", "world_the_end", "world")));
+		assertThat(collection).containsExactlyInAnyOrder("world_nether", "world_the_end", "world");
 	}
 
 	@Test
@@ -108,7 +105,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertTrue(collection.isEmpty());
+		assertThat(collection).isEmpty();
 	}
 
 	@Test
@@ -125,8 +122,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertEquals(3, collection.size());
-		assertTrue(collection.containsAll(Arrays.asList("world_nether", "world_the_end", "world")));
+		assertThat(collection).containsExactlyInAnyOrder("world_nether", "world_the_end", "world");
 	}
 
 	@Test
@@ -143,7 +139,7 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertTrue(collection.isEmpty());
+		assertThat(collection).isEmpty();
 	}
 
 	@Test
@@ -160,6 +156,6 @@ class MethodToCompletionMappingSetTest {
 		final Collection<String> collection = mapper.mapCommandToCompletion(method, args, sender);
 
 		// then
-		assertTrue(collection.isEmpty());
+		assertThat(collection).isEmpty();
 	}
 }

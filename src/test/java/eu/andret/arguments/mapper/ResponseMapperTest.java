@@ -10,21 +10,20 @@ import eu.andret.arguments.mapper.impl.ResponseMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ResponseMapperTest {
-
-	public static final String MOCK_NAME = "mockName";
-	public static final String MOCK_NAME_2 = "mockName2";
-	public static final String MOCK_NAME_1 = "mockName1";
+public class ResponseMapperTest {
+	private static final String MOCK_NAME = "mockName";
+	private static final String MOCK_NAME_1 = "mockName1";
+	private static final String MOCK_NAME_2 = "mockName2";
 
 	@Test
 	void mapStringWithoutMapper() throws NoSuchMethodException {
@@ -36,8 +35,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, "");
 
 		// then
-		assertEquals(1, strings.size());
-		assertEquals("", strings.get(0));
+		assertThat(strings).containsExactly("");
 	}
 
 	@Test
@@ -51,9 +49,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals("one", strings.get(0));
-		assertEquals("two", strings.get(1));
+		assertThat(strings).containsExactly("one", "two");
 	}
 
 	@Test
@@ -67,9 +63,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals("one", strings.get(0));
-		assertEquals("two", strings.get(1));
+		assertThat(strings).containsExactly("one", "two");
 	}
 
 	@Test
@@ -86,8 +80,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, world);
 
 		// then
-		assertEquals(1, strings.size());
-		assertEquals(MOCK_NAME, strings.get(0));
+		assertThat(strings).containsExactly(MOCK_NAME);
 	}
 
 	@Test
@@ -107,9 +100,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals(MOCK_NAME_1, strings.get(0));
-		assertEquals(MOCK_NAME_2, strings.get(1));
+		assertThat(strings).containsExactly(MOCK_NAME_1, MOCK_NAME_2);
 	}
 
 	@Test
@@ -129,9 +120,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals(MOCK_NAME_1, strings.get(0));
-		assertEquals(MOCK_NAME_2, strings.get(1));
+		assertThat(strings).containsExactly(MOCK_NAME_1, MOCK_NAME_2);
 	}
 
 	@Test
@@ -148,8 +137,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, player);
 
 		// then
-		assertEquals(1, strings.size());
-		assertEquals(MOCK_NAME, strings.get(0));
+		assertThat(strings).containsExactly(MOCK_NAME);
 	}
 
 	@Test
@@ -169,9 +157,7 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals(MOCK_NAME_1, strings.get(0));
-		assertEquals(MOCK_NAME_2, strings.get(1));
+		assertThat(strings).containsExactly(MOCK_NAME_1, MOCK_NAME_2);
 	}
 
 	@Test
@@ -191,8 +177,6 @@ class ResponseMapperTest {
 		final List<String> strings = responseMapper.mapResponse(method, result);
 
 		// then
-		assertEquals(2, strings.size());
-		assertEquals(MOCK_NAME_1, strings.get(0));
-		assertEquals(MOCK_NAME_2, strings.get(1));
+		assertThat(strings).containsExactly(MOCK_NAME_1, MOCK_NAME_2);
 	}
 }

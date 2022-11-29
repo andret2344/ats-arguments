@@ -127,7 +127,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper,
 								  @NotNull final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(clazz, new MappingSet<>(clazz, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException(String.format("Mapper with class %s is already registered!", clazz));
+			throw new IllegalArgumentException(String.format("Mapper with class %s is already registered!", clazz.getName()));
 		}
 	}
 
@@ -198,7 +198,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 				.findAny()
 				.orElse(null);
 		if (!getLocalCommandExecutor().getMappingConfig().addTypeMapper(anEnum, new MappingSet<>(anEnum, mapper, fallbackCondition))) {
-			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum));
+			throw new IllegalArgumentException(String.format("Mapper with enum %s is already registered!", anEnum.getName()));
 		}
 	}
 
@@ -225,7 +225,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
 								 @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addTypeCompleter(clazz, function)) {
-			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
+			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz.getName()));
 		}
 	}
 
@@ -257,7 +257,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 						.map(String::toUpperCase)
 						.collect(Collectors.toList());
 		if (!getLocalTabCompleter().addTypeCompleter(anEnum, function)) {
-			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum));
+			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum.getName()));
 		}
 	}
 
@@ -352,7 +352,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 */
 	public <T> void addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final Function<T, String> function) {
 		if (!getLocalCommandExecutor().getMappingConfig().addTypeResponseMapper(clazz, new ResponseMappingSet<>(clazz, function))) {
-			throw new IllegalArgumentException(String.format("Response mapper with class %s is already registered!", clazz));
+			throw new IllegalArgumentException(String.format("Response mapper with class %s is already registered!", clazz.getName()));
 		}
 	}
 
@@ -370,7 +370,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	public <T> void addArgumentResponseMapper(@NotNull final String id, @NotNull final Class<T> clazz,
 											  @NotNull final Function<T, String> function) {
 		if (!getLocalCommandExecutor().getMappingConfig().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
-			throw new IllegalArgumentException(String.format("Response mapper with id %s is already registered!", id));
+			throw new IllegalArgumentException(String.format("Response mapper with id \"%s\" is already registered!", id));
 		}
 	}
 }

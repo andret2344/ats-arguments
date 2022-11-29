@@ -9,25 +9,22 @@ import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.provider.TestEnum;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,7 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AnnotatedCommandTest {
+public class AnnotatedCommandTest {
 	private static class TestCommandExecutor extends LocalCommandExecutor<JavaPlugin> {
 		TestCommandExecutor(final AnnotatedCommand<JavaPlugin> annotatedCommand, final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass, final JavaPlugin plugin, final Object... parameters) {
 			super(annotatedCommand, commandClass, plugin, parameters);
@@ -61,7 +58,7 @@ class AnnotatedCommandTest {
 		final PluginCommand result = annotatedCommand.getCommand();
 
 		// then
-		assertSame(command, result);
+		assertThat(result).isSameAs(command);
 	}
 
 	@Test
@@ -98,7 +95,7 @@ class AnnotatedCommandTest {
 		final CommandExecutor result = annotatedCommand.getCommand().getExecutor();
 
 		// then
-		assertSame(executor, result);
+		assertThat(result).isSameAs(executor);
 	}
 
 	@Test
@@ -113,7 +110,7 @@ class AnnotatedCommandTest {
 		final TabCompleter result = annotatedCommand.getCommand().getTabCompleter();
 
 		// then
-		assertSame(completer, result);
+		assertThat(result).isSameAs(completer);
 	}
 
 	@Test
@@ -129,9 +126,9 @@ class AnnotatedCommandTest {
 		annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
-		final MappingSet<?> test = executor.getMappingConfig().getArgumentMapper("test");
-		assertNotNull(test);
-		assertEquals(int.class, test.getClazz());
+		final MappingSet<?> result = executor.getMappingConfig().getArgumentMapper("test");
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(int.class);
 	}
 
 	@Test
@@ -145,13 +142,15 @@ class AnnotatedCommandTest {
 		annotatedCommand.addArgumentMapper("test", double.class, Double::parseDouble);
 
 		// when
-		final Executable result = () -> annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addArgumentMapper("test", int.class, Integer::parseInt);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
-		final MappingSet<?> test = executor.getMappingConfig().getArgumentMapper("test");
-		assertNotNull(test);
-		assertEquals(double.class, test.getClazz());
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Mapper with id \"test\" is already registered!");
+		final MappingSet<?> result = executor.getMappingConfig().getArgumentMapper("test");
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(double.class);
 	}
 
 	@Test
@@ -167,9 +166,9 @@ class AnnotatedCommandTest {
 		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// then
-		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(boolean.class);
-		assertNotNull(test);
-		assertEquals(boolean.class, test.getClazz());
+		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(boolean.class);
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -183,13 +182,15 @@ class AnnotatedCommandTest {
 		annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// when
-		final Executable result = () -> annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addTypeMapper(boolean.class, Boolean::parseBoolean);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
-		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(boolean.class);
-		assertNotNull(test);
-		assertEquals(boolean.class, test.getClazz());
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Mapper with class boolean is already registered!");
+		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(boolean.class);
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -206,10 +207,10 @@ class AnnotatedCommandTest {
 
 		// then
 		final MappingSet<?> mappingSet = executor.getMappingConfig().getTypeMapper(TestEnum.class);
-		assertNotNull(mappingSet);
-		assertEquals(TestEnum.class, mappingSet.getClazz());
-		assertEquals(TestEnum.TEST_ONE, mappingSet.getFunction().apply("TEST_ONE"));
-		assertNull(mappingSet.getFunction().apply("UNKNOWN"));
+		assertThat(mappingSet).isNotNull();
+		assertThat(mappingSet.getClazz()).isSameAs(TestEnum.class);
+		assertThat(mappingSet.getFunction().apply("TEST_ONE")).isSameAs(TestEnum.TEST_ONE);
+		assertThat(mappingSet.getFunction().apply("UNKNOWN")).isNull();
 	}
 
 	@Test
@@ -223,13 +224,15 @@ class AnnotatedCommandTest {
 		annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// when
-		final Executable result = () -> annotatedCommand.addEnumMapper(TestEnum.class);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addEnumMapper(TestEnum.class);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
-		final MappingSet<?> test = executor.getMappingConfig().getTypeMapper(TestEnum.class);
-		assertNotNull(test);
-		assertEquals(TestEnum.class, test.getClazz());
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Mapper with enum eu.andret.arguments.provider.TestEnum is already registered!");
+		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(TestEnum.class);
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(TestEnum.class);
 	}
 
 	@Test
@@ -282,10 +285,12 @@ class AnnotatedCommandTest {
 		when(completer.addTypeCompleter(any(Class.class), any())).thenReturn(false);
 
 		// when
-		final Executable result = () -> annotatedCommand.addTypeCompleter(World.class, new ArrayList<>());
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addTypeCompleter(World.class, new ArrayList<>());
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Completer with class org.bukkit.World is already registered!");
 		verify(completer, times(1)).addTypeCompleter(eq(World.class), any());
 	}
 
@@ -339,10 +344,12 @@ class AnnotatedCommandTest {
 		when(completer.addArgumentCompleter(any(String.class), any())).thenReturn(false);
 
 		// when
-		final Executable result = () -> annotatedCommand.addArgumentCompleter("testPlayerMapper", new ArrayList<>());
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addArgumentCompleter("testPlayerMapper", new ArrayList<>());
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Completer with id \"testPlayerMapper\" is already registered!");
 		verify(completer, times(1)).addArgumentCompleter(eq("testPlayerMapper"), any());
 	}
 
@@ -376,10 +383,12 @@ class AnnotatedCommandTest {
 		when(completer.addTypeCompleter(eq(TestEnum.class), any())).thenReturn(false);
 
 		// when
-		final Executable result = () -> annotatedCommand.addEnumCompleter(TestEnum.class);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addEnumCompleter(TestEnum.class);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Completer with enum eu.andret.arguments.provider.TestEnum is already registered!");
 		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class), any());
 	}
 
@@ -396,9 +405,9 @@ class AnnotatedCommandTest {
 		annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// then
-		final ResponseMappingSet<?> test = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
-		assertNotNull(test);
-		assertEquals(boolean.class, test.getClazz());
+		final ResponseMappingSet<?> result = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -412,13 +421,15 @@ class AnnotatedCommandTest {
 		annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// when
-		final Executable result = () -> annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addTypeResponseMapper(boolean.class, String::valueOf);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
-		final ResponseMappingSet<?> test = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
-		assertNotNull(test);
-		assertEquals(boolean.class, test.getClazz());
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Response mapper with class boolean is already registered!");
+		final ResponseMappingSet<?> result = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -434,9 +445,9 @@ class AnnotatedCommandTest {
 		annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
 
 		// then
-		final ResponseMappingSet<?> test = executor.getMappingConfig().getArgumentResponseMapper("test");
-		assertNotNull(test);
-		assertEquals(int.class, test.getClazz());
+		final ResponseMappingSet<?> result = executor.getMappingConfig().getArgumentResponseMapper("test");
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(int.class);
 	}
 
 	@Test
@@ -450,13 +461,15 @@ class AnnotatedCommandTest {
 		annotatedCommand.addArgumentResponseMapper("test", double.class, String::valueOf);
 
 		// when
-		final Executable result = () -> annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
+		final ThrowableAssert.ThrowingCallable callable = () -> annotatedCommand.addArgumentResponseMapper("test", int.class, String::valueOf);
 
 		// then
-		assertThrows(IllegalArgumentException.class, result);
-		final ResponseMappingSet<?> test = executor.getMappingConfig().getArgumentResponseMapper("test");
-		assertNotNull(test);
-		assertEquals(double.class, test.getClazz());
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("Response mapper with id \"test\" is already registered!");
+		final ResponseMappingSet<?> result = executor.getMappingConfig().getArgumentResponseMapper("test");
+		assertThat(result).isNotNull();
+		assertThat(result.getClazz()).isSameAs(double.class);
 	}
 
 	@Test
@@ -475,6 +488,6 @@ class AnnotatedCommandTest {
 		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = annotatedCommand.getCommandExecutor(sender);
 
 		// then
-		assertEquals(testMethodsProvider, commandExecutor);
+		assertThat(commandExecutor).isSameAs(testMethodsProvider);
 	}
 }
