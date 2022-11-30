@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface to decide which method should execute in case when {@link Argument} annotated command param passes its
- * fallback predicate.
+ * Using this annotation allows to decide which method should execute in case when {@link Argument} annotated command
+ * param passes its fallback predicate.
  *
  * @author Andret
  * @since Jun 10, 2020

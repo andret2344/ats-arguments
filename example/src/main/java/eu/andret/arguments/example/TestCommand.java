@@ -10,6 +10,7 @@ import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.ExceptionFallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
@@ -165,5 +166,20 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	@Argument(executorType = ExecutorType.PLAYER)
 	public World getMyWorld() {
 		return ((Player) sender).getWorld();
+	}
+
+	@Argument
+	public void throwing() {
+		throw new IllegalArgumentException("The custom throw");
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String exceptionFallback() {
+		return "an exception";
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String exceptionFallback(final IllegalArgumentException exception) {
+		return exception.getMessage();
 	}
 }
