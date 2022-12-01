@@ -27,8 +27,8 @@ public interface IExceptionHandler {
 	 *
 	 * @return Common result from the called method if no exception thrown or all exception fallbacks in random order.
 	 */
-	@NotNull <E extends JavaPlugin> List<String> handleException(@NotNull final Method method,
-																 @NotNull final AnnotatedCommandExecutor<E> executor,
-																 @NotNull final Object[] data,
-																 @NotNull final Method[] executorMethods);
+	@NotNull <E extends JavaPlugin> List<String> handleException(@NotNull Method method,
+																 @NotNull AnnotatedCommandExecutor<E> executor,
+																 @NotNull Object[] data,
+																 @NotNull Method[] executorMethods);
 }

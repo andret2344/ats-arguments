@@ -9,7 +9,10 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,16 +22,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class MethodInvokerTest {
+	@Mock
+	private Method method;
+	@Mock
+	private CommandSender sender;
+	@Mock
+	private JavaPlugin javaPlugin;
+	@Mock
+	private IResponseMapper responseMapper;
+
 	@Test
 	void invokeMethodCorrectly() throws InvocationTargetException, IllegalAccessException {
-		final Method method = mock(Method.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		final IResponseMapper responseMapper = mock(IResponseMapper.class);
+		// given
 		final String[] data = {"test", "result"};
 		final List<String> resultList = List.of(data);
 		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
@@ -48,10 +57,7 @@ class MethodInvokerTest {
 
 	@Test
 	void invokeMethodIncorrectly() throws InvocationTargetException, IllegalAccessException {
-		final Method method = mock(Method.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		final IResponseMapper responseMapper = mock(IResponseMapper.class);
+		// given
 		final String[] data = {"test", "result"};
 		final MethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
