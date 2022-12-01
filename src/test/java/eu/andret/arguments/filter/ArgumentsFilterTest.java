@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 public class ArgumentsFilterTest {
 	@Test
@@ -192,9 +191,7 @@ public class ArgumentsFilterTest {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
 		final IArgumentsFilter mapper = new ArgumentsFilter(mappingConfig);
-		abstract class LocalFunction implements Function<String, Location> {
-		}
-		final LocalFunction getLocation = mock(LocalFunction.class);
+		final Function<String, Location> getLocation = s -> null;
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(Location.class, getLocation, Objects::isNull));
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithParamVarArg", World[].class);
 

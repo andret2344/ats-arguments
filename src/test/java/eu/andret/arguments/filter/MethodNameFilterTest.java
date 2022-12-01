@@ -8,23 +8,23 @@ import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.assertj.core.api.ThrowableAssert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MethodNameFilterTest {
-	static Iterable<Object[]> data() {
-		final Object[][] objects = {
+	@DataProvider(name = "getData")
+	static Object[][] getData() {
+		return new Object[][]{
 				{false, "testMethod", true},
 				{false, "TestMethod", true},
 				{true, "testMethod", true},
 				{true, "TestMethod", false},
 		};
-		return Arrays.asList(objects);
 	}
 
 	@Test
@@ -119,8 +119,7 @@ public class MethodNameFilterTest {
 		assertThat(result).isTrue();
 	}
 
-	//	@ParameterizedTest
-//	@MethodSource("data")
+	@Test(dataProvider = "getData")
 	void methodCaseSensitiveWithIncorrectCase(final boolean caseSensitive, final String command, final boolean expected) throws NoSuchMethodException {
 		// given
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");

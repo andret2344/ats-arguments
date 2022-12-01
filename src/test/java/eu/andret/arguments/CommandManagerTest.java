@@ -77,15 +77,11 @@ public class CommandManagerTest {
 		constructor.setAccessible(true);
 
 		// when
-		final ThrowableAssert.ThrowingCallable callable = () -> {
-			try {
-				constructor.newInstance();
-			} catch (final InvocationTargetException ex) {
-				throw ex.getTargetException();
-			}
-		};
+		final ThrowableAssert.ThrowingCallable callable = constructor::newInstance;
 
 		// then
-		assertThatThrownBy(callable).isInstanceOf(UnsupportedOperationException.class);
+		assertThatThrownBy(callable)
+				.isInstanceOf(InvocationTargetException.class)
+				.hasCauseExactlyInstanceOf(UnsupportedOperationException.class);
 	}
 }
