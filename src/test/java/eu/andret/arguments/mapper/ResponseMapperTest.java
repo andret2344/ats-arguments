@@ -8,7 +8,6 @@ import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.mapper.impl.ResponseMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.testng.annotations.Test;
 
@@ -127,14 +126,14 @@ public class ResponseMapperTest {
 	void mapPlayerWithTypeResponseMapper() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addTypeResponseMapper(OfflinePlayer.class, new ResponseMappingSet<>(OfflinePlayer.class, OfflinePlayer::getName));
+		mappingConfig.addTypeResponseMapper(World.class, new ResponseMappingSet<>(World.class, World::getName));
 		final IResponseMapper responseMapper = new ResponseMapper(mappingConfig);
-		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningPlayer");
-		final OfflinePlayer player = mock(OfflinePlayer.class);
-		when(player.getName()).thenReturn(MOCK_NAME);
+		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningWorldWithoutMapper");
+		final World world = mock(World.class);
+		when(world.getName()).thenReturn(MOCK_NAME);
 
 		// when
-		final List<String> strings = responseMapper.mapResponse(method, player);
+		final List<String> strings = responseMapper.mapResponse(method, world);
 
 		// then
 		assertThat(strings).containsExactly(MOCK_NAME);
@@ -144,14 +143,14 @@ public class ResponseMapperTest {
 	void mapPlayerArrayWithTypeResponseMapper() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addTypeResponseMapper(OfflinePlayer.class, new ResponseMappingSet<>(OfflinePlayer.class, OfflinePlayer::getName));
+		mappingConfig.addTypeResponseMapper(World.class, new ResponseMappingSet<>(World.class, World::getName));
 		final IResponseMapper responseMapper = new ResponseMapper(mappingConfig);
-		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningPlayerArray");
-		final OfflinePlayer player1 = mock(OfflinePlayer.class);
-		when(player1.getName()).thenReturn(MOCK_NAME_1);
-		final OfflinePlayer player2 = mock(OfflinePlayer.class);
-		when(player2.getName()).thenReturn(MOCK_NAME_2);
-		final OfflinePlayer[] result = {player1, player2};
+		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningWorldArrayWithoutMapper");
+		final World world1 = mock(World.class);
+		when(world1.getName()).thenReturn(MOCK_NAME_1);
+		final World world2 = mock(World.class);
+		when(world2.getName()).thenReturn(MOCK_NAME_2);
+		final World[] result = {world1, world2};
 
 		// when
 		final List<String> strings = responseMapper.mapResponse(method, result);
@@ -164,14 +163,14 @@ public class ResponseMapperTest {
 	void mapPlayerListWithTypeResponseMapper() throws NoSuchMethodException {
 		// given
 		final MappingConfig mappingConfig = new MappingConfig();
-		mappingConfig.addTypeResponseMapper(OfflinePlayer.class, new ResponseMappingSet<>(OfflinePlayer.class, OfflinePlayer::getName));
+		mappingConfig.addTypeResponseMapper(World.class, new ResponseMappingSet<>(World.class, World::getName));
 		final IResponseMapper responseMapper = new ResponseMapper(mappingConfig);
-		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningPlayerList");
-		final OfflinePlayer player1 = mock(OfflinePlayer.class);
-		when(player1.getName()).thenReturn(MOCK_NAME_1);
-		final OfflinePlayer player2 = mock(OfflinePlayer.class);
-		when(player2.getName()).thenReturn(MOCK_NAME_2);
-		final List<OfflinePlayer> result = Arrays.asList(player1, player2);
+		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodReturningWorldListWithoutMapper");
+		final World world1 = mock(World.class);
+		when(world1.getName()).thenReturn(MOCK_NAME_1);
+		final World world2 = mock(World.class);
+		when(world2.getName()).thenReturn(MOCK_NAME_2);
+		final List<World> result = Arrays.asList(world1, world2);
 
 		// when
 		final List<String> strings = responseMapper.mapResponse(method, result);

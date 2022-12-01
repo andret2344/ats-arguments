@@ -59,8 +59,8 @@ dependencies {
 
 	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
 	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
-	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.4.6'
-	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.4.6'
+	testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.9.0'
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.9.0'
 	testImplementation group: 'org.mockito', name: 'mockito-testng', version: '0.4.30'
 	testImplementation group: 'org.spigotmc', name: 'spigot-api', version: '1.19.2-R0.1-SNAPSHOT'
 	testImplementation group: 'org.testng', name: 'testng', version: '7.6.1'

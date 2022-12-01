@@ -17,10 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MethodInvokerTest {
 	@Test
@@ -30,7 +27,7 @@ public class MethodInvokerTest {
 		final IResponseMapper responseMapper = (method, result) -> List.of("test", "result");
 		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
-		final Method method = provider.getClass().getDeclaredMethod("getStringList");
+		final Method method = provider.getClass().getDeclaredMethod("testMethodReturningStringList");
 
 		// when
 		final List<String> list = methodInvoker.invokeMethod(method, provider, new Object[0]);
@@ -42,21 +39,21 @@ public class MethodInvokerTest {
 	}
 
 	@Test
-	void invokeMethodIncorrectly() throws InvocationTargetException, IllegalAccessException {
-		final Method method = mock(Method.class);
+	void invokeMethodIncorrectly() throws NoSuchMethodException {
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 		final IResponseMapper responseMapper = mock(IResponseMapper.class);
 		final String[] data = {"test", "result"};
 		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
-
-		when(method.invoke(eq(provider), any())).thenThrow(new IllegalAccessException());
+		final Method method = provider.getClass().getDeclaredMethod("testMethodThrowingException", String.class, String.class);
 
 		// when
 		final ThrowableAssert.ThrowingCallable callable = () -> methodInvoker.invokeMethod(method, provider, data);
 
 		// then
-		assertThatThrownBy(callable).isInstanceOf(IllegalAccessException.class);
+		assertThatThrownBy(callable)
+				.isInstanceOf(InvocationTargetException.class)
+				.hasCauseExactlyInstanceOf(IllegalAccessException.class);
 	}
 }

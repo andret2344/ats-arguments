@@ -51,7 +51,7 @@ public class LocalTabCompleterTest {
 
 		// then
 		assertThat(result).isNotNull()
-				.hasSize(37)
+				.hasSize(38)
 				.containsExactlyElementsOf(providerMethodNames);
 	}
 
