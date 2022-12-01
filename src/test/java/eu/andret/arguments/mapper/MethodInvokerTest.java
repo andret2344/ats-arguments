@@ -24,21 +24,16 @@ import static org.mockito.Mockito.when;
 
 public class MethodInvokerTest {
 	@Test
-	void invokeMethodCorrectly() throws InvocationTargetException, IllegalAccessException {
-		final Method method = mock(Method.class);
+	void invokeMethodCorrectly() throws NoSuchMethodException {
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		final IResponseMapper responseMapper = mock(IResponseMapper.class);
-		final String[] data = {"test", "result"};
-		final List<String> resultList = List.of(data);
+		final IResponseMapper responseMapper = (method, result) -> List.of("test", "result");
 		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
-
-		when(method.invoke(eq(provider), any())).thenReturn(resultList);
-		when(responseMapper.mapResponse(method, resultList)).thenReturn(resultList);
+		final Method method = provider.getClass().getDeclaredMethod("getStringList");
 
 		// when
-		final List<String> list = methodInvoker.invokeMethod(method, provider, data);
+		final List<String> list = methodInvoker.invokeMethod(method, provider, new Object[0]);
 
 		// then
 		assertThat(list)

@@ -26,7 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FallbackArguments"})
 @BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(final CommandSender sender, final JavaPlugin plugin) {
@@ -233,5 +233,10 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	@Argument
 	public List<OfflinePlayer> testMethodReturningPlayerList() {
 		return Arrays.asList(plugin.getServer().getOfflinePlayers());
+	}
+
+	@Argument
+	public String getStringList() {
+		return "some result";
 	}
 }

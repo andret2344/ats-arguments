@@ -47,9 +47,7 @@ public class MethodSelectorTest {
 	@Test
 	void invokeFallbackMethodWith() throws ReflectiveOperationException {
 		// given
-		abstract class LocalFunction implements Function<String, World> {
-		}
-		final Function<String, World> getWorld = mock(LocalFunction.class);
+		final Function<String, World> getWorld = s -> null;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
@@ -134,11 +132,8 @@ public class MethodSelectorTest {
 	@Test
 	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
-		abstract class LocalFunction implements Function<String, World> {
-		}
-		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final World world = mock(World.class);
-		when(getWorld.apply("world")).thenReturn(world);
+		final Function<String, World> getWorld = s -> world;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
