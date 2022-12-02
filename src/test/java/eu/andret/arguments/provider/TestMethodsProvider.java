@@ -17,7 +17,6 @@ import eu.andret.arguments.api.entity.DisplayType;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.api.entity.FallbackPriority;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FallbackArguments"})
 @BaseCommand("test")
 public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	public TestMethodsProvider(final CommandSender sender, final JavaPlugin plugin) {
@@ -221,17 +220,22 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 	}
 
 	@Argument
-	public OfflinePlayer testMethodReturningPlayer() {
-		return plugin.getServer().getOfflinePlayers()[0];
+	public World testMethodReturningWorldWithoutMapper() {
+		return plugin.getServer().getWorlds().get(0);
 	}
 
 	@Argument
-	public OfflinePlayer[] testMethodReturningPlayerArray() {
-		return plugin.getServer().getOfflinePlayers();
+	public World[] testMethodReturningWorldArrayWithoutMapper() {
+		return plugin.getServer().getWorlds().toArray(new World[0]);
 	}
 
 	@Argument
-	public List<OfflinePlayer> testMethodReturningPlayerList() {
-		return Arrays.asList(plugin.getServer().getOfflinePlayers());
+	public List<World> testMethodReturningWorldListWithoutMapper() {
+		return plugin.getServer().getWorlds();
+	}
+
+	@Argument
+	public String testMethodThrowingException(final String first, final String second) throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 }

@@ -13,7 +13,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -22,14 +22,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class LocalTabCompleterTest {
+public class LocalTabCompleterTest {
 	private static class TestCommand extends AnnotatedCommand<JavaPlugin> {
 		TestCommand(final PluginCommand command) {
 			super(command);
@@ -53,9 +50,9 @@ class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
 
 		// then
-		assertNotNull(result);
-		assertEquals(37, result.size());
-		assertEquals(result, providerMethodNames);
+		assertThat(result).isNotNull()
+				.hasSize(38)
+				.containsExactlyElementsOf(providerMethodNames);
 	}
 
 	@Test
@@ -70,9 +67,7 @@ class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testAlias"});
 
 		// then
-		assertNotNull(result);
-		assertEquals(1, result.size());
-		assertTrue(result.contains("testAlias1"));
+		assertThat(result).containsExactly("testAlias1");
 	}
 
 	@Test
@@ -87,8 +82,7 @@ class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{});
 
 		// then
-		assertNotNull(result);
-		assertTrue(result.isEmpty());
+		assertThat(result).isEmpty();
 	}
 
 	@Test
@@ -105,8 +99,7 @@ class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod", "testAlias"});
 
 		// then
-		assertNotNull(result);
-		assertTrue(result.isEmpty());
+		assertThat(result).isEmpty();
 	}
 
 	@Test
@@ -121,9 +114,9 @@ class LocalTabCompleterTest {
 		final boolean result3 = completer.addTypeCompleter(World.class, (sender, collection) -> new ArrayList<>());
 
 		// then
-		assertTrue(result1);
-		assertFalse(result2);
-		assertTrue(result3);
+		assertThat(result1).isTrue();
+		assertThat(result2).isFalse();
+		assertThat(result3).isTrue();
 	}
 
 	@Test
@@ -138,8 +131,8 @@ class LocalTabCompleterTest {
 		final boolean result3 = completer.addArgumentCompleter("world", (sender, collection) -> new ArrayList<>());
 
 		// then
-		assertTrue(result1);
-		assertFalse(result2);
-		assertTrue(result3);
+		assertThat(result1).isTrue();
+		assertThat(result2).isFalse();
+		assertThat(result3).isTrue();
 	}
 }

@@ -9,7 +9,6 @@ import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +50,6 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 	}
 
 	@NotNull
-	@NonNull
 	private BiFunction<List<String>, CommandSender, Collection<String>> extractSuggestions(final Parameter parameter) {
 		if (parameter.isAnnotationPresent(Ignore.class)) {
 			return (sender, collection) -> Collections.emptyList();

@@ -1,5 +1,2 @@
-#project folders
 /.gradle/
-/.idea/
 /build/
-/example/build/

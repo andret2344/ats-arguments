@@ -9,15 +9,14 @@ import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class FallbackSelectorTest {
+public class FallbackSelectorTest {
 	@Test
 	void invokeMismatch() {
 		// given
@@ -28,7 +27,7 @@ class FallbackSelectorTest {
 		final List<Method> result = fallbackSelector.selectFallback(null, World.class, providerClass);
 
 		// then
-		assertEquals(new ArrayList<>(), result);
+		assertThat(result).isEmpty();
 	}
 
 	@Test
@@ -47,7 +46,7 @@ class FallbackSelectorTest {
 		final List<Method> result = fallbackSelector.selectFallback(mapper, World.class, providerClass);
 
 		// then
-		assertEquals(List.of(fallbackSecondMethod, fallbackMethod), result);
+		assertThat(result).containsExactlyInAnyOrder(fallbackSecondMethod, fallbackMethod);
 	}
 
 	@Test
@@ -66,6 +65,6 @@ class FallbackSelectorTest {
 		final List<Method> result = fallbackSelector.selectFallback(mapper, Location.class, providerClass);
 
 		// then
-		assertEquals(List.of(highest, lowest), result);
+		assertThat(result).containsExactlyInAnyOrder(highest, lowest);
 	}
 }

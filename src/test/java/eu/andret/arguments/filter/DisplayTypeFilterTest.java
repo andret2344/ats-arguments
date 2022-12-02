@@ -8,17 +8,15 @@ import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DisplayTypeFilterTest {
-
+public class DisplayTypeFilterTest {
 	@Test
 	void methodAlwaysDisplayed() throws NoSuchMethodException {
 		// given
@@ -31,7 +29,7 @@ class DisplayTypeFilterTest {
 		final boolean result = mapper.mapDisplayType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -47,7 +45,7 @@ class DisplayTypeFilterTest {
 		final boolean result = mapper.mapDisplayType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -63,7 +61,7 @@ class DisplayTypeFilterTest {
 		final boolean result = mapper.mapDisplayType(method, commandSender);
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -78,6 +76,6 @@ class DisplayTypeFilterTest {
 		final boolean result = mapper.mapDisplayType(method, commandSender);
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 }
