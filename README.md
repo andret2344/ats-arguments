@@ -216,6 +216,9 @@ first, look at rules that apply:
     - When using `@Mapper` and parsing failed, you can access the raw value using `@Fallback`
       annotation.
 - Method cannot have an array parameter, but only a VarArg is possible, rules as the point above.
+- If any `@Argument` method throws an exception, it can be caught using `@ExceptionFallback` method.
+    - Multiple methods can catch the same exception, their execution order will be random.
+    - The method can accept the exception as an argument or can accept no arguments.
 - There can be multiple methods with the same name, api will treat missing arguments as obsolete.
 - Library automatically uses tab completion for method names.
     - You can configure more precise completers for methods parameters with `@Completer` annotation.
@@ -274,6 +277,12 @@ API provides a few quite useful annotations.
 | setting | type     | values     | description                                          |
 |---------|----------|------------|------------------------------------------------------|
 | value   | `String` | any string | The completer id to find exact registered completer. |
+
+- `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method
+
+| setting | type                           | values                              | description             |
+|---------|--------------------------------|-------------------------------------|-------------------------|
+| value   | `Class<? extends Throwable>[]` | Array or any exception to be thrown | Exceptions to be catch. |
 
 - `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
 
