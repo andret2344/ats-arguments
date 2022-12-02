@@ -39,8 +39,7 @@ task integrationTest(type: Test) {
 
 idea {
 	module {
-		testSourceDirs += sourceSets.integration.java.srcDirs
-		testResourceDirs += sourceSets.integration.resources.srcDirs
+		scopes.TEST.plus += [configurations.integrationImplementation, configurations.integrationRuntimeOnly]
 	}
 }
 
@@ -104,7 +103,7 @@ javadoc {
 	classpath = configurations.compileClasspath
 
 	options {
-		setMemberLevel JavadocMemberLevel.PUBLIC
+		setMemberLevel JavadocMemberLevel.PROTECTED
 		setAuthor true
 
 		links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
