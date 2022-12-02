@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class ExceptionHandlerTest {
 	@Test
 	public void testNotThrowingException() throws NoSuchMethodException {
-		// given\
+		// given
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
@@ -41,7 +41,7 @@ public class ExceptionHandlerTest {
 
 	@Test
 	public void testThrowingNotCaughtException() throws NoSuchMethodException {
-		// given\
+		// given
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
@@ -66,7 +66,7 @@ public class ExceptionHandlerTest {
 
 	@Test
 	public void testThrowingCaughtException() throws NoSuchMethodException {
-		// given\
+		// given
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
