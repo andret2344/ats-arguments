@@ -38,7 +38,7 @@ public class ExceptionHandler implements IExceptionHandler {
 			final Throwable cause = exception.getCause();
 			final Map<Boolean, List<Method>> groupedMethods = getGroupedMethods(executorMethods, cause.getClass());
 			if (groupedMethods.isEmpty()) {
-				throw exception;
+				throw new RuntimeException(cause);
 			}
 			return groupedMethods.entrySet()
 					.stream()

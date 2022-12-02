@@ -7,9 +7,9 @@ package eu.andret.arguments;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IExceptionHandler;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
-import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
@@ -44,18 +44,18 @@ public class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
-		final IMethodToDescriptionMapper mapper = mock(IMethodToDescriptionMapper.class);
+		final IMethodToDescriptionMapper methodToDescriptionMapper = mock(IMethodToDescriptionMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-		injectMapper(executor, mapper, "methodToDescriptionMapper");
-		when(mapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
+		injectMapper(executor, methodToDescriptionMapper, "methodToDescriptionMapper");
+		when(methodToDescriptionMapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
 		when(command.getName()).thenReturn("test");
 
 		// when
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(sender, times(37)).sendMessage("/test testString");
+		verify(sender, times(38)).sendMessage("/test testString");
 	}
 
 	@Test
@@ -64,11 +64,11 @@ public class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
-		final IMethodToDescriptionMapper mapper = mock(IMethodToDescriptionMapper.class);
+		final IMethodToDescriptionMapper methodToDescriptionMapper = mock(IMethodToDescriptionMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-		injectMapper(executor, mapper, "methodToDescriptionMapper");
-		when(mapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
+		injectMapper(executor, methodToDescriptionMapper, "methodToDescriptionMapper");
+		when(methodToDescriptionMapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("/test testString");
 		when(command.getName()).thenReturn("test");
 		final Consumer<CommandSender> onMainCommandExecutionListener = mock(CommandSenderConsumer.class);
 		executor.setOnMainCommandExecutionListener(onMainCommandExecutionListener);
@@ -86,11 +86,11 @@ public class LocalCommandExecutorTest {
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final ICommandToMethodMapper mapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-		when(mapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.empty());
-		injectMapper(executor, mapper, "commandToMethodMapper");
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.empty());
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};
 		final Consumer<CommandSender> insufficientPermissionsListener = mock(CommandSenderConsumer.class);
@@ -110,11 +110,11 @@ public class LocalCommandExecutorTest {
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final ICommandToMethodMapper mapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-		when(mapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.empty());
-		injectMapper(executor, mapper, "commandToMethodMapper");
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.empty());
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};
 		final Consumer<CommandSender> unknownSubCommandExecutionListener = mock(CommandSenderConsumer.class);
@@ -137,15 +137,15 @@ public class LocalCommandExecutorTest {
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
 		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(false);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
-		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
-		injectMapper(executor, methodMapper, "commandToMethodMapper");
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};
@@ -166,15 +166,15 @@ public class LocalCommandExecutorTest {
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
 		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(false);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
-		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
-		injectMapper(executor, methodMapper, "commandToMethodMapper");
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
 		when(command.getName()).thenReturn("test");
 		final String[] args = {"testMethod"};
@@ -198,13 +198,13 @@ public class LocalCommandExecutorTest {
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final ICommandToMethodMapper methodMapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
-		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
+		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
 		final Class<TestMethodsProvider> providerClass = TestMethodsProvider.class;
 		final Method method = providerClass.getDeclaredMethod("testMethod");
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
@@ -215,17 +215,18 @@ public class LocalCommandExecutorTest {
 		// and
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		when(methodSelector.recalculateArguments(eq(method), any(String[].class))).thenReturn(objects);
-		when(methodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
 		when(instanceCreator.createInstance(sender, plugin, providerClass)).thenReturn(provider);
 		when(command.getName()).thenReturn("test");
-		when(methodInvoker.invokeMethod(eq(method), any(), any())).thenReturn(List.of("result", "value"));
-		injectMapper(executor, methodMapper, "commandToMethodMapper");
+		when(exceptionHandler.handleException(eq(method), any(), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
+				.thenReturn(List.of("result", "value"));
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
 		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
 		injectMapper(executor, responseConsumer, "responseConsumer");
-		injectMapper(executor, methodInvoker, "methodInvoker");
+		injectMapper(executor, exceptionHandler, "exceptionHandler");
 		final String[] args = {"testMethod"};
 		final Consumer<CommandSender> unknownSubCommandExecutionListener = mock(CommandSenderConsumer.class);
 		executor.setOnUnknownSubCommandExecutionListener(unknownSubCommandExecutionListener);
@@ -266,32 +267,33 @@ public class LocalCommandExecutorTest {
 		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
 		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final Method fallbackMethod = testMethodsProviderClass.getDeclaredMethod("testMethodArgumentFallback", String.class);
-		final ICommandToMethodMapper mapper = mock(ICommandToMethodMapper.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter filter = mock(IPermissionFilter.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
-		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
+		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
 		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final FallbackException exception = mock(FallbackException.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
-		injectMapper(executor, mapper, "commandToMethodMapper");
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, filter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
-		injectMapper(executor, methodInvoker, "methodInvoker");
+		injectMapper(executor, exceptionHandler, "exceptionHandler");
 		injectMapper(executor, responseConsumer, "responseConsumer");
 
 		// and
-		when(mapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
 		when(filter.filterPermission(method, sender)).thenReturn(true);
 		when(methodSelector.recalculateArguments(any(), any())).thenThrow(exception);
 		when(fallbackSelector.selectFallback(any(), any(), any())).thenReturn(List.of(fallbackMethod));
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
-		when(methodInvoker.invokeMethod(eq(fallbackMethod), eq(provider), any())).thenReturn(List.of("test", "result"));
+		when(exceptionHandler.handleException(eq(fallbackMethod), eq(provider), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
+				.thenReturn(List.of("test", "result"));
 
 		// when
 		executor.onCommand(sender, command, "test", new String[]{"test"});
@@ -309,35 +311,38 @@ public class LocalCommandExecutorTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
 		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
-		final ICommandToMethodMapper mapper = mock(ICommandToMethodMapper.class);
-		final IPermissionFilter filter = mock(IPermissionFilter.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
+		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
-		final IResponseConsumer consumer = mock(IResponseConsumer.class);
-		final IMethodInvoker invoker = mock(IMethodInvoker.class);
+		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
+		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
 		final Object[] args = {"abc", "test"};
-		injectMapper(executor, mapper, "commandToMethodMapper");
-		injectMapper(executor, filter, "permissionFilter");
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
+		injectMapper(executor, permissionFilter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
-		injectMapper(executor, consumer, "responseConsumer");
-		injectMapper(executor, invoker, "methodInvoker");
-		when(mapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
-		when(filter.filterPermission(method, sender)).thenReturn(true);
+		injectMapper(executor, responseConsumer, "responseConsumer");
+		injectMapper(executor, exceptionHandler, "exceptionHandler");
+
+		// and
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
+		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		when(methodSelector.recalculateArguments(any(), any())).thenReturn(args);
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
-		when(invoker.invokeMethod(eq(method), any(), eq(args))).thenReturn(List.of("result", "value"));
+		when(exceptionHandler.handleException(eq(method), eq(provider), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
+				.thenReturn(List.of("result", "value"));
 
 		// when
 		executor.onCommand(sender, command, "test", new String[]{"abc", "test"});
 		executor.onCommand(sender, command, "test", new String[]{"abc", "test"});
 
 		// then
-		verify(consumer, times(2)).consumeResponse(eq(sender), eq("result"), any());
-		verify(consumer, times(2)).consumeResponse(eq(sender), eq("value"), any());
+		verify(responseConsumer, times(2)).consumeResponse(eq(sender), eq("result"), any());
+		verify(responseConsumer, times(2)).consumeResponse(eq(sender), eq("value"), any());
 	}
 
 	@Test
@@ -348,22 +353,24 @@ public class LocalCommandExecutorTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
 		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
-		final ICommandToMethodMapper mapper = mock(ICommandToMethodMapper.class);
-		final IPermissionFilter filter = mock(IPermissionFilter.class);
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
+		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
-		final IMethodInvoker methodInvoker = mock(IMethodInvoker.class);
+		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
-		injectMapper(executor, mapper, "commandToMethodMapper");
-		injectMapper(executor, filter, "permissionFilter");
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
+		injectMapper(executor, permissionFilter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
-		injectMapper(executor, methodInvoker, "methodInvoker");
-		when(mapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
-		when(filter.filterPermission(method, sender)).thenReturn(true);
+		injectMapper(executor, exceptionHandler, "exceptionHandler");
 		final String[] result = {"one", "two"};
+
+		// and
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
+		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
 		when(methodSelector.recalculateArguments(any(), any())).thenReturn(result);
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
 
@@ -371,7 +378,7 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[]{"test"});
 
 		// then
-		verify(methodInvoker).invokeMethod(eq(method), any(), eq(result));
+		verify(exceptionHandler).handleException(method, provider, result, TestMethodsProvider.class.getDeclaredMethods());
 	}
 
 	private void injectMapper(final LocalCommandExecutor<JavaPlugin> executor, final IMapper mapper, final String mapperName) {

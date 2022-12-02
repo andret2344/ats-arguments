@@ -1,6 +1,7 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.IMapper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Andret
  * @since Nov 30, 2022
  */
-public interface IExceptionHandler {
+public interface IExceptionHandler extends IMapper {
 	/**
 	 * Invokes the passed method and if exception occurred, trying to find matching exception fallback method to call
 	 * instead, or rethrow exception if found none.

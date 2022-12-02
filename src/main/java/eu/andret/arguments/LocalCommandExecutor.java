@@ -91,8 +91,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 						 @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
-		this.parameters = parameters;
 		this.plugin = plugin;
+		this.parameters = parameters;
 	}
 
 	@Override
