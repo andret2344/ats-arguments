@@ -34,7 +34,7 @@ public class ExceptionHandler implements IExceptionHandler {
 															   @NotNull final Method[] executorMethods) {
 		try {
 			return methodInvoker.invokeMethod(method, executor, data);
-		} catch (@SuppressWarnings("CheckStyle") final Exception exception) {
+		} catch (@SuppressWarnings("IllegalCatch") final RuntimeException exception) {
 			final Throwable cause = exception.getCause();
 			final Map<Boolean, List<Method>> groupedMethods = getGroupedMethods(executorMethods, cause.getClass());
 			if (groupedMethods.isEmpty()) {
@@ -43,7 +43,7 @@ public class ExceptionHandler implements IExceptionHandler {
 			return groupedMethods.entrySet()
 					.stream()
 					.flatMap(entry -> entry.getValue().stream()
-							.map(method1 -> methodInvoker.invokeMethod(method1, executor, getArguments(entry.getKey(), cause))))
+							.map(m -> methodInvoker.invokeMethod(m, executor, getArguments(entry.getKey(), cause))))
 					.flatMap(Collection::stream)
 					.collect(Collectors.toList());
 		}
@@ -54,7 +54,7 @@ public class ExceptionHandler implements IExceptionHandler {
 														 @NotNull final Class<? extends Throwable> exceptionClass) {
 		return Arrays.stream(executorMethods)
 				.filter(method -> method.isAnnotationPresent(ExceptionFallback.class))
-				.filter(method1 -> methodHandlesException(exceptionClass, method1))
+				.filter(method -> methodHandlesException(exceptionClass, method))
 				.collect(Collectors.groupingBy(method1 -> method1.getParameterCount() == 0));
 	}
 

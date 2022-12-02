@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 
 @SuppressWarnings("CheckStyle")
-@BaseCommand(value = "test")
+@BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
