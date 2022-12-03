@@ -24,14 +24,14 @@ public class ComplexTest {
 		return new Object[][]{
 				{new String[]{"list"}, "I've got 1"},
 				{new String[]{"list", "2"}, "I've got 2"},
-				{new String[]{"list", "TWO"}, "I've got TWO 1 times"},
-				{new String[]{"list", "3", "ONE"}, "I've got ONE 3 times"},
-				{new String[]{"list", "X"}, "X is not a valid value!"}
+				{new String[]{"list", "TEST"}, "I've got \"TEST\" 1 times"},
+				{new String[]{"list", "3", "VALUE"}, "I've got \"VALUE\" 3 times"},
+				{new String[]{"list", "X"}, "\"X\" is not a valid value!"}
 		};
 	}
 
 	@Test(dataProvider = "getParameters")
-	void testWithNoArguments(final String[] args, final String result) {
+	void testWithArguments(final String[] args, final String result) {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender commandSender = mock(CommandSender.class);
