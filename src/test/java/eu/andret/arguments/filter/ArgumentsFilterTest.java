@@ -94,7 +94,7 @@ public class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithMultipleArguments", String.class, int.class, boolean.class);
 
 		// when
-		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		final boolean result = mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "test", "value"});
 
 		// then
 		assertThat(result).isFalse();
@@ -107,7 +107,7 @@ public class ArgumentsFilterTest {
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithArray", String[].class);
 
 		// when
-		final ThrowableAssert.ThrowingCallable callable = () -> mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "dupa", "dupa"});
+		final ThrowableAssert.ThrowingCallable callable = () -> mapper.filterArguments(method, new String[]{"testMethod", "testArgument", "test", "value"});
 
 		// then
 		assertThatThrownBy(callable)

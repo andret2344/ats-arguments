@@ -35,11 +35,11 @@ public class ComplexIntegrationTestCommandExecutor extends AnnotatedCommandExecu
 
 	@Argument
 	public String list(final int number, final SomeEnum someEnum) {
-		return "I've got " + someEnum + " " + number + " times";
+		return "I've got \"" + someEnum + "\" " + number + " times";
 	}
 
 	@TypeFallback(SomeEnum.class)
 	public String someEnumFallback(final String someEnum) {
-		return String.format("%s is not a valid value!", someEnum);
+		return String.format("\"%s\" is not a valid value!", someEnum);
 	}
 }
