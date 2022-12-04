@@ -57,7 +57,7 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 			return getTypeSuggestion(parameter);
 		}
 		final String value = parameter.getAnnotation(Completer.class).value();
-		final BiFunction<CommandSender, Collection<String>, Collection<String>> argumentCompleter
+		final BiFunction<List<String>, CommandSender, Collection<String>> argumentCompleter
 				= completingConfig.getArgumentCompleter(value);
 		if (argumentCompleter != null) {
 			return argumentCompleter;
@@ -66,7 +66,7 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 	}
 
 	private BiFunction<List<String>, CommandSender, Collection<String>> getTypeSuggestion(final Parameter parameter) {
-		final BiFunction<CommandSender, Collection<String>, Collection<String>> typeCompleter
+		final BiFunction<List<String>, CommandSender, Collection<String>> typeCompleter
 				= completingConfig.getTypeCompleter(parameter.getType());
 		if (typeCompleter != null) {
 			return typeCompleter;

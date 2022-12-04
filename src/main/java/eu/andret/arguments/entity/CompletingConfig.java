@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -19,8 +20,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class CompletingConfig {
-	private final Map<String, BiFunction<CommandSender, Collection<String>, Collection<String>>> argumentCompleters = new HashMap<>();
-	private final Map<Class<?>, BiFunction<CommandSender, Collection<String>, Collection<String>>> typeCompleters = new HashMap<>();
+	private final Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleters = new HashMap<>();
+	private final Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleters = new HashMap<>();
 
 	/**
 	 * Adds an argument completer that allows to suggest values on command writing.
@@ -31,7 +32,7 @@ public class CompletingConfig {
 	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (argumentCompleters.containsKey(id)) {
 			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
@@ -48,8 +49,8 @@ public class CompletingConfig {
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id,
-									 @NotNull final Function<CommandSender, Collection<String>> function) {
-		addArgumentCompleter(id, (sender, collection) -> function.apply(sender));
+									 @NotNull final Function<List<String>, Collection<String>> function) {
+		addArgumentCompleter(id, (collection, sender) -> function.apply(collection));
 	}
 
 	/**
@@ -90,7 +91,7 @@ public class CompletingConfig {
 		if (typeCompleters.containsKey(anEnum)) {
 			throw new IllegalArgumentException(String.format("Completer with enum %s is already registered!", anEnum));
 		}
-		final BiFunction<CommandSender, Collection<String>, Collection<String>> function = (sender, collection) ->
+		final BiFunction<List<String>, CommandSender, Collection<String>> function = (sender, collection) ->
 				Arrays.stream(anEnum.getEnumConstants())
 						.map(String::valueOf)
 						.map(String::toUpperCase)
@@ -107,7 +108,7 @@ public class CompletingConfig {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
-								 @NotNull final BiFunction<CommandSender, Collection<String>, Collection<String>> function) {
+								 @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (typeCompleters.containsKey(clazz)) {
 			throw new IllegalArgumentException(String.format("Completer with class %s is already registered!", clazz));
 		}
@@ -123,8 +124,8 @@ public class CompletingConfig {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
-								 @NotNull final Function<CommandSender, Collection<String>> function) {
-		addTypeCompleter(clazz, (sender, collection) -> function.apply(sender));
+								 @NotNull final Function<List<String>, Collection<String>> function) {
+		addTypeCompleter(clazz, (collection, sender) -> function.apply(collection));
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class CompletingConfig {
 	 * @return The completer if found, {@code null} otherwise.
 	 */
 	@Nullable
-	public BiFunction<CommandSender, Collection<String>, Collection<String>> getArgumentCompleter(@NotNull final String id) {
+	public BiFunction<List<String>, CommandSender, Collection<String>> getArgumentCompleter(@NotNull final String id) {
 		return argumentCompleters.get(id);
 	}
 
@@ -171,7 +172,7 @@ public class CompletingConfig {
 	 * @return The completer if found, {@code null} otherwise.
 	 */
 	@Nullable
-	public BiFunction<CommandSender, Collection<String>, Collection<String>> getTypeCompleter(@NotNull final Class<?> clazz) {
+	public BiFunction<List<String>, CommandSender, Collection<String>> getTypeCompleter(@NotNull final Class<?> clazz) {
 		return typeCompleters.get(clazz);
 	}
 }

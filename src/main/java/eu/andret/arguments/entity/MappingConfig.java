@@ -7,12 +7,12 @@ package eu.andret.arguments.entity;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
-import eu.andret.arguments.api.entity.FallbackConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -66,7 +66,7 @@ public class MappingConfig {
 	public <T> void addArgumentMapper(@NotNull final String id,
 									  @NotNull final Class<T> clazz,
 									  @NotNull final Function<String, T> mapper) {
-		addArgumentMapper(id, clazz, mapper, FallbackConstants.NEVER);
+		addArgumentMapper(id, clazz, mapper, Objects::isNull);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class MappingConfig {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper) {
-		addTypeMapper(clazz, mapper, FallbackConstants.NEVER);
+		addTypeMapper(clazz, mapper, Objects::isNull);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class MappingConfig {
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum) {
-		addEnumMapper(anEnum, FallbackConstants.NEVER);
+		addEnumMapper(anEnum, Objects::isNull);
 	}
 
 	/**
