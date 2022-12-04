@@ -22,10 +22,10 @@ import java.lang.reflect.Method;
 public class PermissionFilter implements IPermissionFilter {
 	@Override
 	public boolean filterPermission(final Method method, final CommandSender sender) {
-		if (sender.isOp()) {
+		if (sender instanceof ConsoleCommandSender) {
 			return true;
 		}
-		if (sender instanceof ConsoleCommandSender) {
+		if (sender.isOp()) {
 			return true;
 		}
 		final Argument argument = method.getAnnotation(Argument.class);

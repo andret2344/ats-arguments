@@ -9,16 +9,15 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PermissionFilterTest {
+public class PermissionFilterTest {
 	@Test
 	void methodWithPermissionCalledByConsole() throws NoSuchMethodException {
 		// given
@@ -30,7 +29,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -45,7 +44,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -60,7 +59,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -75,7 +74,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -89,7 +88,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -104,7 +103,7 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -118,6 +117,6 @@ class PermissionFilterTest {
 		final boolean result = mapper.filterPermission(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 }

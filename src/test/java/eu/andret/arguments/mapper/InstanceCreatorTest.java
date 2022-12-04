@@ -10,19 +10,19 @@ import eu.andret.arguments.provider.FewArgumentsClass;
 import eu.andret.arguments.provider.ManyArgumentsClass;
 import eu.andret.arguments.provider.ManyConstructorsClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-class InstanceCreatorTest {
+public class InstanceCreatorTest {
 	@Test
 	void createInstanceCorrectly() {
 		// given
@@ -35,7 +35,7 @@ class InstanceCreatorTest {
 		final TestMethodsProvider provider = creator.createInstance(sender, plugin, commandClass);
 
 		// then
-		assertNotNull(provider);
+		assertThat(provider).isNotNull();
 	}
 
 	@Test
@@ -51,7 +51,7 @@ class InstanceCreatorTest {
 		final ManyArgumentsClass provider = creator.createInstance(sender, plugin, commandClass, world);
 
 		// then
-		assertNotNull(provider);
+		assertThat(provider).isNotNull();
 	}
 
 	@Test
@@ -63,10 +63,10 @@ class InstanceCreatorTest {
 		final Class<ExceptionalClass> commandClass = ExceptionalClass.class;
 
 		// when
-		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
+		final ThrowableAssert.ThrowingCallable callable = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
-		assertThrows(InvocationTargetException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(InvocationTargetException.class);
 	}
 
 	@Test
@@ -78,10 +78,10 @@ class InstanceCreatorTest {
 		final Class<FewArgumentsClass> commandClass = FewArgumentsClass.class;
 
 		// when
-		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
+		final ThrowableAssert.ThrowingCallable callable = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
-		assertThrows(IllegalStateException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -93,9 +93,9 @@ class InstanceCreatorTest {
 		final Class<ManyConstructorsClass> commandClass = ManyConstructorsClass.class;
 
 		// when
-		final Executable result = () -> creator.createInstance(sender, plugin, commandClass);
+		final ThrowableAssert.ThrowingCallable callable = () -> creator.createInstance(sender, plugin, commandClass);
 
 		// then
-		assertThrows(UnsupportedOperationException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(UnsupportedOperationException.class);
 	}
 }

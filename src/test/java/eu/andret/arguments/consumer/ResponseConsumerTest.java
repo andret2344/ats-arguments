@@ -8,14 +8,14 @@ import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class ResponseConsumerTest {
+public class ResponseConsumerTest {
 	@Test
 	void nullResult() {
 		// given

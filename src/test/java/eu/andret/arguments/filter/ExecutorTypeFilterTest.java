@@ -9,16 +9,14 @@ import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class ExecutorTypeFilterTest {
-
+public class ExecutorTypeFilterTest {
 	@Test
 	void methodWithExecutorTypePlayerCalledByPlayer() throws NoSuchMethodException {
 		// given
@@ -30,7 +28,7 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -44,7 +42,7 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -58,7 +56,7 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertFalse(result);
+		assertThat(result).isFalse();
 	}
 
 	@Test
@@ -72,7 +70,7 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -86,7 +84,7 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -100,6 +98,6 @@ class ExecutorTypeFilterTest {
 		final boolean result = mapper.filterExecutorType(method, commandSender);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 	}
 }

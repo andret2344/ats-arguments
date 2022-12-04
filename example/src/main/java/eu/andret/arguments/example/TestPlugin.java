@@ -24,17 +24,19 @@ public class TestPlugin extends JavaPlugin {
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
 		testCommand.getMappingConfig().addTypeMapper(World.class, Bukkit::getWorld);
-		testCommand.getCompletingConfig().addTypeCompleter(World.class, Bukkit.getWorlds()
+		testCommand.getCompletingConfig().addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
+				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.collect(Collectors.toList()));
 		testCommand.getMappingConfig().addEnumMapper(SomeEnum.class);
 		testCommand.getCompletingConfig().addEnumCompleter(SomeEnum.class);
 		testCommand.getMappingConfig().addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
 		testCommand.getCompletingConfig().addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
-		testCommand.getCompletingConfig().addArgumentCompleter("playerCompleter", () -> Bukkit.getOnlinePlayers()
+		testCommand.getCompletingConfig().addArgumentCompleter("playerCompleter", strings -> Bukkit.getOnlinePlayers()
 				.stream()
 				.map(HumanEntity::getName)
+				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));

@@ -6,15 +6,15 @@ package eu.andret.arguments;
 
 import eu.andret.arguments.provider.EmptyClass;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -22,17 +22,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CommandManagerTest {
+public class CommandManagerTest {
 	@Test
 	void classWithNoAnnotation() {
 		// given
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
 
 		// when
-		final Executable result = () -> CommandManager.registerCommand(EmptyClass.class, javaPlugin);
+		final ThrowableAssert.ThrowingCallable callable = () -> CommandManager.registerCommand(EmptyClass.class, javaPlugin);
 
 		// then
-		assertThrows(UnsupportedOperationException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -42,10 +42,10 @@ class CommandManagerTest {
 		when(javaPlugin.getCommand(anyString())).thenReturn(null);
 
 		// when
-		final Executable result = () -> CommandManager.registerCommand(TestMethodsProvider.class, javaPlugin);
+		final ThrowableAssert.ThrowingCallable callable = () -> CommandManager.registerCommand(TestMethodsProvider.class, javaPlugin);
 
 		// then
-		assertThrows(UnsupportedOperationException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -77,13 +77,11 @@ class CommandManagerTest {
 		constructor.setAccessible(true);
 
 		// when
-		final Executable result = () -> {
-			try {
-				constructor.newInstance();
-			} catch (final InvocationTargetException ex) {
-				throw ex.getTargetException();
-			}
-		};
-		assertThrows(UnsupportedOperationException.class, result);
+		final ThrowableAssert.ThrowingCallable callable = constructor::newInstance;
+
+		// then
+		assertThatThrownBy(callable)
+				.isInstanceOf(InvocationTargetException.class)
+				.hasCauseExactlyInstanceOf(UnsupportedOperationException.class);
 	}
 }

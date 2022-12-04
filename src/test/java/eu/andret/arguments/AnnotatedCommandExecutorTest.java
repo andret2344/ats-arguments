@@ -7,12 +7,12 @@ package eu.andret.arguments;
 import eu.andret.arguments.provider.EmptyClass;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class AnnotatedCommandExecutorTest {
+public class AnnotatedCommandExecutorTest {
 	@Test
 	void insanitiesWithCorrectData() {
 		// given
@@ -23,7 +23,7 @@ class AnnotatedCommandExecutorTest {
 		final AnnotatedCommandExecutor<JavaPlugin> executor = new EmptyClass(sender, plugin);
 
 		//then
-		assertEquals(sender, executor.getSender());
-		assertEquals(plugin, executor.getPlugin());
+		assertThat(sender).isSameAs(executor.getSender());
+		assertThat(plugin).isSameAs(executor.getPlugin());
 	}
 }

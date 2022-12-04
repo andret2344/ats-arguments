@@ -10,7 +10,6 @@ import eu.andret.arguments.entity.CompletingConfig;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +19,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 
 /**
@@ -39,18 +39,17 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 			return Collections.emptyList();
 		}
 		if (args.length - 1 <= method.getParameterCount()) {
-			return extractSuggestions(method.getParameters()[args.length - 2]).apply(sender, Arrays.asList(args));
+			return extractSuggestions(method.getParameters()[args.length - 2]).apply(Arrays.asList(args), sender);
 		}
 		final Parameter parameter = method.getParameters()[method.getParameterCount() - 1];
 		if (!parameter.isVarArgs()) {
 			return Collections.emptyList();
 		}
-		return extractSuggestions(parameter).apply(sender, Arrays.asList(args));
+		return extractSuggestions(parameter).apply(Arrays.asList(args), sender);
 	}
 
 	@NotNull
-	@NonNull
-	private BiFunction<CommandSender, Collection<String>, Collection<String>> extractSuggestions(final Parameter parameter) {
+	private BiFunction<List<String>, CommandSender, Collection<String>> extractSuggestions(final Parameter parameter) {
 		if (parameter.isAnnotationPresent(Ignore.class)) {
 			return (sender, collection) -> Collections.emptyList();
 		}
@@ -66,7 +65,7 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 		return getTypeSuggestion(parameter);
 	}
 
-	private BiFunction<CommandSender, Collection<String>, Collection<String>> getTypeSuggestion(final Parameter parameter) {
+	private BiFunction<List<String>, CommandSender, Collection<String>> getTypeSuggestion(final Parameter parameter) {
 		final BiFunction<CommandSender, Collection<String>, Collection<String>> typeCompleter
 				= completingConfig.getTypeCompleter(parameter.getType());
 		if (typeCompleter != null) {

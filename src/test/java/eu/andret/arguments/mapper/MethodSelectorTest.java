@@ -11,24 +11,24 @@ import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-class MethodSelectorTest {
+public class MethodSelectorTest {
 	@Test
 	void invokeMethodWithNoArgs() throws ReflectiveOperationException {
 		// given
@@ -41,15 +41,13 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "testMethod");
 
 		// then
-		assertArrayEquals(new Object[0], result);
+		assertThat(result).isEmpty();
 	}
 
 	@Test
 	void invokeFallbackMethodWith() throws ReflectiveOperationException {
 		// given
-		abstract class LocalFunction implements Function<String, World> {
-		}
-		final Function<String, World> getWorld = mock(LocalFunction.class);
+		final Function<String, World> getWorld = s -> null;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
@@ -62,10 +60,10 @@ class MethodSelectorTest {
 		when(fallbackSelector.selectFallback(mapper, World.class, provider)).thenReturn(methods);
 
 		// when
-		final Executable result = () -> selector.recalculateArguments(methodWorld, "testMethod", "test");
+		final ThrowableAssert.ThrowingCallable callable = () -> selector.recalculateArguments(methodWorld, "testMethod", "test");
 
 		// then
-		assertThrows(FallbackException.class, result);
+		assertThatThrownBy(callable).isInstanceOf(FallbackException.class);
 	}
 
 	@Test
@@ -80,7 +78,7 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
 
 		// then
-		assertArrayEquals(new Object[]{"test"}, result);
+		assertThat(result).containsExactly("test");
 	}
 
 	@Test
@@ -98,7 +96,7 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
 
 		// then
-		assertArrayEquals(new Location[]{location}, result);
+		assertThat(result).containsExactly(location);
 	}
 
 	@Test
@@ -113,7 +111,7 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "test", "testMethodWithCorrectPosition", "test2");
 
 		// then
-		assertArrayEquals(new Object[]{"test", "test2"}, result);
+		assertThat(result).containsExactly("test", "test2");
 	}
 
 	@Test
@@ -128,17 +126,14 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "1", "2");
 
 		// then
-		assertArrayEquals(new int[][]{{1, 2}}, result);
+		assertThat(result).isEqualTo(new int[][]{{1, 2}});
 	}
 
 	@Test
 	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
-		abstract class LocalFunction implements Function<String, World> {
-		}
-		final Function<String, World> getWorld = mock(LocalFunction.class);
 		final World world = mock(World.class);
-		when(getWorld.apply("world")).thenReturn(world);
+		final Function<String, World> getWorld = s -> world;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
@@ -150,6 +145,6 @@ class MethodSelectorTest {
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "world");
 
 		// then
-		assertArrayEquals(new Object[]{world}, result);
+		assertThat(result).containsExactly(world);
 	}
 }

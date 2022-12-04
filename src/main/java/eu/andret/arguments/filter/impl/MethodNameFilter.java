@@ -48,7 +48,7 @@ public class MethodNameFilter implements IMethodNameFilter {
 
 	private boolean verifyNonStatic(final Method method) {
 		if (Modifier.isStatic(method.getModifiers())) {
-			throw new IllegalStateException("@Argument method cannot be static! Method: " + method);
+			throw new IllegalStateException(String.format("@Argument method cannot be static! Method: %s#%s", method.getDeclaringClass().getName(), method.getName()));
 		}
 		return true;
 	}
