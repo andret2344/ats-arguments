@@ -10,16 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-class TypeMapperTest {
+public class TypeMapperTest {
 	@Test
 	void customTypeMapperCorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -40,7 +40,7 @@ class TypeMapperTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("The world: testWorldName");
 		verify(sender, times(0)).sendMessage("unknown");
 	}
@@ -64,7 +64,7 @@ class TypeMapperTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("unknown");
 		verifyNoMoreInteractions(sender);
 	}
@@ -88,7 +88,7 @@ class TypeMapperTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("An int: 1");
 		verify(sender, times(0)).sendMessage("unknown");
 	}

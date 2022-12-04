@@ -49,7 +49,7 @@ public class ArgumentsFilter implements IArgumentsFilter {
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter parameter = parameters.get(i);
 			if (parameter.getType().isArray() && !parameter.isVarArgs()) {
-				throw new IllegalArgumentException("Cannot be the array! Use VarArgs instead. Method " + method);
+				throw new IllegalArgumentException(String.format("Cannot be the array! Use VarArg instead. Method: %s#%s", method.getDeclaringClass().getName(), method.getName()));
 			}
 			final Mapper mapper = parameter.getAnnotation(Mapper.class);
 			if (!isTypeMatched(parameter, mapper, classes, i, parameters)) {

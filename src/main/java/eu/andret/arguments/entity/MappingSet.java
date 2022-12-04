@@ -4,8 +4,8 @@
 
 package eu.andret.arguments.entity;
 
-import lombok.NonNull;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -21,8 +21,10 @@ import java.util.function.Predicate;
  */
 @Value
 public class MappingSet<T> {
+	@NotNull
 	Class<T> clazz;
+	@NotNull
 	Function<String, T> function;
-	@NonNull
+	@NotNull
 	Predicate<Object> fallbackCondition;
 }

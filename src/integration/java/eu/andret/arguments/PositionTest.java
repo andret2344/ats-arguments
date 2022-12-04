@@ -8,30 +8,26 @@ import eu.andret.arguments.executor.IntegrationTestCommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class PositionTest {
-	public static Collection<Object[]> getDataSourceForPositionTest() {
-		final Object[][] objects = {
+public class PositionTest {
+	@DataProvider(name = "getData")
+	static Object[][] getData() {
+		return new Object[][]{
 				{new String[]{"testWithoutParameters"}, "none"},
 				{new String[]{"testWithParameter", "1"}, "1"},
 				{new String[]{"testWithParameter", "test"}, "test"},
 				{new String[]{"position", "testWithChangedPosition"}, "position"}
 		};
-		return Arrays.asList(objects);
 	}
 
-	@ParameterizedTest(name = "{0} => \"{1}\"")
-	@MethodSource("getDataSourceForPositionTest")
+	@Test(dataProvider = "getData")
 	void simpleCallWithPosition(final String[] args, final String expectedResult) {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -44,7 +40,7 @@ class PositionTest {
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage(expectedResult);
 	}
 }
