@@ -10,16 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-class TypeMapperTest {
+public class TypeMapperTest {
 	@Test
 	void customTypeMapperCorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -34,13 +34,13 @@ class TypeMapperTest {
 		annotatedCommand.addTypeMapper(World.class, ignored -> world);
 		final String[] args = {"testWithWorld", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("The world: testWorldName");
 		verify(sender, times(0)).sendMessage("unknown");
 	}
@@ -58,13 +58,13 @@ class TypeMapperTest {
 
 		final String[] args = {"testWithPlayer", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("unknown");
 		verifyNoMoreInteractions(sender);
 	}
@@ -82,13 +82,13 @@ class TypeMapperTest {
 
 		final String[] args = {"testWithInt", "1"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(s -> s.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
 
 		// when
 		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertTrue(result);
+		assertThat(result).isTrue();
 		verify(sender, times(1)).sendMessage("An int: 1");
 		verify(sender, times(0)).sendMessage("unknown");
 	}

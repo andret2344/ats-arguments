@@ -34,17 +34,7 @@ compile:
       - build/classes/**
       - build/libs/*.jar
 
-delombok:
-  stage: build
-  dependencies:
-    - wrapper
-  script:
-    - ./gradlew delombok
-  artifacts:
-    paths:
-      - build/delombok/**
-
-junit:
+testng:
   stage: verify
   dependencies:
     - compile

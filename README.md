@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 
@@ -38,7 +38,7 @@ repositories {
 
 ```groovy
 dependencies {
-	implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.1.1'
+	implementation group: 'eu.andret', name: 'ats-arguments', version: '0.1.3'
 	// other dependencies
 }
 ```
@@ -51,7 +51,7 @@ dependencies {
 	<dependency>
 		<groupId>eu.andret</groupId>
 		<artifactId>ats-arguments</artifactId>
-		<version>0.1.1.1</version>
+		<version>0.1.3</version>
 	</dependency>
 	<!-- other dependencies -->
 </dependencies>
@@ -69,7 +69,7 @@ plugins {
 //...
 
 shadowJar {
-	relocate 'eu.andret.arguments', 'eu.andret.YOUR_PLUGIN_NAME.arguments'
+	relocate 'eu.andret.arguments', 'YOUR_PLUGIN_PACKAGE.arguments'
 	configurations = [project.configurations.implementation]
 }
 
@@ -108,7 +108,8 @@ build.dependsOn(shadowJar)
 </build>
 ```
 
-> **Note**: It not necessarily have to be `eu.andret.YOUR_PLUGIN_NAME`, it can be any package, that will be unique on the server (like: `com.example.test.arguments`).
+> **Note**: It not necessarily have to be `eu.andret.YOUR_PLUGIN_NAME`, it can be any package, that will be unique on
+> the server (like: `com.example.test.arguments`).
 
 ## Basic code setup
 
@@ -125,19 +126,20 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 }
 ```
 
-This we have just filled class with everything necessary. Now let's tell the manager to take care of this class:
+By doing this, we have just filled the class with everything that is necessary. Now, let's tell the manager to take care
+of this class:
 
 ```java
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
+		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
 		// other initial setup logic
 	}
 }
 ```
 
-That's it, we have done the basic setup. However, you have to remember to register the command you put
+And that's it, we have done the basic setup. However, you have to remember to register the command you put
 into  `@BaseCommand` inside your `plugin.yml` file!
 
 Now, to use this library in proper way, simply write any non-static method in your `@BaseCommand`
@@ -166,7 +168,7 @@ It's also possible to pass additional arguments that will be used as AnnotatedCo
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
+		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
 		// other initial setup logic
 	}
 }
@@ -227,51 +229,51 @@ API provides a few quite useful annotations.
 
 - `@Argument` - Basic annotation for command configuration.
 
-| setting | type | values | default | description |
-| ------- | ---- | ------ | ------- | ----------- |
-| permission | `String` | Any string. | `""` | Permission whether sender can perform the command. |
-| executorType | `ExecutorType` | `ALL`, `PLAYER` or `CONSOLE`. | `ALL` | Executor type that is allowed to execute the command. |
-| description | `String` | Any String. | `""` | The description of command that will show up in help. |
-| aliases | `String[]` | Array of any non-colliding strings. | `{}` | Aliases to argument, eg. "cmd" as alias for "command", and so on. |
-| position | `int` | Any non-negative int lower or equal to methods arguments count. | `0` | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
-| displayType | `DisplayType` | `ALWAYS`, `IF_PERMS`, `NONE` | `ALWAYS` | Describes when argument in help message should be visible. |
+| setting      | type           | values                                                          | default  | description                                                                               |
+|--------------|----------------|-----------------------------------------------------------------|----------|-------------------------------------------------------------------------------------------|
+| permission   | `String`       | Any string.                                                     | `""`     | Permission whether sender can perform the command.                                        |
+| executorType | `ExecutorType` | `ALL`, `PLAYER` or `CONSOLE`.                                   | `ALL`    | Executor type that is allowed to execute the command.                                     |
+| description  | `String`       | Any String.                                                     | `""`     | The description of command that will show up in help.                                     |
+| aliases      | `String[]`     | Array of any non-colliding strings.                             | `{}`     | Aliases to argument, eg. "cmd" as alias for "command", and so on.                         |
+| position     | `int`          | Any non-negative int lower or equal to methods arguments count. | `0`      | which argument should be the method's name. For 1, it'll be `/test methodArg methodName`. |
+| displayType  | `DisplayType`  | `ALWAYS`, `IF_PERMS`, `NONE`                                    | `ALWAYS` | Describes when argument in help message should be visible.                                |
 
 - `@BaseCommand` - Obligatory annotation for command class configuration.
 
-| setting | type | values | default | description |
-| ------- | ---- | ------ | ------- | ----------- |
-| value | `String` | any string representing command | None. | The command all methods will be arguments for. |
-| aliases | `String[]` | Array od any Strings. | `{}` | Aliases to command. |
+| setting | type       | values                          | default | description                                    |
+|---------|------------|---------------------------------|---------|------------------------------------------------|
+| value   | `String`   | any string representing command | None.   | The command all methods will be arguments for. |
+| aliases | `String[]` | Array od any Strings.           | `{}`    | Aliases to command.                            |
 
 - `@Mapper` - Allowing connecting argument with a configured mapper.
 
-| setting | type | values |  description |
-| ------- | ---- | ------ |  ----------- |
-| value | `String` | any string | The mapper id to find exact registered mapper. |
+| setting | type     | values     | description                                    |
+|---------|----------|------------|------------------------------------------------|
+| value   | `String` | any string | The mapper id to find exact registered mapper. |
 
 - `@ArgumentResponse` - Allows connection return value with "to `String`" mapper.
 
-| setting | type | values | description |
-| ------- | ---- | ------ | ----------- |
-| value | `String` | any string | The mapper id to find exact registered response mapper. |
+| setting | type     | values     | description                                             |
+|---------|----------|------------|---------------------------------------------------------|
+| value   | `String` | any string | The mapper id to find exact registered response mapper. |
 
 - `@ArgumentFallback` - Annotation allowing catching not mapped correctly with argument mapper values.
 
-| setting | type | values | description |
-| ------- | ---- | ------ | ----------- |
-| value | `String[]` | any strings | The mapper ids that in case of failure should call the annotated method. |
+| setting | type       | values      | description                                                              |
+|---------|------------|-------------|--------------------------------------------------------------------------|
+| value   | `String[]` | any strings | The mapper ids that in case of failure should call the annotated method. |
 
 - `@TypeFallback` - Annotation allowing catching not mapped correctly with type mapper values.
 
-| setting | type | values | description | 
-| ------- | ---- | ------ | ----------- |
-| value | `Class<?>[]` | any classes | The mapper classes that in case of failure should call the annotated method. |
+| setting | type         | values      | description                                                                  | 
+|---------|--------------|-------------|------------------------------------------------------------------------------|
+| value   | `Class<?>[]` | any classes | The mapper classes that in case of failure should call the annotated method. |
 
 - `@Completer` - Annotation that connects argument with configured argument completer.
 
-| setting | type | values |  description |
-| ------- | ---- | ------ |  ----------- |
-| value | `String` | any string | The completer id to find exact registered completer. |
+| setting | type     | values     | description                                          |
+|---------|----------|------------|------------------------------------------------------|
+| value   | `String` | any string | The completer id to find exact registered completer. |
 
 - `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
 
@@ -356,9 +358,12 @@ requires 2 arguments:
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
-    - `Function<CommandSender, Collection<String>>` as instruction how to produce suggestion basing on `CommandSender`.
+    - `Function<List<String>. Collection<String>>` as instruction how to produce suggestion based on currently typed
+      words.
+    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions based on
+      currently typed words and the typist.
 
-That's it. Just call the described method and completers will start suggesting values basing on parameter type.
+That's it. Just call the described method and completers will start suggesting values based on parameter type.
 
 #### Argument completers
 
@@ -369,7 +374,10 @@ type will have the same suggestions. The method `addArgumentCompleter` requires 
 - One of:
     - `Collection<String>` containing suggestions,
     - `Supplier<Collection<String>>` as instruction how to produce suggestions,
-    - `Function<CommandSender, Collection<String>>` as instruction how to produce suggestion basing on `CommandSender`.
+    - `Function<List<String>, Collection<String>>` as instruction how to produce suggestion based on currently typed
+      words.
+    - `BiFunction<List<String>, CommandSender, Collection<String>>` as instruction how to produce suggestions based on
+      currently typed words and the typist.
 
 To have it working, we need to put `@Completer("someId")` before the parameter to get suggestions. Without this
 annotation, nothing will happen.
