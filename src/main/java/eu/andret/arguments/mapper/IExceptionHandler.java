@@ -17,16 +17,18 @@ import java.util.List;
  */
 public interface IExceptionHandler extends IMapper {
 	/**
-	 * Invokes the passed method and if exception occurred, trying to find matching exception fallback method to call
+	 * Invokes the passed method and if exception occurred, tries to find matching exception fallback method to call
 	 * instead, or rethrow exception if found none.
 	 *
-	 * @param method The {@link Method} that can throw an exception.
-	 * @param executor The executor that the method is called on.
+	 * @param method {@link Method} that may throw an exception.
+	 * @param executor The executor on which the method has been called.
 	 * @param data The arguments to pass to invoked method.
-	 * @param executorMethods Methods to search if there is any that handles the thrown exception, if thrown.
+	 * @param executorMethods Methods to search if any of them handles the thrown exception.
 	 * @param <E> The {@link JavaPlugin} subclass.
 	 *
-	 * @return Common result from the called method if no exception thrown or all exception fallbacks in random order.
+	 * @return Common result from the called method if no exceptions were thrown or aggregated results from all
+	 *        {@link eu.andret.arguments.api.annotation.ExceptionFallback} methods executed in random order. Rethrow any
+	 * 		thrown exception that wasn't caught.
 	 */
 	@NotNull <E extends JavaPlugin> List<String> handleException(@NotNull Method method,
 																 @NotNull AnnotatedCommandExecutor<E> executor,

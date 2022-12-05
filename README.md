@@ -213,7 +213,7 @@ first, look at rules that apply:
   into method ones. In order to use other types, there is a possibility to configure mappers.
     - Type Mapper will instruct how to parse text into certain class independently
     - Argument Mapper will be used only with explicit `@Mapper` annotation.
-    - When using `@Mapper` and parsing failed, you can access the raw value using `@Fallback`
+    - When using `@Mapper` and parsing fails, you can access the raw value using `@Fallback`
       annotation.
 - Method cannot have an array parameter, but only a VarArg is possible, rules as the point above.
 - If any `@Argument` method throws an exception, it can be caught using `@ExceptionFallback` method.
@@ -274,15 +274,15 @@ API provides a few quite useful annotations.
 
 - `@Completer` - Annotation that connects argument with configured argument completer.
 
-| setting | type     | values     | description                                          |
-|---------|----------|------------|------------------------------------------------------|
-| value   | `String` | any string | The completer id to find exact registered completer. |
+| setting | type     | values     | description                                              |
+|---------|----------|------------|----------------------------------------------------------|
+| value   | `String` | any string | The completer id to find the exact registered completer. |
 
 - `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method
 
-| setting | type                           | values                              | description             |
-|---------|--------------------------------|-------------------------------------|-------------------------|
-| value   | `Class<? extends Throwable>[]` | Array or any exception to be thrown | Exceptions to be catch. |
+| setting | type                           | values                              | description              |
+|---------|--------------------------------|-------------------------------------|--------------------------|
+| value   | `Class<? extends Throwable>[]` | Array or any exception to be thrown | Exceptions to be caught. |
 
 - `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
 
