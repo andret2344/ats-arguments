@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Using this annotation allows to execute method in case when {@link Argument} annotated method throws an exception.
+ * Using this annotation allows to execute a method when a {@link Argument} annotated method throws an exception.
  *
  * @author Andret
  * @since Jun 10, 2020

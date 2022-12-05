@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 public class ExceptionHandlerTest {
 	@Test
 	public void testThrowingNonCaughtException() {
+		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender commandSender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
@@ -40,6 +41,7 @@ public class ExceptionHandlerTest {
 
 	@Test
 	public void testThrowingCaughtException() {
+		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender commandSender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);

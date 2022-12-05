@@ -169,7 +169,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	}
 
 	@Argument
-	public void throwing() {
+	public void throwException() {
 		throw new IllegalArgumentException("The custom throw");
 	}
 
