@@ -280,9 +280,9 @@ API provides a few quite useful annotations.
 
 - `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method.
 
-| setting | type                           | values                              | description              |
-|---------|--------------------------------|-------------------------------------|--------------------------|
-| value   | `Class<? extends Throwable>[]` | Array or any exception to be thrown | Exceptions to be caught. |
+| setting | type                           | values                                     | description              |
+|---------|--------------------------------|--------------------------------------------|--------------------------|
+| value   | `Class<? extends Throwable>[]` | Array of any exceptions that can be thrown | Exceptions to be caught. |
 
 - `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
 
