@@ -278,7 +278,7 @@ API provides a few quite useful annotations.
 |---------|----------|------------|----------------------------------------------------------|
 | value   | `String` | any string | The completer id to find the exact registered completer. |
 
-- `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method
+- `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method.
 
 | setting | type                           | values                              | description              |
 |---------|--------------------------------|-------------------------------------|--------------------------|

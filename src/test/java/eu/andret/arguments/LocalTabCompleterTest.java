@@ -50,8 +50,7 @@ public class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
 
 		// then
-		assertThat(result)
-				.containsExactlyElementsOf(providerMethodNames);
+		assertThat(result).containsExactlyElementsOf(providerMethodNames);
 	}
 
 	@Test
