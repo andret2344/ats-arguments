@@ -23,12 +23,12 @@ public interface IExceptionHandler extends IMapper {
 	 * @param method {@link Method} that may throw an exception.
 	 * @param executor The executor on which the method has been called.
 	 * @param data The arguments to be passed to invoked method.
-	 * @param executorMethods Methods to search if any of them handles the thrown exception.
+	 * @param executorMethods Methods to search if any of them can handle the thrown exception.
 	 * @param <E> The {@link JavaPlugin} subclass.
 	 *
 	 * @return Common result from the called method if no exceptions were thrown or the aggregated results from all
 	 *        {@link eu.andret.arguments.api.annotation.ExceptionFallback} methods executed in random order. Rethrow any
-	 * 		thrown exception that wasn't caught.
+	 * 		thrown exception that haven't been caught.
 	 */
 	@NotNull <E extends JavaPlugin> List<String> handleException(@NotNull Method method,
 																 @NotNull AnnotatedCommandExecutor<E> executor,
