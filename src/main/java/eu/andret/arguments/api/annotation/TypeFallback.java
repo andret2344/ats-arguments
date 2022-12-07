@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface to decide which method should execute in case when {@link Argument} annotated command param passes its
- * fallback predicate.
+ * Using this annotation allows to decide which method should execute when an {@link Argument} annotated command param
+ * matches its fallback condition.
  *
  * @author Andret
  * @since Jun 10, 2020
@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TypeFallback {
 	/**
-	 * The array of {@link Mapper} values which will fall back into annotated method if they meet their fallback
+	 * The array of {@link Class} values which will fall back into the annotated method if they meet their fallback
 	 * conditions.
 	 *
 	 * @return The list of values.
