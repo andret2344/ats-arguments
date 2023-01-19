@@ -10,6 +10,7 @@ import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.ExceptionFallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
@@ -236,6 +237,21 @@ public class TestMethodsProvider extends AnnotatedCommandExecutor<JavaPlugin> {
 
 	@Argument
 	public String testMethodThrowingException(final String first, final String second) throws IllegalAccessException {
-		throw new IllegalAccessException();
+		throw new IllegalAccessException("on purpose");
+	}
+
+	@Argument
+	public String testMethodThrowingUncheckedException() {
+		throw new IllegalArgumentException("on purpose");
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String testMethodExceptionFallbackWithoutParameter() {
+		return "no parameter";
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String testMethodExceptionFallbackWithParameter(final IllegalArgumentException exception) {
+		return exception.getMessage();
 	}
 }

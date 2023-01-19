@@ -15,12 +15,14 @@ import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.filter.impl.DisplayTypeFilter;
 import eu.andret.arguments.filter.impl.PermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IExceptionHandler;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.mapper.impl.CommandToMethodMapper;
+import eu.andret.arguments.mapper.impl.ExceptionHandler;
 import eu.andret.arguments.mapper.impl.FallbackSelector;
 import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
@@ -74,6 +76,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IMethodSelector methodSelector = new MethodSelector(fallbackSelector, mappingConfig);
 	IInstanceCreator instanceCreator = new InstanceCreator();
 	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
+	IExceptionHandler exceptionHandler = new ExceptionHandler(methodInvoker);
 	@Getter(AccessLevel.PACKAGE)
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
@@ -101,8 +104,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 						 @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
-		this.parameters = parameters;
 		this.plugin = plugin;
+		this.parameters = parameters;
 		root = new Node(commandClass);
 	}
 
@@ -185,7 +188,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
 		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
 		return executionCall.getMethods().stream()
-				.map(method -> methodInvoker.invokeMethod(method, commandExecutor, executionCall.getData()))
+				.map(method -> exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods()))
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
