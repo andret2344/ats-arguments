@@ -41,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -88,15 +87,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
 	@NotNull
-	Node root;
-
-	@Value
-	class Node {
-		@NotNull
-		Class<? extends AnnotatedCommandExecutor<E>> clazz;
-		@NotNull
-		List<Node> children = new ArrayList<>();
-	}
+	CommandTree<E> commandTree;
 
 	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
 						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
@@ -106,7 +97,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		this.commandClass = commandClass;
 		this.plugin = plugin;
 		this.parameters = parameters;
-		root = new Node(commandClass);
+		commandTree = new CommandTree<>(commandClass);
 	}
 
 	@Override
@@ -214,25 +205,21 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		final SubCommand annotation = commandClass.getAnnotation(SubCommand.class);
 		final Class<? extends AnnotatedCommandExecutor<E>> parent
 				= (Class<? extends AnnotatedCommandExecutor<E>>) annotation.parent();
-		final Node found = search(parent);
+		final CommandTree<E>.Node found = commandTree.search(parent);
 		if (found == null) {
 			throw new IllegalArgumentException("Parent class is not registered!");
 		}
-		found.children.add(new Node(commandClass));
-	}
-
-	private Node search(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
-		return search(root, clazz);
-	}
-
-	private Node search(@NotNull final Node current, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
-		if (current.clazz.equals(clazz)) {
-			return current;
+		final boolean dupedValue = found.children.stream()
+				.map(CommandTree.Node.class::cast)
+				.anyMatch(o -> getValue(o.clazz).equals(getValue(parent)));
+		if (dupedValue) {
+			throw new IllegalArgumentException("SubCommand with this value is already registered!");
 		}
-		return current.children.stream()
-				.map(node -> search(node, clazz))
-				.filter(Objects::nonNull)
-				.findAny()
-				.orElse(null);
+		found.add(commandClass);
+	}
+
+	@NotNull
+	private String getValue(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return clazz.getAnnotation(SubCommand.class).value();
 	}
 }

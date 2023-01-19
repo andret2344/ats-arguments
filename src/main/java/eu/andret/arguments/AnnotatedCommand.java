@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.SubCommand;
@@ -378,10 +379,20 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		}
 	}
 
+	/**
+	 * Adds and registers a subcommand class.
+	 *
+	 * @param commandClass A subcommand class that is annotated with the {@link SubCommand} annotation. The class
+	 * 		cannot be annotated with the {@link BaseCommand} annotation.
+	 */
 	public void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass) {
-		final SubCommand annotation = commandClass.getAnnotation(SubCommand.class);
-		if (annotation == null) {
-			throw new UnsupportedOperationException("Class not annotated with @" + SubCommand.class.getName());
+		final SubCommand subCommandAnnotation = commandClass.getAnnotation(SubCommand.class);
+		if (subCommandAnnotation == null) {
+			throw new UnsupportedOperationException("SubCommand class not annotated with @" + SubCommand.class.getName());
+		}
+		final BaseCommand baseCommandAnnotation = commandClass.getAnnotation(BaseCommand.class);
+		if (baseCommandAnnotation != null) {
+			throw new UnsupportedOperationException("SubCommand class cannot be annotated with @" + BaseCommand.class.getName());
 		}
 		getLocalCommandExecutor().addSubCommand(commandClass);
 	}
