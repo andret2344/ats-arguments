@@ -22,5 +22,5 @@ public interface IArgumentsFilter extends IMapper {
 	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments, {@code false}
 	 * 		otherwise.
 	 */
-	boolean filterArguments(Method method, String[] command);
+	boolean filterArguments(Method method, String[] command, int skip);
 }

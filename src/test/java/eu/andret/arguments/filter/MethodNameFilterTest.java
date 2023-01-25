@@ -30,13 +30,12 @@ public class MethodNameFilterTest {
 	@Test
 	void staticAnnotatedMethodCalled() throws NoSuchMethodException {
 		// given
-		final String[] command = {};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testStaticMethod");
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final ThrowableAssert.ThrowingCallable callable = () -> mapper.filterMethodName(method, command, options);
+		final ThrowableAssert.ThrowingCallable callable = () -> mapper.filterMethodName(method, "", options);
 
 		// then
 		assertThatThrownBy(callable)
@@ -47,13 +46,12 @@ public class MethodNameFilterTest {
 	@Test
 	void methodWithExceededPositionCalled() throws NoSuchMethodException {
 		// given
-		final String[] command = {};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithExceededPosition");
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final boolean result = mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, "", options);
 
 		// then
 		assertThat(result).isFalse();
@@ -62,13 +60,12 @@ public class MethodNameFilterTest {
 	@Test
 	void methodWithoutAnnotation() throws NoSuchMethodException {
 		// given
-		final String[] command = {};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithoutAnnotation");
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final boolean result = mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, "", options);
 
 		// then
 		assertThat(result).isFalse();
@@ -77,13 +74,12 @@ public class MethodNameFilterTest {
 	@Test
 	void method() throws NoSuchMethodException {
 		// given
-		final String[] command = {"testMethod"};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethod");
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final boolean result = mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, "testMethod", options);
 
 		// then
 		assertThat(result).isTrue();
@@ -92,13 +88,12 @@ public class MethodNameFilterTest {
 	@Test
 	void methodWithAliases() throws NoSuchMethodException {
 		// given
-		final String[] command = {"testAlias1"};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodWithAliases");
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final boolean result = mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, "testAlias1", options);
 
 		// then
 		assertThat(result).isTrue();
@@ -107,13 +102,12 @@ public class MethodNameFilterTest {
 	@Test
 	void methodWithCorrectPosition() throws NoSuchMethodException {
 		// given
-		final String[] command = {"test", "testMethodSecondWithCorrectPosition"};
 		final Method method = TestMethodsProvider.class.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class);
 		final IMethodNameFilter mapper = new MethodNameFilter();
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
 
 		// when
-		final boolean result = mapper.filterMethodName(method, command, options);
+		final boolean result = mapper.filterMethodName(method, "test", options);
 
 		// then
 		assertThat(result).isTrue();
@@ -128,7 +122,7 @@ public class MethodNameFilterTest {
 		options.setCaseSensitive(caseSensitive);
 
 		// when
-		final boolean result = mapper.filterMethodName(method, new String[]{command}, options);
+		final boolean result = mapper.filterMethodName(method, command, options);
 
 		// then
 		assertThat(result).isEqualTo(expected);

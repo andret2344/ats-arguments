@@ -4,6 +4,7 @@
 
 package eu.andret.arguments;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -13,22 +14,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class CommandTree<E extends JavaPlugin> {
+public class CommandTree<E extends JavaPlugin> {
+	@Getter
 	private final Node root;
 
 	@RequiredArgsConstructor
-	final class Node {
+	@Getter
+	public final class Node {
 		@NotNull
-		final Class<? extends AnnotatedCommandExecutor<E>> clazz;
+		private final Class<? extends AnnotatedCommandExecutor<E>> clazz;
 		@NotNull
-		final List<Node> children = new ArrayList<>();
+		private final List<Node> children = new ArrayList<>();
 
 		void add(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
 			children.add(new Node(clazz));
 		}
 	}
 
-	public CommandTree(final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+	public CommandTree(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
 		root = new Node(clazz);
 	}
 

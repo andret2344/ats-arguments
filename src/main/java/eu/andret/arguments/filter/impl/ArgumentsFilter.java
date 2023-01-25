@@ -32,12 +32,13 @@ public class ArgumentsFilter implements IArgumentsFilter {
 	MappingConfig mappingConfig;
 
 	@Override
-	public boolean filterArguments(final Method method, final String[] command) {
-		final int size = Math.min(command.length - 1, method.getParameterCount());
-		if (size == 0 && command.length - 1 + method.getParameterCount() != 0) {
+	public boolean filterArguments(final Method method, final String[] command, final int skip) {
+		System.out.println("skip = " + skip);
+		final int size = Math.min(command.length - skip, method.getParameterCount());
+		if (size == 0 && command.length + method.getParameterCount() != skip) {
 			return false;
 		}
-		final List<Class<?>> list = Stream.of(command).skip(1).map(Util::getRealClass).collect(Collectors.toList());
+		final List<Class<?>> list = Stream.of(command).skip(skip).map(Util::getRealClass).collect(Collectors.toList());
 		return checkParameters(method, list);
 	}
 

@@ -36,6 +36,9 @@ public class ExceptionHandler implements IExceptionHandler {
 			return methodInvoker.invokeMethod(method, executor, data);
 		} catch (@SuppressWarnings("IllegalCatch") final Exception exception) {
 			final Throwable cause = exception.getCause();
+			if (cause == null) {
+				throw exception;
+			}
 			final Map<Boolean, List<Method>> groupedMethods = getGroupedMethods(executorMethods, cause.getClass());
 			if (groupedMethods.isEmpty()) {
 				throw new RuntimeException(cause);

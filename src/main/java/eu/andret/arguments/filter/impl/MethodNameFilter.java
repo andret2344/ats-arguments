@@ -25,20 +25,18 @@ import java.util.stream.Stream;
 @Value
 public class MethodNameFilter implements IMethodNameFilter {
 	@Override
-	public boolean filterMethodName(final Method method, final String[] command, final AnnotatedCommand.Options options) {
+	public boolean filterMethodName(final Method method, final String name, final AnnotatedCommand.Options options) {
 		return Optional.of(method)
 				.filter(theMethod -> theMethod.isAnnotationPresent(Argument.class))
 				.filter(this::verifyNonStatic)
 				.map(theMethod -> theMethod.getAnnotation(Argument.class))
-				.filter(argument -> verifyArgumentPosition(argument, command))
-				.map(argument -> nameMatches(argument, method, command, options))
+				.map(argument -> nameMatches(argument, method, name, options.isCaseSensitive()))
 				.orElse(false);
 	}
 
-	private boolean nameMatches(final Argument argument, final Method method, final String[] command,
-								final AnnotatedCommand.Options options) {
-		final String name = command[argument.position()];
-		final Predicate<String> predicate = options.isCaseSensitive() ? name::equals : name::equalsIgnoreCase;
+	private boolean nameMatches(final Argument argument, final Method method, final String name,
+								final boolean caseSensitive) {
+		final Predicate<String> predicate = caseSensitive ? name::equals : name::equalsIgnoreCase;
 		return getAllNamesStream(argument, method).anyMatch(predicate);
 	}
 
@@ -51,9 +49,5 @@ public class MethodNameFilter implements IMethodNameFilter {
 			throw new IllegalStateException(String.format("@Argument method cannot be static! Method: %s#%s", method.getDeclaringClass().getName(), method.getName()));
 		}
 		return true;
-	}
-
-	private boolean verifyArgumentPosition(final Argument argument, final String[] command) {
-		return argument.position() < command.length;
 	}
 }

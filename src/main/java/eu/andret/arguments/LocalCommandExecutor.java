@@ -114,7 +114,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 											.mapMethodToDescription(method, command.getName()))));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender, annotatedCommand.getOptions())
+					.mapCommandToMethod(commandTree, args, sender, annotatedCommand.getOptions())
 					.ifPresentOrElse(method -> invokeMethod(method, sender, args), () -> noneMethodFound(sender));
 		}
 		return true;
@@ -190,6 +190,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		if (executors.containsKey(sender)) {
 			return executors.get(sender);
 		}
+		// TODO not commandClass, find in the tree the exact class
 		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
 		executors.put(sender, commandExecutor);
 		return commandExecutor;
@@ -209,9 +210,9 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		if (found == null) {
 			throw new IllegalArgumentException("Parent class is not registered!");
 		}
-		final boolean dupedValue = found.children.stream()
+		final boolean dupedValue = found.getChildren().stream()
 				.map(CommandTree.Node.class::cast)
-				.anyMatch(o -> getValue(o.clazz).equals(getValue(parent)));
+				.anyMatch(o -> getValue(o.getClazz()).equals(getValue(parent)));
 		if (dupedValue) {
 			throw new IllegalArgumentException("SubCommand with this value is already registered!");
 		}
