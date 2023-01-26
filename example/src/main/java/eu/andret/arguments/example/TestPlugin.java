@@ -40,7 +40,7 @@ public class TestPlugin extends JavaPlugin {
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
-		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender());
+		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender(), TestCommand.class);
 		if (executor != null) {
 			getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
 		}

@@ -252,7 +252,7 @@ public class LocalCommandExecutorTest {
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
 
 		// when
-		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = executor.getCommandExecutor(sender);
+		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = executor.getCommandExecutor(sender, TestMethodsProvider.class);
 
 		// then
 		assertThat(commandExecutor).isNull();

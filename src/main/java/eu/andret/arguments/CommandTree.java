@@ -24,15 +24,17 @@ public class CommandTree<E extends JavaPlugin> {
 		@NotNull
 		private final Class<? extends AnnotatedCommandExecutor<E>> clazz;
 		@NotNull
+		private final Object[] parameters;
+		@NotNull
 		private final List<Node> children = new ArrayList<>();
 
-		void add(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
-			children.add(new Node(clazz));
+		void add(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz, @NotNull final Object... parameters) {
+			children.add(new Node(clazz, parameters));
 		}
 	}
 
-	public CommandTree(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
-		root = new Node(clazz);
+	public CommandTree(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz, @NotNull final Object... parameters) {
+		root = new Node(clazz, parameters);
 	}
 
 	@Nullable

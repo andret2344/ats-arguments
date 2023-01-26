@@ -84,8 +84,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * 		command.
 	 */
 	@Nullable
-	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return getLocalCommandExecutor().getCommandExecutor(sender);
+	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender,
+														  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return getLocalCommandExecutor().getCommandExecutor(sender, clazz);
 	}
 
 	/**
@@ -384,8 +385,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 *
 	 * @param commandClass A subcommand class that is annotated with the {@link SubCommand} annotation. The class
 	 * 		cannot be annotated with the {@link BaseCommand} annotation.
+	 * @param parameters Parameters to pass to constructor.
 	 */
-	public void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass) {
+	public void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+							  @NotNull final Object... parameters) {
 		final SubCommand subCommandAnnotation = commandClass.getAnnotation(SubCommand.class);
 		if (subCommandAnnotation == null) {
 			throw new UnsupportedOperationException("SubCommand class not annotated with @" + SubCommand.class.getName());
@@ -394,6 +397,6 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		if (baseCommandAnnotation != null) {
 			throw new UnsupportedOperationException("SubCommand class cannot be annotated with @" + BaseCommand.class.getName());
 		}
-		getLocalCommandExecutor().addSubCommand(commandClass);
+		getLocalCommandExecutor().addSubCommand(commandClass, parameters);
 	}
 }

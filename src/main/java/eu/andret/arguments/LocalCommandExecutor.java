@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -62,7 +63,7 @@ import java.util.stream.Collectors;
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	JavaPlugin plugin;
-	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
+	Map<CommandSender, Map<Class<AnnotatedCommandExecutor<E>>, AnnotatedCommandExecutor<E>>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
 	@Getter
 	MappingConfig mappingConfig = new MappingConfig();
@@ -84,8 +85,6 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
 	Consumer<CommandSender> onMainCommandExecutionListener;
-	@Getter(AccessLevel.PACKAGE)
-	Object[] parameters;
 	@NotNull
 	CommandTree<E> commandTree;
 
@@ -96,8 +95,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		this.annotatedCommand = annotatedCommand;
 		this.commandClass = commandClass;
 		this.plugin = plugin;
-		this.parameters = parameters;
-		commandTree = new CommandTree<>(commandClass);
+		commandTree = new CommandTree<>(commandClass, parameters);
 	}
 
 	@Override
@@ -175,34 +173,53 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@NotNull
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
-		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
 		return executionCall.getMethods().stream()
-				.map(method -> exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods()))
+				.map(method -> {
+					final Class<AnnotatedCommandExecutor<E>> declaringClass
+							= (Class<AnnotatedCommandExecutor<E>>) method.getDeclaringClass();
+					final AnnotatedCommandExecutor<E> commandExecutor
+							= getAnnotatedCommandExecutor(sender, declaringClass);
+					return exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods());
+				})
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
 	@NotNull
-	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
+	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender,
+																	@NotNull final Class<AnnotatedCommandExecutor<E>> clazz) {
 		if (executors.containsKey(sender)) {
-			return executors.get(sender);
+			final Map<Class<AnnotatedCommandExecutor<E>>, AnnotatedCommandExecutor<E>> executorMap = executors.get(sender);
+			if (executorMap.containsKey(clazz)) {
+				return executorMap.get(clazz);
+			}
 		}
-		// TODO not commandClass, find in the tree the exact class
-		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
-		executors.put(sender, commandExecutor);
+		final CommandTree<E>.Node node = commandTree.search(clazz);
+		if (node == null) {
+			throw new NoSuchElementException("Cannot find node associated with " + clazz.getName());
+		}
+		final AnnotatedCommandExecutor<E> commandExecutor
+				= instanceCreator.createInstance(sender, plugin, clazz, node.getParameters());
+		if (!executors.containsKey(sender)) {
+			executors.put(sender, new HashMap<>());
+		}
+		executors.get(sender).put(clazz, commandExecutor);
 		return commandExecutor;
 	}
 
 	@Nullable
-	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return executors.get(sender);
+	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender,
+												   @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return executors.getOrDefault(sender, new HashMap<>()).get(clazz);
 	}
 
 	@SuppressWarnings("unchecked")
-	void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass) {
+	void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+					   @NotNull final Object... parameters) {
 		final SubCommand annotation = commandClass.getAnnotation(SubCommand.class);
 		final Class<? extends AnnotatedCommandExecutor<E>> parent
 				= (Class<? extends AnnotatedCommandExecutor<E>>) annotation.parent();
@@ -216,7 +233,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		if (dupedValue) {
 			throw new IllegalArgumentException("SubCommand with this value is already registered!");
 		}
-		found.add(commandClass);
+		found.add(commandClass, parameters);
 	}
 
 	@NotNull
