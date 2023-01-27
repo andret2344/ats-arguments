@@ -25,16 +25,29 @@ public class CommandTree<E extends JavaPlugin> {
 		private final Class<? extends AnnotatedCommandExecutor<E>> clazz;
 		@NotNull
 		private final Object[] parameters;
+		@Nullable
+		private final Node parent;
 		@NotNull
 		private final List<Node> children = new ArrayList<>();
 
 		void add(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz, @NotNull final Object... parameters) {
-			children.add(new Node(clazz, parameters));
+			children.add(new Node(clazz, parameters, this));
+		}
+
+		@NotNull
+		public List<Node> getBranch() {
+			final List<Node> result = new ArrayList<>();
+			Node walking = this;
+			while (walking != null) {
+				result.add(0, walking);
+				walking = walking.parent;
+			}
+			return result;
 		}
 	}
 
 	public CommandTree(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz, @NotNull final Object... parameters) {
-		root = new Node(clazz, parameters);
+		root = new Node(clazz, parameters, null);
 	}
 
 	@Nullable

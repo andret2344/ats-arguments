@@ -43,6 +43,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,23 +78,20 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IInstanceCreator instanceCreator = new InstanceCreator();
 	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	IExceptionHandler exceptionHandler = new ExceptionHandler(methodInvoker);
-	@Getter(AccessLevel.PACKAGE)
-	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
+	@NotNull
+	CommandTree<E> commandTree;
 	@NonFinal
 	Consumer<CommandSender> onUnknownSubCommandExecutionListener;
 	@NonFinal
 	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
 	Consumer<CommandSender> onMainCommandExecutionListener;
-	@NotNull
-	CommandTree<E> commandTree;
 
 	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
 						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
 						 @NotNull final E plugin,
 						 @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
-		this.commandClass = commandClass;
 		this.plugin = plugin;
 		commandTree = new CommandTree<>(commandClass, parameters);
 	}
@@ -104,7 +102,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
 					.ifPresentOrElse(listener -> listener.accept(sender), () ->
-							Arrays.stream(commandClass.getDeclaredMethods())
+							// TODO: Whole tree
+							Arrays.stream(commandTree.getRoot().getClazz().getDeclaredMethods())
 									.filter(method -> !Modifier.isStatic(method.getModifiers()))
 									.filter(method -> method.isAnnotationPresent(Argument.class))
 									.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
@@ -149,7 +148,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		Optional.ofNullable(onUnknownSubCommandExecutionListener).ifPresent(listener -> listener.accept(sender));
 	}
 
-	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
+	private void invokeMethod(@NotNull final Method method,
+							  @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
 			Optional.of(selectMethod(method, args))
@@ -168,21 +168,30 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 			final Object[] data = methodSelector.recalculateArguments(method, command);
 			return new ExecutionCall(List.of(method), data);
 		} catch (final FallbackException ex) {
-			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), commandClass);
-			return new ExecutionCall(methods, new Object[]{ex.getValue()});
+			final Class<? extends AnnotatedCommandExecutor<E>> declaringClass = getAnnotatedCommandExecutorClass(method);
+			final CommandTree<E>.Node node = commandTree.search(declaringClass);
+			final Object[] data = {ex.getValue()};
+			if (node == null) {
+				return new ExecutionCall(Collections.emptyList(), data);
+			}
+			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), node);
+			return new ExecutionCall(methods, data);
 		}
 	}
 
+	@NotNull
 	@SuppressWarnings("unchecked")
+	private Class<AnnotatedCommandExecutor<E>> getAnnotatedCommandExecutorClass(final @NotNull Method method) {
+		return (Class<AnnotatedCommandExecutor<E>>) method.getDeclaringClass();
+	}
+
 	@NotNull
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
 		return executionCall.getMethods().stream()
 				.map(method -> {
-					final Class<AnnotatedCommandExecutor<E>> declaringClass
-							= (Class<AnnotatedCommandExecutor<E>>) method.getDeclaringClass();
-					final AnnotatedCommandExecutor<E> commandExecutor
-							= getAnnotatedCommandExecutor(sender, declaringClass);
-					return exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods());
+					final Class<AnnotatedCommandExecutor<E>> declaringClass = getAnnotatedCommandExecutorClass(method);
+					final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender, declaringClass);
+					return exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), declaringClass.getDeclaredMethods());
 				})
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)

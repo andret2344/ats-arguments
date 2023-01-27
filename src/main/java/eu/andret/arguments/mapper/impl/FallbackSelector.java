@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper.impl;
 
-import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.CommandTree;
 import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
@@ -36,17 +36,20 @@ public class FallbackSelector implements IFallbackSelector {
 	public <E extends JavaPlugin> List<Method> selectFallback(
 			@Nullable final Mapper mapper,
 			@NotNull final Class<?> targetClass,
-			@NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
+			@NotNull final CommandTree<E>.Node node) {
 		if (mapper == null) {
-			return getTypeFallbacks(targetClass, executorClass);
+			return getTypeFallbacks(targetClass, node);
 		}
-		return getArgumentFallbacks(mapper.value(), executorClass);
+		return getArgumentFallbacks(mapper.value(), node);
 	}
 
 	@NotNull
-	private <E extends JavaPlugin> List<Method> getArgumentFallbacks(
-			@NotNull final String argument, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
-		return Arrays.stream(executor.getDeclaredMethods())
+	private <E extends JavaPlugin> List<Method> getArgumentFallbacks(@NotNull final String argument,
+																	 @NotNull final CommandTree<E>.Node node) {
+		return node.getBranch().stream()
+				.map(CommandTree.Node::getClazz)
+				.map(Class::getDeclaredMethods)
+				.flatMap(Arrays::stream)
 				.filter(method -> method.isAnnotationPresent(ArgumentFallback.class))
 				.filter(method -> Arrays.asList(method.getAnnotation(ArgumentFallback.class).value())
 						.contains(argument))
@@ -57,9 +60,12 @@ public class FallbackSelector implements IFallbackSelector {
 	}
 
 	@NotNull
-	private <E extends JavaPlugin> List<Method> getTypeFallbacks(
-			@NotNull final Class<?> type, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
-		return Arrays.stream(executor.getDeclaredMethods())
+	private <E extends JavaPlugin> List<Method> getTypeFallbacks(@NotNull final Class<?> type,
+																 @NotNull final CommandTree<E>.Node node) {
+		return node.getBranch().stream()
+				.map(CommandTree.Node::getClazz)
+				.map(Class::getDeclaredMethods)
+				.flatMap(Arrays::stream)
 				.filter(method -> method.isAnnotationPresent(TypeFallback.class))
 				.filter(method -> Arrays.asList(method.getAnnotation(TypeFallback.class).value())
 						.contains(type))
