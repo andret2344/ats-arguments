@@ -7,11 +7,10 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * An implementation for {@link IMethodToDescriptionMapper}.
@@ -25,13 +24,14 @@ public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 	public String mapMethodToDescription(final Method method, final String command) {
 		String message = "/" + command + getCommandPattern(method);
 		final String description = method.getAnnotation(Argument.class).description();
-		if (!description.isEmpty()) {
+		if (!description.isBlank()) {
 			message += " - " + description;
 		}
-		return message.replace('&', '\u00A7');
+		return message.replace('&', '§');
 	}
 
-	private String getCommandPattern(final Method method) {
+	@NotNull
+	private String getCommandPattern(@NotNull final Method method) {
 		final Parameter[] params = method.getParameters();
 		final Argument a = method.getAnnotation(Argument.class);
 		final StringBuilder message = new StringBuilder();
@@ -55,13 +55,13 @@ public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 		return message.toString();
 	}
 
-	private String getArgumentWithAliases(final Method method) {
-		final Argument a = method.getAnnotation(Argument.class);
-		if (a.aliases().length == 0) {
+	@NotNull
+	private String getArgumentWithAliases(@NotNull final Method method) {
+		final Argument argument = method.getAnnotation(Argument.class);
+		if (argument.aliases().length == 0) {
 			return method.getName();
 		}
-		return "<" + method.getName() + Arrays.stream(a.aliases())
-				.map(alias -> "|" + alias)
-				.collect(Collectors.joining("")) + ">";
+		final String aliases = String.join("|", argument.aliases());
+		return String.format("<%s|%s>", method.getName(), aliases);
 	}
 }

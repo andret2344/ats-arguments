@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class CommandTree<E extends JavaPlugin> {
 	@Getter
@@ -48,6 +49,16 @@ public class CommandTree<E extends JavaPlugin> {
 
 	public CommandTree(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz, @NotNull final Object... parameters) {
 		root = new Node(clazz, parameters, null);
+	}
+
+	public void runConsumer(final Consumer<@NotNull Node> consumer) {
+		final List<Node> nodes = new ArrayList<>();
+		nodes.add(root);
+		while (!nodes.isEmpty()) {
+			final Node current = nodes.remove(0);
+			consumer.accept(current);
+			nodes.addAll(current.children);
+		}
 	}
 
 	@Nullable

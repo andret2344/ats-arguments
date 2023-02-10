@@ -33,7 +33,6 @@ public class ArgumentsFilter implements IArgumentsFilter {
 
 	@Override
 	public boolean filterArguments(final Method method, final String[] command, final int skip) {
-		System.out.println("skip = " + skip);
 		final int size = Math.min(command.length - skip, method.getParameterCount());
 		if (size == 0 && command.length + method.getParameterCount() != skip) {
 			return false;

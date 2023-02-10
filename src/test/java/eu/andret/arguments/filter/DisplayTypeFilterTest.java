@@ -26,7 +26,7 @@ public class DisplayTypeFilterTest {
 		final IDisplayTypeFilter mapper = new DisplayTypeFilter(permissionMapper);
 
 		// when
-		final boolean result = mapper.mapDisplayType(method, commandSender);
+		final boolean result = mapper.filterDisplayType(method, commandSender);
 
 		// then
 		assertThat(result).isTrue();
@@ -42,7 +42,7 @@ public class DisplayTypeFilterTest {
 		when(permissionMapper.filterPermission(method, commandSender)).thenReturn(true);
 
 		// when
-		final boolean result = mapper.mapDisplayType(method, commandSender);
+		final boolean result = mapper.filterDisplayType(method, commandSender);
 
 		// then
 		assertThat(result).isTrue();
@@ -58,7 +58,7 @@ public class DisplayTypeFilterTest {
 		when(permissionMapper.filterPermission(method, commandSender)).thenReturn(false);
 
 		// when
-		final boolean result = mapper.mapDisplayType(method, commandSender);
+		final boolean result = mapper.filterDisplayType(method, commandSender);
 
 		// then
 		assertThat(result).isFalse();
@@ -73,7 +73,7 @@ public class DisplayTypeFilterTest {
 		final IDisplayTypeFilter mapper = new DisplayTypeFilter(permissionMapper);
 
 		// when
-		final boolean result = mapper.mapDisplayType(method, commandSender);
+		final boolean result = mapper.filterDisplayType(method, commandSender);
 
 		// then
 		assertThat(result).isFalse();

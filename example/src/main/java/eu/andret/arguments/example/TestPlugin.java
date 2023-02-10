@@ -39,7 +39,6 @@ public class TestPlugin extends JavaPlugin {
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.collect(Collectors.toList()));
 		testCommand.getOptions().setAutoTranslateColors(true);
-		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
 		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender(), TestCommand.class);
 		if (executor != null) {
 			getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
@@ -48,11 +47,12 @@ public class TestPlugin extends JavaPlugin {
 		testCommand.addTypeResponseMapper(Player.class, HumanEntity::getName);
 		testCommand.addArgumentResponseMapper("world", World.class, World::getName);
 
-		testCommand.addSubCommand(TestSubCommand.class);
+		testCommand.addSubCommand(TestSubCommand.class, SomeEnum.TWO);
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);
 		paramCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
+		paramCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
 	}
 
 	public boolean isSuperSecretSetting() {

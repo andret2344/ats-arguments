@@ -10,6 +10,7 @@ import eu.andret.arguments.filter.IDisplayTypeFilter;
 import eu.andret.arguments.filter.IPermissionFilter;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
@@ -24,7 +25,7 @@ public class DisplayTypeFilter implements IDisplayTypeFilter {
 	private final IPermissionFilter permissionMapper;
 
 	@Override
-	public boolean mapDisplayType(final Method method, final CommandSender sender) {
+	public boolean filterDisplayType(@NotNull final Method method, @NotNull final CommandSender sender) {
 		final DisplayType displayType = method.getAnnotation(Argument.class).displayType();
 		if (displayType == DisplayType.ALWAYS) {
 			return true;

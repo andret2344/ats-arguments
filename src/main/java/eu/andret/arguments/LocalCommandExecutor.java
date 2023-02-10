@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.SubCommand;
 import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.consumer.impl.ResponseConsumer;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -98,17 +100,10 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
-							 @NotNull final String label, @NotNull final String[] args) {
+							 @NotNull final String label, @NotNull final String @NotNull [] args) {
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
-					.ifPresentOrElse(listener -> listener.accept(sender), () ->
-							// TODO: Whole tree
-							Arrays.stream(commandTree.getRoot().getClazz().getDeclaredMethods())
-									.filter(method -> !Modifier.isStatic(method.getModifiers()))
-									.filter(method -> method.isAnnotationPresent(Argument.class))
-									.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
-									.forEach(method -> sender.sendMessage(methodToDescriptionMapper
-											.mapMethodToDescription(method, command.getName()))));
+					.ifPresentOrElse(listener -> listener.accept(sender), () -> createDescriptions(sender));
 		} else {
 			commandToMethodMapper
 					.mapCommandToMethod(commandTree, args, sender, annotatedCommand.getOptions())
@@ -245,8 +240,43 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		found.add(commandClass, parameters);
 	}
 
+	private void createDescriptions(@NotNull final CommandSender sender) {
+		final List<String> result = new ArrayList<>();
+		commandTree.runConsumer(node -> {
+			final StringBuilder text = new StringBuilder();
+			CommandTree<E>.Node walking = node;
+			while (walking != null) {
+				text.insert(0, " " + getValue(walking.getClazz()));
+				walking = walking.getParent();
+			}
+			result.addAll(getStringStream(node, sender, text.substring(1)));
+		});
+		result.stream().sorted().forEach(sender::sendMessage);
+	}
+
 	@NotNull
 	private String getValue(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
-		return clazz.getAnnotation(SubCommand.class).value();
+		final SubCommand subCommand = clazz.getDeclaredAnnotation(SubCommand.class);
+		if (subCommand != null) {
+			return subCommand.value();
+		}
+		final BaseCommand baseCommand = clazz.getDeclaredAnnotation(BaseCommand.class);
+		if (baseCommand != null) {
+			return baseCommand.value();
+		}
+		final String message = String.format("The class %s is not annotated with @%s or with @%s!",
+				clazz, BaseCommand.class.getName(), SubCommand.class.getName());
+		throw new IllegalArgumentException(message);
+	}
+
+	@NotNull
+	private List<String> getStringStream(@NotNull final CommandTree<E>.Node node, @NotNull final CommandSender sender,
+										 @NotNull final String text) {
+		return Arrays.stream(node.getClazz().getDeclaredMethods())
+				.filter(method -> !Modifier.isStatic(method.getModifiers()))
+				.filter(method -> method.isAnnotationPresent(Argument.class))
+				.filter(method -> displayTypeMapper.filterDisplayType(method, sender))
+				.map(method -> methodToDescriptionMapper.mapMethodToDescription(method, text))
+				.collect(Collectors.toList());
 	}
 }
