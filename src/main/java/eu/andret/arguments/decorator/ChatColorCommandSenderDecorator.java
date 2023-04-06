@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Decoring class for {@link CommandSender} class to apply coloring to text messages.
+ * Decorating class for {@link CommandSender} class to apply coloring to text messages.
  */
 @Generated("IntelliJ IDEA")
 public class ChatColorCommandSenderDecorator implements CommandSender {

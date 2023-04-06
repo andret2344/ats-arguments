@@ -1,6 +1,6 @@
 plugins {
 	id 'io.franzbecker.gradle-lombok' version '5.0.0'
-	id 'de.jansauer.printcoverage' version '2.0.0'
+	id 'org.barfuin.gradle.jacocolog' version '3.1.0'
 }
 
 apply plugin: 'idea'
@@ -11,6 +11,10 @@ apply plugin: 'checkstyle'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
+
+jacoco {
+	toolVersion = '0.8.8'
+}
 
 sourceSets {
 	integration {
@@ -75,7 +79,7 @@ checkstyleIntegration.exclude("**")
 
 test {
 	useTestNG()
-	finalizedBy jacocoTestCoverageVerification, printCoverage
+	finalizedBy jacocoTestCoverageVerification, jacocoAggregatedReport
 }
 
 jacocoTestReport {
@@ -84,7 +88,7 @@ jacocoTestReport {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
 					'example/**',
-					'decorator/**'
+					'**/decorator/**'
 			])
 		}))
 	}
@@ -97,10 +101,8 @@ jacocoTestCoverageVerification {
 				minimum = 1.0
 			}
 			excludes = [
-					'example*',
 					'eu.andret.arguments.example.*',
-					'decorator*',
-					'eu.andret.arguments.decorator.*'
+					'**/ChatColorCommandSenderDecorator.**'
 			]
 		}
 	}
