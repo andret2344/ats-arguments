@@ -82,7 +82,10 @@ jacocoTestReport {
 	reports.xml.enabled true
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: ['example/**'])
+			fileTree(dir: it, exclude: [
+					'example/**',
+					'decorator/**'
+			])
 		}))
 	}
 }
@@ -93,7 +96,10 @@ jacocoTestCoverageVerification {
 			limit {
 				minimum = 1.0
 			}
-			excludes = ['example*', 'eu.andret.arguments.example.*']
+			excludes = [
+					'eu.andret.arguments.example.*',
+					'eu.andret.arguments.decorator.*'
+			]
 		}
 	}
 }
