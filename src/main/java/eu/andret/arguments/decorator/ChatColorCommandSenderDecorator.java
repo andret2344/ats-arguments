@@ -19,10 +19,18 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Decoring class for {@link CommandSender} class to apply coloring to text messages.
+ */
 @Generated("IntelliJ IDEA")
 public class ChatColorCommandSenderDecorator implements CommandSender {
 	private final CommandSender wrappedSender;
 
+	/**
+	 * A constructor.
+	 *
+	 * @param wrappedSender The original {@link CommandSender} to be wrapped.
+	 */
 	public ChatColorCommandSenderDecorator(@NotNull final CommandSender wrappedSender) {
 		this.wrappedSender = wrappedSender;
 	}

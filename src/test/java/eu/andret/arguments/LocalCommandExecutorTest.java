@@ -5,7 +5,12 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.filter.IPermissionFilter;
-import eu.andret.arguments.mapper.*;
+import eu.andret.arguments.mapper.ICommandToMethodMapper;
+import eu.andret.arguments.mapper.IExceptionHandler;
+import eu.andret.arguments.mapper.IFallbackSelector;
+import eu.andret.arguments.mapper.IInstanceCreator;
+import eu.andret.arguments.mapper.IMethodSelector;
+import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -20,8 +25,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class LocalCommandExecutorTest {
 	private interface CommandSenderConsumer extends Consumer<CommandSender> {

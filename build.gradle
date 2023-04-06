@@ -97,7 +97,9 @@ jacocoTestCoverageVerification {
 				minimum = 1.0
 			}
 			excludes = [
+					'example*',
 					'eu.andret.arguments.example.*',
+					'decorator*',
 					'eu.andret.arguments.decorator.*'
 			]
 		}
