@@ -14,8 +14,7 @@ import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Value;
-import lombok.experimental.NonFinal;
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,14 +38,13 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Jun 02, 2019
  */
-@Value
-@NonFinal
 @AllArgsConstructor
 public class AnnotatedCommand<E extends JavaPlugin> {
 	@NotNull
-	PluginCommand command;
+	private final PluginCommand command;
+	@Getter
 	@NotNull
-	Options options;
+	private final Options options;
 
 	/**
 	 * Single argument constructor.

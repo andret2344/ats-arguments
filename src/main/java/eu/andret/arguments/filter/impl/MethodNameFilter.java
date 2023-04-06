@@ -8,6 +8,7 @@ import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.filter.IMethodNameFilter;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -34,17 +35,18 @@ public class MethodNameFilter implements IMethodNameFilter {
 				.orElse(false);
 	}
 
-	private boolean nameMatches(final Argument argument, final Method method, final String name,
-								final boolean caseSensitive) {
+	private boolean nameMatches(@NotNull final Argument argument, @NotNull final Method method,
+								@NotNull final String name, final boolean caseSensitive) {
 		final Predicate<String> predicate = caseSensitive ? name::equals : name::equalsIgnoreCase;
 		return getAllNamesStream(argument, method).anyMatch(predicate);
 	}
 
-	private Stream<String> getAllNamesStream(final Argument argument, final Method method) {
+	@NotNull
+	private Stream<String> getAllNamesStream(@NotNull final Argument argument, @NotNull final Method method) {
 		return Stream.concat(Arrays.stream(argument.aliases()), Stream.of(method.getName()));
 	}
 
-	private boolean verifyNonStatic(final Method method) {
+	private boolean verifyNonStatic(@NotNull final Method method) {
 		if (Modifier.isStatic(method.getModifiers())) {
 			throw new IllegalStateException(String.format("@Argument method cannot be static! Method: %s#%s", method.getDeclaringClass().getName(), method.getName()));
 		}
