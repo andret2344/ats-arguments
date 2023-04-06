@@ -4,14 +4,8 @@
 
 package eu.andret.arguments;
 
-import eu.andret.arguments.consumer.IResponseConsumer;
 import eu.andret.arguments.filter.IPermissionFilter;
-import eu.andret.arguments.mapper.ICommandToMethodMapper;
-import eu.andret.arguments.mapper.IExceptionHandler;
-import eu.andret.arguments.mapper.IFallbackSelector;
-import eu.andret.arguments.mapper.IInstanceCreator;
-import eu.andret.arguments.mapper.IMethodSelector;
-import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
+import eu.andret.arguments.mapper.*;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -26,13 +20,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class LocalCommandExecutorTest {
 	private interface CommandSenderConsumer extends Consumer<CommandSender> {
@@ -72,12 +61,13 @@ public class LocalCommandExecutorTest {
 		when(command.getName()).thenReturn("test");
 		final Consumer<CommandSender> onMainCommandExecutionListener = mock(CommandSenderConsumer.class);
 		executor.setOnMainCommandExecutionListener(onMainCommandExecutionListener);
+		annotatedCommand.getOptions().setAutoTranslateColors(true);
 
 		// when
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(onMainCommandExecutionListener, times(1)).accept(sender);
+		verify(onMainCommandExecutionListener, times(1)).accept(any(CommandSender.class));
 	}
 
 	@Test
@@ -200,7 +190,6 @@ public class LocalCommandExecutorTest {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
-		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
@@ -225,7 +214,6 @@ public class LocalCommandExecutorTest {
 		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
-		injectMapper(executor, responseConsumer, "responseConsumer");
 		injectMapper(executor, exceptionHandler, "exceptionHandler");
 		final String[] args = {"testMethod"};
 		final Consumer<CommandSender> unknownSubCommandExecutionListener = mock(CommandSenderConsumer.class);
@@ -273,7 +261,6 @@ public class LocalCommandExecutorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
 		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
-		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final FallbackException exception = mock(FallbackException.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
@@ -284,7 +271,6 @@ public class LocalCommandExecutorTest {
 		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
 		injectMapper(executor, exceptionHandler, "exceptionHandler");
-		injectMapper(executor, responseConsumer, "responseConsumer");
 
 		// and
 		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
@@ -299,8 +285,8 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[]{"test"});
 
 		// then
-		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq("test"), any());
-		verify(responseConsumer, times(1)).consumeResponse(eq(sender), eq("result"), any());
+		verify(sender, times(1)).sendMessage("test");
+		verify(sender, times(1)).sendMessage("result");
 	}
 
 	@Test
@@ -315,7 +301,6 @@ public class LocalCommandExecutorTest {
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
-		final IResponseConsumer responseConsumer = mock(IResponseConsumer.class);
 		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
@@ -325,7 +310,6 @@ public class LocalCommandExecutorTest {
 		injectMapper(executor, permissionFilter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
-		injectMapper(executor, responseConsumer, "responseConsumer");
 		injectMapper(executor, exceptionHandler, "exceptionHandler");
 
 		// and
@@ -341,8 +325,8 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[]{"abc", "test"});
 
 		// then
-		verify(responseConsumer, times(2)).consumeResponse(eq(sender), eq("result"), any());
-		verify(responseConsumer, times(2)).consumeResponse(eq(sender), eq("value"), any());
+		verify(sender, times(2)).sendMessage("result");
+		verify(sender, times(2)).sendMessage("value");
 	}
 
 	@Test
