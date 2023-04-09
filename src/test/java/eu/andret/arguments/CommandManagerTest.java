@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,8 +65,8 @@ public class CommandManagerTest {
 		CommandManager.registerCommand(TestMethodsProvider.class, javaPlugin);
 
 		// then
-		verify(pluginCommand, times(1)).setExecutor(any());
-		verify(pluginCommand, times(1)).setTabCompleter(any());
+		verify(pluginCommand).setExecutor(any());
+		verify(pluginCommand).setTabCompleter(any());
 	}
 
 	@Test

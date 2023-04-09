@@ -1,13 +1,12 @@
 plugins {
+	id 'idea'
+	id 'java'
+	id 'jacoco'
+	id 'maven-publish'
+	id 'checkstyle'
 	id 'io.franzbecker.gradle-lombok' version '5.0.0'
 	id 'org.barfuin.gradle.jacocolog' version '3.1.0'
 }
-
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
-apply plugin: 'checkstyle'
 
 final List<String> jacocoExclusions = ['example/**', '**/decorator/*.class']
 
@@ -134,7 +133,7 @@ publishing {
 			artifact tasks.packageJavadoc
 			groupId = project.group
 			version = project.version
-			artifactId = project.codeName
+			artifactId = project.name
 		}
 	}
 	repositories {
@@ -153,5 +152,5 @@ publishing {
 }
 
 jar {
-	setArchivesBaseName "${project.codeName}"
+	setArchivesBaseName project.name
 }

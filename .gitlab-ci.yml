@@ -1,5 +1,5 @@
 #
-# Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+# Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 #
 image: gradle:7.6-jdk11
 
@@ -13,20 +13,12 @@ before_script:
   - chmod a+x gradlew
 
 stages:
-  - prepare
   - build
   - verify
   - deploy
 
-wrapper:
-  stage: prepare
-  script:
-    - gradle wrapper
-
 compile:
   stage: build
-  dependencies:
-    - wrapper
   script:
     - ./gradlew assemble
   artifacts:
@@ -36,28 +28,20 @@ compile:
 
 testng:
   stage: verify
-  dependencies:
-    - compile
   script:
     - ./gradlew test
   coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
-  when: on_success
   artifacts:
     reports:
       junit: build/test-results/test/**.xml
 
 integration:
   stage: verify
-  dependencies:
-    - compile
   script:
     - ./gradlew integrationTest
-  when: on_success
 
 checkstyle:
   stage: verify
-  dependencies:
-    - compile
   script:
     - ./gradlew checkstyleMain
 

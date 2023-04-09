@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -77,7 +78,7 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(onMainCommandExecutionListener, times(1)).accept(any(CommandSender.class));
+		verify(onMainCommandExecutionListener).accept(any(CommandSender.class));
 	}
 
 	@Test
@@ -101,7 +102,7 @@ public class LocalCommandExecutorTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(insufficientPermissionsListener, times(0)).accept(any(CommandSender.class));
+		verify(insufficientPermissionsListener, never()).accept(any(CommandSender.class));
 	}
 
 	@Test
@@ -127,8 +128,8 @@ public class LocalCommandExecutorTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(unknownSubCommandExecutionListener, times(1)).accept(sender);
-		verify(insufficientPermissionsListener, times(0)).accept(any(CommandSender.class));
+		verify(unknownSubCommandExecutionListener).accept(sender);
+		verify(insufficientPermissionsListener, never()).accept(any(CommandSender.class));
 	}
 
 	@Test
@@ -157,7 +158,7 @@ public class LocalCommandExecutorTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(unknownSubCommandExecutionListener, times(0)).accept(any(CommandSender.class));
+		verify(unknownSubCommandExecutionListener, never()).accept(any(CommandSender.class));
 	}
 
 	@Test
@@ -188,8 +189,8 @@ public class LocalCommandExecutorTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(unknownSubCommandExecutionListener, times(0)).accept(any(CommandSender.class));
-		verify(insufficientPermissionsListener, times(1)).accept(sender);
+		verify(unknownSubCommandExecutionListener, never()).accept(any(CommandSender.class));
+		verify(insufficientPermissionsListener).accept(sender);
 	}
 
 	@Test
@@ -236,8 +237,8 @@ public class LocalCommandExecutorTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(unknownSubCommandExecutionListener, times(0)).accept(any());
-		verify(insufficientPermissionsListener, times(0)).accept(any());
+		verify(unknownSubCommandExecutionListener, never()).accept(any());
+		verify(insufficientPermissionsListener, never()).accept(any());
 	}
 
 	@Test
@@ -295,8 +296,8 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[]{"test"});
 
 		// then
-		verify(sender, times(1)).sendMessage("test");
-		verify(sender, times(1)).sendMessage("result");
+		verify(sender).sendMessage("test");
+		verify(sender).sendMessage("result");
 	}
 
 	@Test

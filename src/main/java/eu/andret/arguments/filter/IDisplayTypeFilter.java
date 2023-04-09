@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter;
@@ -20,7 +20,6 @@ public interface IDisplayTypeFilter {
 	 *
 	 * @param method The method where Annotation should be got from.
 	 * @param sender The sender who invoked the command.
-	 *
 	 * @return {@code true} if argument should be visible in held, {@code false} otherwise.
 	 */
 	boolean mapDisplayType(Method method, CommandSender sender);

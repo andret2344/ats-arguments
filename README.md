@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 
@@ -120,7 +120,7 @@ constructor. This class also needs to be annotated with `@BaseCommand`.
 
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-	public TestCommand(CommandSender sender, TestPlugin plugin) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
 	}
 }
@@ -133,7 +133,7 @@ of this class:
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
+		final AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
 		// other initial setup logic
 	}
 }
@@ -149,7 +149,7 @@ Now, to use this library in proper way, simply write any non-static method in yo
 
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-	public TestCommand(CommandSender sender, TestPlugin plugin) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
 	}
 
@@ -168,7 +168,7 @@ It's also possible to pass additional arguments that will be used as AnnotatedCo
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
+		final AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
 		// other initial setup logic
 	}
 }
@@ -177,7 +177,7 @@ public class TestPlugin extends JavaPlugin {
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	private final World world;
 
-	public TestCommand(CommandSender sender, TestPlugin plugin, World world) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin, final World world) {
 		super(sender, plugin);
 		this.world = world;
 	}
