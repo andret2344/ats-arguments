@@ -3,12 +3,11 @@
  */
 
 plugins {
+	id 'idea'
+	id 'java'
 	id 'com.github.johnrengelman.shadow' version '7.1.2'
 	id 'kr.entree.spigradle' version '2.4.2'
 }
-
-apply plugin: 'idea'
-apply plugin: 'java'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
