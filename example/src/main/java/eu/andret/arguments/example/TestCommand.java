@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
@@ -49,10 +49,6 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument
 	public String player(@Mapper("playerMapper") @Completer("playerCompleter") final Player player) {
-		if (player == null) {
-			// "/test player Andret2344", sender gets: "Who do you mean?"
-			return "Who do you mean?";
-		}
 		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
 		return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
 	}
@@ -159,7 +155,7 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument(executorType = ExecutorType.PLAYER)
 	public Player getMe() {
-		return ((Player) sender);
+		return (Player) sender;
 	}
 
 	@ArgumentResponse("world")

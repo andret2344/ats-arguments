@@ -4,8 +4,12 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ats-arguments.iml" filepath="$PROJECT_DIR$/.idea/ats-arguments.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/example/atsArguments.example.main.iml" filepath="$PROJECT_DIR$/.idea/modules/example/atsArguments.example.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/atsArguments.integration.iml" filepath="$PROJECT_DIR$/.idea/modules/atsArguments.integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/atsArguments.main.iml" filepath="$PROJECT_DIR$/.idea/modules/atsArguments.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/atsArguments.test.iml" filepath="$PROJECT_DIR$/.idea/modules/atsArguments.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/example/eu.andret.arguments.example.atsArguments.example.main.iml" filepath="$PROJECT_DIR$/.idea/modules/example/eu.andret.arguments.example.atsArguments.example.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eu.andret.atsArguments.main.iml" filepath="$PROJECT_DIR$/.idea/modules/eu.andret.atsArguments.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eu.andret.atsArguments.test.iml" filepath="$PROJECT_DIR$/.idea/modules/eu.andret.atsArguments.test.iml" />
     </modules>
   </component>
 </project>

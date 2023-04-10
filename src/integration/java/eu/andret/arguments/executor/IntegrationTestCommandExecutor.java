@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.executor;
@@ -25,6 +25,7 @@ public class IntegrationTestCommandExecutor extends AnnotatedCommandExecutor<Jav
 	}
 
 	@Argument
+	@SuppressWarnings("PrimitiveReturn")
 	public int testWithParameter(final int number) {
 		return number;
 	}

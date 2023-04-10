@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 	@Override
 	public String mapMethodToDescription(final Method method, final String command) {
-		String message = "/" + command + getCommandPattern(method);
 		final String description = method.getAnnotation(Argument.class).description();
-		if (!description.isEmpty()) {
-			message += " - " + description;
+		final StringBuilder stringBuilder = new StringBuilder("/").append(command).append(getCommandPattern(method));
+		if (description.isEmpty()) {
+			return stringBuilder.toString();
 		}
-		return message.replace('&', '\u00A7');
+		return stringBuilder.append(" - ").append(description).toString();
 	}
 
 	private String getCommandPattern(final Method method) {

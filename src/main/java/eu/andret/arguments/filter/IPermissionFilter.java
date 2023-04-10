@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter;
@@ -21,7 +21,6 @@ public interface IPermissionFilter extends IMapper {
 	 *
 	 * @param method The {@link Method} to be analyzed.
 	 * @param sender The {@link CommandSender} who performed the command.
-	 *
 	 * @return {@code true} if sender has permission to execute the command or is op, {@code false} otherwise.
 	 */
 	boolean filterPermission(Method method, CommandSender sender);

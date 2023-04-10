@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -21,10 +21,9 @@ public class CommandManager {
 	 * Method registering new command classes.
 	 *
 	 * @param commandClass The class extending {@link AnnotatedCommandExecutor}
-	 * @param plugin The class extending {@link JavaPlugin} as main class of plugin
-	 * @param arguments The arguments that will be passed into {@link AnnotatedCommandExecutor} constructor.
-	 * @param <E> The main plugin class that extends {@link JavaPlugin}.
-	 *
+	 * @param plugin       The class extending {@link JavaPlugin} as main class of plugin
+	 * @param arguments    The arguments that will be passed into {@link AnnotatedCommandExecutor} constructor.
+	 * @param <E>          The main plugin class that extends {@link JavaPlugin}.
 	 * @return AnnotatedCommand
 	 */
 	public <E extends JavaPlugin> AnnotatedCommand<E> registerCommand(final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
