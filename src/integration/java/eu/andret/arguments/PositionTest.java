@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PositionTest {
@@ -41,6 +40,6 @@ public class PositionTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage(expectedResult);
+		verify(sender).sendMessage(expectedResult);
 	}
 }

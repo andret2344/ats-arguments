@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -7,8 +7,7 @@ package eu.andret.arguments;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.SubCommand;
-import eu.andret.arguments.consumer.IResponseConsumer;
-import eu.andret.arguments.consumer.impl.ResponseConsumer;
+import eu.andret.arguments.decorator.ChatColorCommandSenderDecorator;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
@@ -73,7 +72,6 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
-	IResponseConsumer responseConsumer = new ResponseConsumer();
 	IDisplayTypeFilter displayTypeMapper = new DisplayTypeFilter(permissionFilter);
 	IFallbackSelector fallbackSelector = new FallbackSelector();
 	IMethodSelector methodSelector = new MethodSelector(fallbackSelector, mappingConfig);
@@ -101,13 +99,14 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
 							 @NotNull final String label, @NotNull final String @NotNull [] args) {
+		final CommandSender commandSender = createCommandSender(sender);
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
-					.ifPresentOrElse(listener -> listener.accept(sender), () -> createDescriptions(sender));
+					.ifPresentOrElse(listener -> listener.accept(commandSender), () -> createDescriptions(commandSender));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(commandTree, args, sender, annotatedCommand.getOptions())
-					.ifPresentOrElse(method -> invokeMethod(method, sender, args), () -> noneMethodFound(sender));
+					.mapCommandToMethod(commandTree, args, commandSender, annotatedCommand.getOptions())
+					.ifPresentOrElse(method -> invokeMethod(method, commandSender, args), () -> noneMethodFound(commandSender));
 		}
 		return true;
 	}
@@ -151,7 +150,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 					.map(executionCall -> invokeMethods(executionCall, sender))
 					.stream()
 					.flatMap(Collection::stream)
-					.forEach(value -> responseConsumer.consumeResponse(sender, value, annotatedCommand.getOptions()));
+					.forEach(sender::sendMessage);
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.accept(sender);
 		}
@@ -278,5 +277,13 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 				.filter(method -> displayTypeMapper.filterDisplayType(method, sender))
 				.map(method -> methodToDescriptionMapper.mapMethodToDescription(method, text))
 				.collect(Collectors.toList());
+	}
+
+	@NotNull
+	private CommandSender createCommandSender(@NotNull final CommandSender base) {
+		if (annotatedCommand.getOptions().isAutoTranslateColors()) {
+			return new ChatColorCommandSenderDecorator(base);
+		}
+		return base;
 	}
 }

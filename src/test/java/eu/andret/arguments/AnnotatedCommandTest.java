@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -78,9 +77,9 @@ public class AnnotatedCommandTest {
 		});
 
 		// then
-		verify(executor, times(1)).setOnUnknownSubCommandExecutionListener(any());
-		verify(executor, times(1)).setOnInsufficientPermissionsListener(any());
-		verify(executor, times(1)).setOnMainCommandExecutionListener(any());
+		verify(executor).setOnUnknownSubCommandExecutionListener(any());
+		verify(executor).setOnInsufficientPermissionsListener(any());
+		verify(executor).setOnMainCommandExecutionListener(any());
 	}
 
 	@Test
@@ -251,7 +250,7 @@ public class AnnotatedCommandTest {
 		annotatedCommand.addTypeCompleter(World.class, list);
 
 		// then
-		verify(completer, times(1))
+		verify(completer)
 				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
@@ -268,10 +267,10 @@ public class AnnotatedCommandTest {
 		list.add("two");
 
 		// when
-		annotatedCommand.addTypeCompleter(World.class, (sender) -> list);
+		annotatedCommand.addTypeCompleter(World.class, sender -> list);
 
 		// then
-		verify(completer, times(1))
+		verify(completer)
 				.addTypeCompleter(eq(World.class), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
@@ -291,7 +290,7 @@ public class AnnotatedCommandTest {
 		assertThatThrownBy(callable)
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Completer with class org.bukkit.World is already registered!");
-		verify(completer, times(1)).addTypeCompleter(eq(World.class), any());
+		verify(completer).addTypeCompleter(eq(World.class), any());
 	}
 
 	@Test
@@ -310,7 +309,7 @@ public class AnnotatedCommandTest {
 		annotatedCommand.addArgumentCompleter("testPlayerMapper", list);
 
 		// then
-		verify(completer, times(1))
+		verify(completer)
 				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
@@ -327,10 +326,10 @@ public class AnnotatedCommandTest {
 		list.add("two");
 
 		// when
-		annotatedCommand.addArgumentCompleter("testPlayerMapper", (sender) -> list);
+		annotatedCommand.addArgumentCompleter("testPlayerMapper", sender -> list);
 
 		// then
-		verify(completer, times(1))
+		verify(completer)
 				.addArgumentCompleter(eq("testPlayerMapper"), argThat(function -> function.apply(null, null).equals(list)));
 	}
 
@@ -350,7 +349,7 @@ public class AnnotatedCommandTest {
 		assertThatThrownBy(callable)
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Completer with id \"testPlayerMapper\" is already registered!");
-		verify(completer, times(1)).addArgumentCompleter(eq("testPlayerMapper"), any());
+		verify(completer).addArgumentCompleter(eq("testPlayerMapper"), any());
 	}
 
 	@Test
@@ -369,7 +368,7 @@ public class AnnotatedCommandTest {
 		annotatedCommand.addEnumCompleter(TestEnum.class);
 
 		// then
-		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class),
+		verify(completer).addTypeCompleter(eq(TestEnum.class),
 				argThat(function -> function.apply(null, null).equals(values)));
 	}
 
@@ -389,7 +388,7 @@ public class AnnotatedCommandTest {
 		assertThatThrownBy(callable)
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("Completer with enum eu.andret.arguments.provider.TestEnum is already registered!");
-		verify(completer, times(1)).addTypeCompleter(eq(TestEnum.class), any());
+		verify(completer).addTypeCompleter(eq(TestEnum.class), any());
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,7 +53,7 @@ public class ExceptionHandlerTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(commandSender, times(1)).sendMessage("no parameter");
-		verify(commandSender, times(1)).sendMessage("on purpose");
+		verify(commandSender).sendMessage("no parameter");
+		verify(commandSender).sendMessage("on purpose");
 	}
 }

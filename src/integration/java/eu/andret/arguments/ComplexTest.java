@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +47,7 @@ public class ComplexTest {
 
 		// then
 		assertThat(commandResult).isTrue();
-		verify(commandSender, times(0)).sendMessage("unknown");
-		verify(commandSender, times(1)).sendMessage(result);
+		verify(commandSender, never()).sendMessage("unknown");
+		verify(commandSender).sendMessage(result);
 	}
 }

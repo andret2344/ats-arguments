@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.entity;
@@ -26,7 +26,6 @@ public class MappingConfig {
 	 *
 	 * @param key The identification.
 	 * @param set The mapping set.
-	 *
 	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this key exists.
 	 */
 	public boolean addArgumentMapper(final String key, final MappingSet<?> set) {
@@ -41,8 +40,7 @@ public class MappingConfig {
 	 * Adds a type mapper.
 	 *
 	 * @param clazz The identifying class.
-	 * @param set The mapping set.
-	 *
+	 * @param set   The mapping set.
 	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this class exists.
 	 */
 	public boolean addTypeMapper(final Class<?> clazz, final MappingSet<?> set) {
@@ -56,9 +54,8 @@ public class MappingConfig {
 	/**
 	 * Adds an argument response mapper.
 	 *
-	 * @param id The identifier.
+	 * @param id  The identifier.
 	 * @param set The response mapping set.
-	 *
 	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this key exists.
 	 */
 	public boolean addArgumentResponseMapper(@NotNull final String id, @NotNull final ResponseMappingSet<?> set) {
@@ -73,8 +70,7 @@ public class MappingConfig {
 	 * Adds a type response mapper.
 	 *
 	 * @param clazz The identifying class.
-	 * @param set The response mapping set.
-	 *
+	 * @param set   The response mapping set.
 	 * @return {@code true} if successfully added mapping set, {@code false} if mapper with this class exists.
 	 */
 	public boolean addTypeResponseMapper(@NotNull final Class<?> clazz, @NotNull final ResponseMappingSet<?> set) {
@@ -89,7 +85,6 @@ public class MappingConfig {
 	 * Gets the argument mapper.
 	 *
 	 * @param key The identification.
-	 *
 	 * @return The found mapping set if found, {@code null} otherwise.
 	 */
 	public MappingSet<?> getArgumentMapper(final String key) {
@@ -100,7 +95,6 @@ public class MappingConfig {
 	 * Gets the type mapper.
 	 *
 	 * @param clazz The identifying class.
-	 *
 	 * @return The found mapping set if found, {@code null} otherwise.
 	 */
 	public MappingSet<?> getTypeMapper(final Class<?> clazz) {
@@ -111,7 +105,6 @@ public class MappingConfig {
 	 * Gets the argument response mapper.
 	 *
 	 * @param id The identifier.
-	 *
 	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	public ResponseMappingSet<?> getArgumentResponseMapper(@NotNull final String id) {
@@ -122,7 +115,6 @@ public class MappingConfig {
 	 * Gets the type response mapper.
 	 *
 	 * @param clazz The identifying class.
-	 *
 	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	public ResponseMappingSet<?> getTypeResponseMapper(@NotNull final Class<?> clazz) {

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -24,11 +24,10 @@ public interface IFallbackSelector extends IMapper {
 	/**
 	 * Invokes fallback method on basis of annotation value.
 	 *
-	 * @param mapper The {@link Mapper} annotation of failed mapping.
-	 * @param targetClass The {@link Class} that's instance was to be created.
+	 * @param mapper        The {@link Mapper} annotation of failed mapping.
+	 * @param targetClass   The {@link Class} that's instance was to be created.
 	 * @param node The node to search for fallbacks in its value class or any ancestor.
-	 * @param <E> The {@link JavaPlugin} subclass.
-	 *
+	 * @param <E>           The {@link JavaPlugin} subclass.
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull <E extends JavaPlugin> List<Method> selectFallback(@Nullable Mapper mapper,

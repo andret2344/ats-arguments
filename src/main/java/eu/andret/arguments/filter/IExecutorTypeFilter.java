@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter;
@@ -20,9 +20,8 @@ public interface IExecutorTypeFilter extends IMapper {
 	/**
 	 * @param method The method that will be analyzed.
 	 * @param sender The real command sender who performed command.
-	 *
 	 * @return {@code true} if command executor matches with the one provided in {@link Argument#executorType()}, {@code
-	 * 		false} otherwise.
+	 * false} otherwise.
 	 */
 	boolean filterExecutorType(Method method, CommandSender sender);
 }

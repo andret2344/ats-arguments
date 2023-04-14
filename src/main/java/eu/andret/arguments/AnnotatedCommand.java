@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -77,9 +77,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 
 	/**
 	 * @param sender The sender that is assigned to the desired CommandExecutor.
-	 *
 	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
-	 * 		command.
+	 * command.
 	 */
 	@Nullable
 	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender,
@@ -117,12 +116,11 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
-	 * @param clazz The {@link Class} that will be returned from mapper function,
-	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
-	 *        {@link String}.
+	 * @param clazz             The {@link Class} that will be returned from mapper function,
+	 * @param mapper            The {@link Function} that has the logic how to create the {@code clazz} object of
+	 *                          {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
-	 *
+	 * @param <T>               The argument type that can be usd as the @{@link Argument} method's parameter
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper,
@@ -135,11 +133,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
-	 * @param clazz The {@link Class} that will be returned from mapper function,
+	 * @param clazz  The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
-	 *        {@link String}.
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
-	 *
+	 *               {@link String}.
+	 * @param <T>    The argument type that can be usd as the @{@link Argument} method's parameter
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public <T> void addTypeMapper(@NotNull final Class<T> clazz, @NotNull final Function<String, T> mapper) {
@@ -149,14 +146,13 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 *
-	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
-	 * 		the created mapper.
-	 * @param clazz The {@link Class} that will be returned from mapper function,
-	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of
-	 *        {@link String}.
+	 * @param id                The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
+	 *                          the created mapper.
+	 * @param clazz             The {@link Class} that will be returned from mapper function,
+	 * @param mapper            The {@link Function} that has the logic how to create the {@code clazz} object of
+	 *                          {@link String}.
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
-	 *
+	 * @param <T>               The argument type that can be usd as the @{@link Argument} method's parameter
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(@NotNull final String id,
@@ -172,12 +168,11 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds a mapper that allows to instantly create matching type instead of expecting {@link String}.
 	 * {@link TypeFallback} method will never be called.
 	 *
-	 * @param id The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
-	 * 		the created mapper.
-	 * @param clazz The {@link Class} that will be returned from mapper function,
+	 * @param id     The id of mapper that has to be unique. This is passed to {@link Mapper#value()} to precisely select
+	 *               the created mapper.
+	 * @param clazz  The {@link Class} that will be returned from mapper function,
 	 * @param mapper The {@link Function} that has the logic how to create the {@code clazz} object of String
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's parameter
-	 *
+	 * @param <T>    The argument type that can be usd as the @{@link Argument} method's parameter
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
@@ -188,10 +183,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
 	 *
-	 * @param anEnum The {@link Enum} that will be returned from mapper function,
+	 * @param anEnum            The {@link Enum} that will be returned from mapper function,
 	 * @param fallbackCondition The {@link Predicate} that will verify if fallback should execute.
-	 * @param <T> The {@link Enum} type that will be mapped.
-	 *
+	 * @param <T>               The {@link Enum} type that will be mapped.
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum,
@@ -209,8 +203,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds a mapper that allows to instantly create matching enum value instead of expecting {@link String}.
 	 *
 	 * @param anEnum The {@link Enum} that will be returned from mapper function,
-	 * @param <T> The {@link Enum} type that will be mapped.
-	 *
+	 * @param <T>    The {@link Enum} type that will be mapped.
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumMapper(@NotNull final Class<T> anEnum) {
@@ -220,9 +213,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param clazz    The {@link Class} that will be matched to completer.
 	 * @param function The {@link BiFunction} that will be used to create the list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
@@ -235,9 +227,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param clazz    The {@link Class} that will be matched to completer.
 	 * @param function The {@link Function} that will be used to create the list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz,
@@ -249,8 +240,7 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * Adds an enum completer that allows to suggest values on command writing.
 	 *
 	 * @param anEnum The {@link Enum} class that will be matched to completer.
-	 * @param <T> The {@link Enum} type that will be mapped.
-	 *
+	 * @param <T>    The {@link Enum} type that will be mapped.
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Enum}.
 	 */
 	public <T extends Enum<T>> void addEnumCompleter(@NotNull final Class<T> anEnum) {
@@ -267,9 +257,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param clazz    The {@link Class} that will be matched to completer.
 	 * @param supplier The {@link Supplier} that will be used to create the list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Supplier<Collection<String>> supplier) {
@@ -279,9 +268,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a type completer that allows to suggest values on command writing.
 	 *
-	 * @param clazz The {@link Class} that will be matched to completer.
+	 * @param clazz      The {@link Class} that will be matched to completer.
 	 * @param collection The {@link Collection} that will be the list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated {@link Class}.
 	 */
 	public void addTypeCompleter(@NotNull final Class<?> clazz, @NotNull final Collection<String> collection) {
@@ -291,10 +279,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
-	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
-	 * 		select the created completer.
+	 * @param id       The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
+	 *                 select the created completer.
 	 * @param function The {@link Function} that will produce list of matching values on basis of the sender.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id,
@@ -307,10 +294,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
-	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
-	 * 		select the created completer.
+	 * @param id       The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
+	 *                 select the created completer.
 	 * @param function The {@link Function} that will produce list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id,
@@ -321,10 +307,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
-	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
-	 * 		select the created completer.
+	 * @param id       The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
+	 *                 select the created completer.
 	 * @param supplier The {@link Supplier} that will produce list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id, @NotNull final Supplier<Collection<String>> supplier) {
@@ -334,10 +319,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds an argument completer that allows to suggest values on command writing.
 	 *
-	 * @param id The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
-	 * 		select the created completer.
+	 * @param id         The id of completer that has to be unique. This is passed to {@link Completer#value()} to precisely
+	 *                   select the created completer.
 	 * @param collection The {@link Collection} that will be used as list of matching values.
-	 *
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
 	public void addArgumentCompleter(@NotNull final String id, @NotNull final Collection<String> collection) {
@@ -347,11 +331,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a response mapper that allows to map return value to {@link String}.
 	 *
-	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param clazz    The {@link Class} that will be returned from mapper function.
 	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
-	 * 		object.
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
-	 *
+	 *                 object.
+	 * @param <T>      The argument type that can be usd as the @{@link Argument} method's return type.
 	 * @throws IllegalArgumentException if tried to register duplicated class.
 	 */
 	public <T> void addTypeResponseMapper(@NotNull final Class<T> clazz, @NotNull final Function<T, String> function) {
@@ -363,12 +346,11 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	/**
 	 * Adds a response mapper that allows to map return value to {@link String}.
 	 *
-	 * @param id The id of the response mapper. The id has to be unique.
-	 * @param clazz The {@link Class} that will be returned from mapper function.
+	 * @param id       The id of the response mapper. The id has to be unique.
+	 * @param clazz    The {@link Class} that will be returned from mapper function.
 	 * @param function The {@link Function} that has the logic how to create the {@link String} of {@code clazz}
-	 * 		object.
-	 * @param <T> The argument type that can be usd as the @{@link Argument} method's return type.
-	 *
+	 *                 object.
+	 * @param <T>      The argument type that can be usd as the @{@link Argument} method's return type.
 	 * @throws IllegalArgumentException if tried to register duplicated class.
 	 */
 	public <T> void addArgumentResponseMapper(@NotNull final String id, @NotNull final Class<T> clazz,

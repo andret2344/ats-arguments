@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -24,9 +24,8 @@ public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param commandTree The {@link CommandTree} instance.
 	 * @param command The arguments array that followed up base command.
-	 * @param sender The {@link CommandSender} of the command.
+	 * @param sender  The {@link CommandSender} of the command.
 	 * @param options The command options.
-	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
 	Optional<Method> mapCommandToMethod(@NotNull CommandTree<? extends JavaPlugin> commandTree,

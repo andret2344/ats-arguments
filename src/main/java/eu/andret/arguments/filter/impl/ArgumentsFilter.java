@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter.impl;
@@ -79,9 +79,6 @@ public class ArgumentsFilter implements IArgumentsFilter {
 					.map(aClass -> aClass.isAssignableFrom(parameterClass))
 					.orElse(false);
 		}
-		if (mappingConfig.getTypeMapper(parameterClass) != null) {
-			return true;
-		}
-		return clazz.isAssignableFrom(parameterClass);
+		return mappingConfig.getTypeMapper(parameterClass) != null || clazz.isAssignableFrom(parameterClass);
 	}
 }

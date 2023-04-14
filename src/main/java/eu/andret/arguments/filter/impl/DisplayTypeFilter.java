@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.filter.impl;
@@ -27,9 +27,6 @@ public class DisplayTypeFilter implements IDisplayTypeFilter {
 	@Override
 	public boolean filterDisplayType(@NotNull final Method method, @NotNull final CommandSender sender) {
 		final DisplayType displayType = method.getAnnotation(Argument.class).displayType();
-		if (displayType == DisplayType.ALWAYS) {
-			return true;
-		}
-		return permissionMapper.filterPermission(method, sender) && displayType == DisplayType.IF_PERMS;
+		return displayType == DisplayType.ALWAYS || permissionMapper.filterPermission(method, sender) && displayType == DisplayType.IF_PERMS;
 	}
 }

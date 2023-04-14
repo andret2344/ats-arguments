@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
@@ -21,8 +21,9 @@ public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		final AnnotatedCommand<TestPlugin> testCommand = CommandManager.registerCommand(TestCommand.class, this);
+		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
-		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
+		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("&cI don't know what you want from me"));
 		testCommand.addTypeMapper(World.class, Bukkit::getWorld);
 		testCommand.addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
 				.stream()
