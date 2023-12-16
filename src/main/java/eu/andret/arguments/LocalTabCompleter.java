@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -51,7 +51,8 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
 
 	@Override
-	public List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String alias, final String[] args) {
+	public List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
+									  @NotNull final String label, final String[] args) {
 		if (args.length == 0) {
 			return Collections.emptyList();
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,8 +36,8 @@ public class PermissionTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(sender, times(0)).sendMessage("permission");
-		verify(sender, times(1)).sendMessage("no perms");
+		verify(sender, never()).sendMessage("permission");
+		verify(sender).sendMessage("no perms");
 	}
 
 	@Test
@@ -57,8 +57,8 @@ public class PermissionTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("permission");
-		verify(sender, times(0)).sendMessage("no perms");
+		verify(sender).sendMessage("permission");
+		verify(sender, never()).sendMessage("no perms");
 	}
 
 	@Test
@@ -78,8 +78,8 @@ public class PermissionTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("permission");
-		verify(sender, times(0)).sendMessage("no perms");
+		verify(sender).sendMessage("permission");
+		verify(sender, never()).sendMessage("no perms");
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class PermissionTest {
 
 		// then
 		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("permission");
-		verify(sender, times(0)).sendMessage("no perms");
+		verify(sender).sendMessage("permission");
+		verify(sender, never()).sendMessage("no perms");
 	}
 }

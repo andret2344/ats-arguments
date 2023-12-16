@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -69,8 +69,7 @@ public class Util {
 	 *
 	 * @param clazz The {@link Class} which type variable is trying to be made
 	 * @param value The string containing possible to convert value, e.g. "1", "false" or "0.009".
-	 * @param <T> The predicted result type and the class type.
-	 *
+	 * @param <T>   The predicted result type and the class type.
 	 * @return The converted value, or not if no possible assignment found, or is an array.
 	 */
 	@NotNull
@@ -85,8 +84,7 @@ public class Util {
 	 * Method that will determine the actual class by the content of String.
 	 *
 	 * @param value The value that need to be parsed. Accepts only int, double, boolean and String. Not matching any
-	 * 		of them will result as String.
-	 *
+	 *              of them will result as String.
 	 * @return the class, which value inside the string arguments matches
 	 */
 	@NotNull

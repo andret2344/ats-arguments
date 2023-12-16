@@ -1,5 +1,5 @@
 #
-# Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+# Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 #
 image: gradle:7.6-jdk11
 
@@ -9,7 +9,7 @@ before_script:
 stages:
   - build
   - verify
-  - publish
+  - deploy
 
 compile:
   stage: build
@@ -33,7 +33,6 @@ integration:
   stage: verify
   script:
     - ./gradlew integrationTest
-  when: on_success
 
 lint:
   stage: verify

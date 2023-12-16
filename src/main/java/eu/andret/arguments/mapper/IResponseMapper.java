@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -22,7 +22,6 @@ public interface IResponseMapper extends IMapper {
 	 *
 	 * @param method Method, which return value is mapped. The method is NOT being called.
 	 * @param result The result of passed method.
-	 *
 	 * @return The mapped values.
 	 */
 	@NotNull

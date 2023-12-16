@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -41,8 +41,8 @@ public class ArgumentMapperTest {
 		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		verify(commandSender, times(1)).sendMessage("The mapped world: testMappedWorldName");
-		verify(commandSender, times(0)).sendMessage(UNKNOWN);
+		verify(commandSender).sendMessage("The mapped world: testMappedWorldName");
+		verify(commandSender, never()).sendMessage(UNKNOWN);
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class ArgumentMapperTest {
 		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		verify(commandSender, times(1)).sendMessage(UNKNOWN);
+		verify(commandSender).sendMessage(UNKNOWN);
 		verifyNoMoreInteractions(commandSender);
 	}
 }

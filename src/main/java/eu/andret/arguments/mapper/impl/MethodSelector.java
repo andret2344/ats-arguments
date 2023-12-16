@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper.impl;
@@ -81,9 +81,9 @@ public class MethodSelector implements IMethodSelector {
 
 	@NotNull
 	@SuppressWarnings("unchecked")
-	private <T> Optional<? extends MappingSet<T>> getMappingSet(@Nullable final Mapper mapper,
-																@NotNull final Class<T> clazz) {
-		final Optional<? extends MappingSet<T>> mappingSet = Optional.ofNullable(mapper)
+	private <T> Optional<MappingSet<T>> getMappingSet(@Nullable final Mapper mapper,
+													  @NotNull final Class<T> clazz) {
+		final Optional<MappingSet<T>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
 				.map(mappingConfig::getArgumentMapper)
 				.filter(set -> set.getClazz().equals(clazz))
