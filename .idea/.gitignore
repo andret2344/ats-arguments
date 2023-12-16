@@ -1,8 +1,9 @@
 /dataSources/
+/modules/
 /shelf/
 /sonarlint/
-/modules/
 
+/ats-arguments.iml
 /checkstyle-idea.xml
 /codestream.xml
 /compiler.xml
@@ -14,6 +15,6 @@
 /jarRepositories.xml
 /jpa-buddy.xml
 /misc.xml
+/modules.xml
 /uiDesigner.xml
 /workspace.xml
-/ats-arguments.iml
