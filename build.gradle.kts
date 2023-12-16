@@ -123,7 +123,7 @@ tasks {
 			rule {
 				classDirectories.setFrom(jacocoTestReport.get().classDirectories)
 				limit {
-					minimum = BigDecimal("1")
+					minimum = "1".toBigDecimal()
 				}
 			}
 		}

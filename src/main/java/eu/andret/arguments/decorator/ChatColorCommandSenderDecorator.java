@@ -4,6 +4,7 @@
 
 package eu.andret.arguments.decorator;
 
+import lombok.Generated;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.processing.Generated;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import java.util.UUID;
 /**
  * Decorating class for {@link CommandSender} class to apply coloring to text messages.
  */
-@Generated("IntelliJ IDEA")
+@Generated
 public class ChatColorCommandSenderDecorator implements CommandSender {
 	private final CommandSender wrappedSender;
 
@@ -41,7 +41,7 @@ public class ChatColorCommandSenderDecorator implements CommandSender {
 	}
 
 	@Override
-	public void sendMessage(@NotNull final String... messages) {
+	public void sendMessage(@NotNull final String @NotNull ... messages) {
 		final String[] array = Arrays.stream(messages)
 				.map(message -> ChatColor.translateAlternateColorCodes('&', message))
 				.toArray(String[]::new);
@@ -54,7 +54,7 @@ public class ChatColorCommandSenderDecorator implements CommandSender {
 	}
 
 	@Override
-	public void sendMessage(@Nullable final UUID sender, @NotNull final String... messages) {
+	public void sendMessage(@Nullable final UUID sender, @NotNull final String @NotNull ... messages) {
 		final String[] array = Arrays.stream(messages)
 				.map(message -> ChatColor.translateAlternateColorCodes('&', message))
 				.toArray(String[]::new);
