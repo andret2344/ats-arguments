@@ -9,7 +9,7 @@ before_script:
 stages:
   - build
   - verify
-  - deploy
+  - publish
 
 compile:
   stage: build
