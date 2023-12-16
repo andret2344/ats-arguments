@@ -1,6 +1,7 @@
 /dataSources/
 /shelf/
 /sonarlint/
+/modules/
 
 /checkstyle-idea.xml
 /codestream.xml
@@ -15,3 +16,4 @@
 /misc.xml
 /uiDesigner.xml
 /workspace.xml
+/ats-arguments.iml

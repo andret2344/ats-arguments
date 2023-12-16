@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,6 +19,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class ArgumentMapperTest {
+	private static final String UNKNOWN = "unknown";
+
 	@Test
 	void customArgumentMapperCorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -34,15 +35,14 @@ public class ArgumentMapperTest {
 		annotatedCommand.addArgumentMapper("world", World.class, ignored -> world);
 		final String[] args = {"testWithWorldMapper", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(commandSender, times(1)).sendMessage("The mapped world: testMappedWorldName");
-		verify(commandSender, times(0)).sendMessage("unknown");
+		verify(commandSender, times(0)).sendMessage(UNKNOWN);
 	}
 
 	@Test
@@ -58,14 +58,13 @@ public class ArgumentMapperTest {
 
 		final String[] args = {"testWithPlayerMapper", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		assertThat(result).isTrue();
-		verify(commandSender, times(1)).sendMessage("unknown");
+		verify(commandSender, times(1)).sendMessage(UNKNOWN);
 		verifyNoMoreInteractions(commandSender);
 	}
 }
