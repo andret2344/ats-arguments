@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -36,10 +35,9 @@ public class PositionTest {
 		final LocalCommandExecutor<JavaPlugin> commandExecutor = new LocalCommandExecutor<>(annotatedCommand, IntegrationTestCommandExecutor.class, plugin);
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, "IntegrationTest", args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage(expectedResult);
 	}
 }

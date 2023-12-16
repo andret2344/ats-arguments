@@ -12,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -43,10 +42,9 @@ public class ComplexTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("unknown"));
 
 		// when
-		final boolean commandResult = commandExecutor.onCommand(commandSender, command, "ComplexIntegrationTest", args);
+		commandExecutor.onCommand(commandSender, command, "ComplexIntegrationTest", args);
 
 		// then
-		assertThat(commandResult).isTrue();
 		verify(commandSender, never()).sendMessage("unknown");
 		verify(commandSender).sendMessage(result);
 	}

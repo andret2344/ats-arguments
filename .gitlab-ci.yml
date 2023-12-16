@@ -20,7 +20,7 @@ compile:
       - build/classes/**
       - build/libs/*.jar
 
-testng:
+tests:unit:
   stage: verify
   script:
     - ./gradlew test
@@ -29,7 +29,7 @@ testng:
     reports:
       junit: build/test-results/test/**.xml
 
-integration:
+tests:int:
   stage: verify
   script:
     - ./gradlew integrationTest
