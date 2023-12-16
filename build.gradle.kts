@@ -153,34 +153,34 @@ tasks {
 		from(named("javadoc"))
 	}
 
-	publishing {
-		publications {
-			create<MavenPublication>("maven") {
-				artifact(jar)
-//				artifact(named("sourceJar"))
-//				artifact(named("packageJavadoc"))
-				groupId = project.properties["group"] as String
-				version = project.properties["version"] as String
-				artifactId = project.properties["artifact"] as String
-			}
-		}
-		repositories {
-			maven {
-				name = "GitLab"
-
-				url = uri("https://gitlab.com/api/v4/projects/12063927/packages/maven")
-				credentials(HttpHeaderCredentials::class) {
-					name = "Job-Token"
-					value = System.getenv("CI_JOB_TOKEN")
-				}
-				authentication {
-					create<HttpHeaderAuthentication>("header")
-				}
-			}
-		}
-	}
-
 	jar {
 		archiveBaseName.set("${project.properties["artifact"]}")
+	}
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("maven") {
+			artifact(tasks.jar)
+			artifact(tasks.named("sourceJar"))
+			artifact(tasks.named("packageJavadoc"))
+			groupId = project.properties["group"] as String
+			version = project.properties["version"] as String
+			artifactId = project.properties["artifact"] as String
+		}
+	}
+	repositories {
+		maven {
+			name = "GitLab"
+
+			url = uri("https://gitlab.com/api/v4/projects/12063927/packages/maven")
+			credentials(HttpHeaderCredentials::class) {
+				name = "Job-Token"
+				value = System.getenv("CI_JOB_TOKEN")
+			}
+			authentication {
+				create<HttpHeaderAuthentication>("header")
+			}
+		}
 	}
 }
