@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 plugins {
@@ -17,9 +17,9 @@ repositories {
 dependencies {
 	implementation(rootProject)
 	compileOnly(
-		group = "org.spigotmc",
-		name = "spigot-api",
-		version = "${rootProject.properties["spigotVersion"]}-R0.1-SNAPSHOT"
+			group = "org.spigotmc",
+			name = "spigot-api",
+			version = "${rootProject.properties["spigotVersion"]}-R0.1-SNAPSHOT"
 	)
 }
 

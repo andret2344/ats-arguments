@@ -16,12 +16,14 @@ import java.util.List;
  * @author Andret
  * @since Nov 25, 2021
  */
+@FunctionalInterface
 public interface IResponseMapper extends IMapper {
 	/**
 	 * Maps the response from Object to list of String.
 	 *
 	 * @param method Method, which return value is mapped. The method is NOT being called.
 	 * @param result The result of passed method.
+	 *
 	 * @return The mapped values.
 	 */
 	@NotNull

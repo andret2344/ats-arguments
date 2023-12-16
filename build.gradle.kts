@@ -32,50 +32,48 @@ repositories {
 
 dependencies {
 	compileOnly(
-		group = "org.spigotmc",
-		name = "spigot-api",
-		version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
+			group = "org.spigotmc",
+			name = "spigot-api",
+			version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
 	)
-	compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
-	implementation(group = "org.jetbrains", name = "annotations", version = "24.0.1")
-	annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+	compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.30")
+	implementation(group = "org.jetbrains", name = "annotations", version = "24.1.0")
+	annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.30")
 
-	testCompileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+	testCompileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.30")
 	testImplementation(group = "org.assertj", name = "assertj-core", version = "3.24.2")
-	testImplementation(group = "org.mockito", name = "mockito-core", version = "5.2.0")
+	testImplementation(group = "org.mockito", name = "mockito-core", version = "5.8.0")
 	testImplementation(group = "org.mockito", name = "mockito-inline", version = "5.2.0")
-	testImplementation(group = "org.mockito", name = "mockito-testng", version = "0.4.31")
+	testImplementation(group = "org.mockito", name = "mockito-testng", version = "0.5.2")
 	testImplementation(
-		group = "org.spigotmc",
-		name = "spigot-api",
-		version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
+			group = "org.spigotmc",
+			name = "spigot-api",
+			version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
 	)
-	testImplementation(group = "org.testng", name = "testng", version = "7.7.1")
-	testAnnotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.26")
+	testImplementation(group = "org.testng", name = "testng", version = "7.8.0")
+	testAnnotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.30")
 }
-
-//checkstyleIntegration.exclude("**")
 
 tasks {
 	compileJava {
 		options.compilerArgs.addAll(
-			listOf(
-				"-parameters",
-				"-g",
-				"-Xlint:deprecation",
-				"-Xlint:unchecked"
-			)
+				listOf(
+						"-parameters",
+						"-g",
+						"-Xlint:deprecation",
+						"-Xlint:unchecked"
+				)
 		)
 	}
 
 	compileTestJava {
 		options.compilerArgs.addAll(
-			listOf(
-				"-parameters",
-				"-g",
-				"-Xlint:deprecation",
-				"-Xlint:unchecked"
-			)
+				listOf(
+						"-parameters",
+						"-g",
+						"-Xlint:deprecation",
+						"-Xlint:unchecked"
+				)
 		)
 	}
 

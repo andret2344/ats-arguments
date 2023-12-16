@@ -17,14 +17,16 @@ import org.jetbrains.annotations.NotNull;
  * @author Andret
  * @since Sep 03, 2021
  */
+@FunctionalInterface
 public interface IInstanceCreator extends IMapper {
 	/**
-	 * @param sender        The sender who executed the command.
-	 * @param plugin        The {@link JavaPlugin}.
+	 * @param sender The sender who executed the command.
+	 * @param plugin The {@link JavaPlugin}.
 	 * @param executorClass The class containing {@link Argument} methods.
-	 * @param parameters    The executor's constructor parameters.
-	 * @param <E>           The {@link JavaPlugin} subclass.
-	 * @param <A>           The {@link AnnotatedCommandExecutor} class.
+	 * @param parameters The executor's constructor parameters.
+	 * @param <E> The {@link JavaPlugin} subclass.
+	 * @param <A> The {@link AnnotatedCommandExecutor} class.
+	 *
 	 * @return List with results from called methods.
 	 */
 	@NotNull <E extends JavaPlugin, A extends AnnotatedCommandExecutor<E>> A createInstance(

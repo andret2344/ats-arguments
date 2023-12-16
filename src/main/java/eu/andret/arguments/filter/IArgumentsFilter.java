@@ -14,12 +14,14 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface IArgumentsFilter extends IMapper {
 	/**
-	 * @param method  The {@link Method} that will be analyzed.
+	 * @param method The {@link Method} that will be analyzed.
 	 * @param command The array of {@link String} with arguments passed with command.
+	 *
 	 * @return {@code true} if {@code method} matches command arguments and mappers input arguments, {@code false}
-	 * otherwise.
+	 * 		otherwise.
 	 */
 	boolean filterArguments(Method method, String[] command);
 }

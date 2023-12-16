@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
+Copyright Andret (c) 2018. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 

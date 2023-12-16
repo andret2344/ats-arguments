@@ -20,14 +20,16 @@ import java.util.List;
  * @author Andret
  * @since Sep 02, 2021
  */
+@FunctionalInterface
 public interface IFallbackSelector extends IMapper {
 	/**
 	 * Invokes fallback method on basis of annotation value.
 	 *
-	 * @param mapper        The {@link Mapper} annotation of failed mapping.
-	 * @param targetClass   The {@link Class} that's instance was to be created.
+	 * @param mapper The {@link Mapper} annotation of failed mapping.
+	 * @param targetClass The {@link Class} that's instance was to be created.
 	 * @param executorClass The class reference, where the method was written.
-	 * @param <E>           The {@link JavaPlugin} subclass.
+	 * @param <E> The {@link JavaPlugin} subclass.
+	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull <E extends JavaPlugin> List<Method> selectFallback(@Nullable Mapper mapper,

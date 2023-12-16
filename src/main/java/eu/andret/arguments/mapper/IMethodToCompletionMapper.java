@@ -16,13 +16,15 @@ import java.util.Collection;
  * @author Andret
  * @since Nov 07, 2020
  */
+@FunctionalInterface
 public interface IMethodToCompletionMapper extends IMapper {
 	/**
 	 * The method that maps method and typed arguments {@link Collection} of suggestions.
 	 *
 	 * @param method The method on which basis suggestions are going to be created
-	 * @param args   Arguments that has already been typed into the command line.
+	 * @param args Arguments that has already been typed into the command line.
 	 * @param sender The command sender.
+	 *
 	 * @return {@link Collection} of possible suggestions.
 	 */
 	Collection<String> mapCommandToCompletion(Method method, String[] args, CommandSender sender);

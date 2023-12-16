@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 #
-image: gradle:7.6-jdk11
+image: gradle:8.5-jdk17
 
 before_script:
   - chmod a+x gradlew

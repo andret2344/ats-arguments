@@ -64,7 +64,6 @@ public class MethodSelector implements IMethodSelector {
 					Array.set(array, j, map(mapper, type, args[j + i + skip]));
 				}
 				data[i] = array;
-				break;
 			} else {
 				data[i] = map(mapper, method.getParameters()[i].getType(), args[i + skip]);
 			}

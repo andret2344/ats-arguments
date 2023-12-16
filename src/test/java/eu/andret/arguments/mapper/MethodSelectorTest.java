@@ -25,7 +25,6 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class MethodSelectorTest {
@@ -35,7 +34,7 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethod"));
+		final Method method = commandClass.getDeclaredMethod("testMethod");
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "testMethod");
@@ -53,7 +52,7 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> provider = TestMethodsProvider.class;
-		final Method methodWorld = spy(provider.getDeclaredMethod("testMethodWithParam", World.class));
+		final Method methodWorld = provider.getDeclaredMethod("testMethodWithParam", World.class);
 		final Mapper mapper = methodWorld.getParameters()[0].getAnnotation(Mapper.class);
 		final List<Method> methods = List.of(provider.getDeclaredMethod("testMethodArgumentFallback",
 				String.class));
@@ -72,7 +71,7 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithArgument", String.class));
+		final Method method = commandClass.getDeclaredMethod("testMethodWithArgument", String.class);
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
@@ -90,7 +89,7 @@ public class MethodSelectorTest {
 		mappingConfig.addTypeMapper(Location.class, new MappingSet<>(Location.class, s -> location, Objects::isNull));
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithMappedArgument", Location.class));
+		final Method method = commandClass.getDeclaredMethod("testMethodWithMappedArgument", Location.class);
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
@@ -105,7 +104,7 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class));
+		final Method method = commandClass.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class);
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "test", "testMethodWithCorrectPosition", "test2");
@@ -120,7 +119,7 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class));
+		final Method method = commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class);
 
 		// when
 		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "1", "2");
@@ -137,7 +136,7 @@ public class MethodSelectorTest {
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
-		final Method method = spy(commandClass.getDeclaredMethod("testMethodWithParam", World.class));
+		final Method method = commandClass.getDeclaredMethod("testMethodWithParam", World.class);
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 
