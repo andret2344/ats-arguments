@@ -5,6 +5,7 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.entity.CompletingConfig;
 import eu.andret.arguments.filter.IMethodNameFilter;
 import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
@@ -25,10 +26,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,10 +43,9 @@ import java.util.stream.Stream;
 class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 	AnnotatedCommand<E> annotatedCommand;
 	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-	Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
+	CompletingConfig completingConfig;
 	IMethodNameFilter methodNameMapper = new MethodNameFilter();
-	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
+	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(completingConfig);
 
 	@Override
 	public List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
@@ -74,21 +71,5 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 				.map(method -> methodToCompletionMapper.mapCommandToCompletion(method, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());
-	}
-
-	boolean addArgumentCompleter(final String id, final BiFunction<List<String>, CommandSender, Collection<String>> function) {
-		if (argumentCompleterMap.containsKey(id)) {
-			return false;
-		}
-		argumentCompleterMap.put(id, function);
-		return true;
-	}
-
-	boolean addTypeCompleter(final Class<?> clazz, final BiFunction<List<String>, CommandSender, Collection<String>> function) {
-		if (typeCompleterMap.containsKey(clazz)) {
-			return false;
-		}
-		typeCompleterMap.put(clazz, function);
-		return true;
 	}
 }

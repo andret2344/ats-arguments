@@ -23,17 +23,17 @@ public class TestPlugin extends JavaPlugin {
 		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
 		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("&cI don't know what you want from me"));
-		testCommand.addTypeMapper(World.class, Bukkit::getWorld);
-		testCommand.addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
+		testCommand.getMappingConfig().addTypeMapper(World.class, Bukkit::getWorld);
+		testCommand.getCompletingConfig().addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
 				.toList());
-		testCommand.addEnumMapper(SomeEnum.class);
-		testCommand.addEnumCompleter(SomeEnum.class);
-		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
-		testCommand.addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
-		testCommand.addArgumentCompleter("playerCompleter", strings -> Bukkit.getOnlinePlayers()
+		testCommand.getMappingConfig().addEnumMapper(SomeEnum.class);
+		testCommand.getCompletingConfig().addEnumCompleter(SomeEnum.class);
+		testCommand.getMappingConfig().addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
+		testCommand.getCompletingConfig().addTypeCompleter(boolean.class, Arrays.asList("true", "false"));
+		testCommand.getCompletingConfig().addArgumentCompleter("playerCompleter", strings -> Bukkit.getOnlinePlayers()
 				.stream()
 				.map(HumanEntity::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
@@ -44,8 +44,8 @@ public class TestPlugin extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(executor.alwaysDisplayed());
 		}
 
-		testCommand.addTypeResponseMapper(Player.class, HumanEntity::getName);
-		testCommand.addArgumentResponseMapper("world", World.class, World::getName);
+		testCommand.getMappingConfig().addTypeResponseMapper(Player.class, HumanEntity::getName);
+		testCommand.getMappingConfig().addArgumentResponseMapper("world", World.class, World::getName);
 
 		final AnnotatedCommand<TestPlugin> paramCommand = CommandManager.registerCommand(TestParametrizedCommand.class, this, getServer().getWorld("world"), 1);
 		paramCommand.getOptions().setCaseSensitive(true);

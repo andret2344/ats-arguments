@@ -5,6 +5,8 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.BaseCommand;
+import eu.andret.arguments.entity.CompletingConfig;
+import eu.andret.arguments.entity.MappingConfig;
 import lombok.experimental.UtilityClass;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,9 +39,19 @@ public class CommandManager {
 		if (pluginCommand == null) {
 			throw new UnsupportedOperationException("Command not registered in the plugin.yml file!");
 		}
-		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand);
-		pluginCommand.setExecutor(new LocalCommandExecutor<>(annotatedCommand, commandClass, plugin, arguments));
-		pluginCommand.setTabCompleter(new LocalTabCompleter<>(annotatedCommand, commandClass));
+		final MappingConfig mappingConfig = new MappingConfig();
+		final CompletingConfig completingConfig = new CompletingConfig();
+		final AnnotatedCommand<E> annotatedCommand = new AnnotatedCommand<>(pluginCommand, new AnnotatedCommand.Options(), mappingConfig, completingConfig);
+		pluginCommand.setExecutor(new LocalCommandExecutor<>(
+				annotatedCommand,
+				commandClass,
+				mappingConfig,
+				null,
+				null,
+				null,
+				plugin,
+				arguments));
+		pluginCommand.setTabCompleter(new LocalTabCompleter<>(annotatedCommand, commandClass, completingConfig));
 		return annotatedCommand;
 	}
 }

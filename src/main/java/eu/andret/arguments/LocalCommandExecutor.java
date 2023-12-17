@@ -59,10 +59,9 @@ import java.util.stream.Collectors;
 @NonFinal
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
-	JavaPlugin plugin;
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
-	@Getter
+	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	MappingConfig mappingConfig = new MappingConfig();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
@@ -73,13 +72,13 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IInstanceCreator instanceCreator = new InstanceCreator();
 	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	IExceptionHandler exceptionHandler = new ExceptionHandler(methodInvoker);
-	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
 	@NonFinal
 	Consumer<CommandSender> onUnknownSubCommandExecutionListener;
 	@NonFinal
 	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
 	Consumer<CommandSender> onMainCommandExecutionListener;
+	JavaPlugin plugin;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
 
