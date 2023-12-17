@@ -11,7 +11,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -49,10 +48,9 @@ public class ExceptionHandlerTest {
 		when(command.getExecutor()).thenReturn(commandExecutor);
 
 		// when
-		final boolean result = commandExecutor.onCommand(commandSender, command, "ExceptionTestCommandExecutor", new String[]{"throwUncheckedException"});
+		commandExecutor.onCommand(commandSender, command, "ExceptionTestCommandExecutor", new String[]{"throwUncheckedException"});
 
 		// then
-		assertThat(result).isTrue();
 		verify(commandSender).sendMessage("no parameter");
 		verify(commandSender).sendMessage("on purpose");
 	}

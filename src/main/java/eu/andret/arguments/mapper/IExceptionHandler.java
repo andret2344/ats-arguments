@@ -15,6 +15,7 @@ import java.util.List;
  * @author Andret
  * @since Nov 30, 2022
  */
+@FunctionalInterface
 public interface IExceptionHandler extends IMapper {
 	/**
 	 * Invokes the passed method and if an exception occurs, tries to find a matching exception fallback method to call

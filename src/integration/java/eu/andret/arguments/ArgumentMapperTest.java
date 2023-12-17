@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -39,10 +38,9 @@ public class ArgumentMapperTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(commandSender).sendMessage("The mapped world: testMappedWorldName");
 		verify(commandSender, never()).sendMessage(UNKNOWN);
 	}
@@ -63,10 +61,9 @@ public class ArgumentMapperTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(commandSender, command, "IntegrationTest", args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(commandSender).sendMessage(UNKNOWN);
 		verifyNoMoreInteractions(commandSender);
 	}

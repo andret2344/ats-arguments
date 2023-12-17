@@ -14,12 +14,14 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since May 08, 2020
  */
+@FunctionalInterface
 public interface IDisplayTypeFilter {
 	/**
 	 * Maps the argument's display type.
 	 *
 	 * @param method The method where Annotation should be got from.
 	 * @param sender The sender who invoked the command.
+	 *
 	 * @return {@code true} if argument should be visible in held, {@code false} otherwise.
 	 */
 	boolean mapDisplayType(Method method, CommandSender sender);

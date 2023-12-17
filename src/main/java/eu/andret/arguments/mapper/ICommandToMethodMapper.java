@@ -18,12 +18,14 @@ import java.util.Optional;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param methods Methods annotated with {@link Argument}.
 	 * @param command The arguments array that followed up base command.
-	 * @param sender  The {@link CommandSender} of the command.
+	 * @param sender The {@link CommandSender} of the command.
 	 * @param options The command options.
+	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
 	Optional<Method> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender, AnnotatedCommand.Options options);

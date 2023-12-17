@@ -1,21 +1,15 @@
 #
 # Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 #
-image: gradle:7.6-jdk11
-
-cache:
-  paths:
-    - .gradle/wrapper
-    - .gradle/caches
+image: gradle:8.5-jdk17
 
 before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
   - chmod a+x gradlew
 
 stages:
   - build
   - verify
-  - deploy
+  - publish
 
 compile:
   stage: build
@@ -26,7 +20,7 @@ compile:
       - build/classes/**
       - build/libs/*.jar
 
-testng:
+tests:unit:
   stage: verify
   script:
     - ./gradlew test
@@ -35,18 +29,18 @@ testng:
     reports:
       junit: build/test-results/test/**.xml
 
-integration:
+tests:int:
   stage: verify
   script:
     - ./gradlew integrationTest
 
-checkstyle:
+lint:
   stage: verify
   script:
     - ./gradlew checkstyleMain
 
-publish:
-  stage: deploy
+deploy:
+  stage: publish
   script:
     - ./gradlew clean
     - ./gradlew publish
@@ -55,7 +49,7 @@ publish:
   when: manual
 
 pages:
-  stage: deploy
+  stage: publish
   script:
     - ./gradlew javadoc
   after_script:
