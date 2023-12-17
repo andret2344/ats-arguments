@@ -62,7 +62,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
 	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
-	MappingConfig mappingConfig;
+	MappingConfig mappingConfig = new MappingConfig();
 	ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
 	IMethodToDescriptionMapper methodToDescriptionMapper = new MethodToDescriptionMapper();
 	IPermissionFilter permissionFilter = new PermissionFilter();
@@ -81,6 +81,16 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	JavaPlugin plugin;
 	@Getter(AccessLevel.PACKAGE)
 	Object[] parameters;
+
+	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
+						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+						 @NotNull final E plugin,
+						 @NotNull final Object... parameters) {
+		this.annotatedCommand = annotatedCommand;
+		this.commandClass = commandClass;
+		this.plugin = plugin;
+		this.parameters = parameters;
+	}
 
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
