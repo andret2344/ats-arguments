@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.provider;
@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @BaseCommand("malformed")
 @EqualsAndHashCode(callSuper = true)
 public class FewArgumentsClass extends AnnotatedCommandExecutor<JavaPlugin> {
+	@SuppressWarnings("ConstructorParameters")
 	public FewArgumentsClass(final CommandSender sender) {
 		super(sender, null);
 	}

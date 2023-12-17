@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Andret
  * @since Sep 03, 2021
  */
+@FunctionalInterface
 public interface IInstanceCreator extends IMapper {
 	/**
 	 * @param sender The sender who executed the command.

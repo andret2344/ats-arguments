@@ -2,7 +2,7 @@
 
 ## License
 
-Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
 
 ## Dependency setup
 
@@ -25,10 +25,10 @@ repositories {
 ```xml
 
 <repositories>
-	<repository>
-		<url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
-	</repository>
-	<!-- other repositories -->
+    <repository>
+        <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
+    </repository>
+    <!-- other repositories -->
 </repositories>
 ```
 
@@ -48,12 +48,12 @@ dependencies {
 ```xml
 
 <dependencies>
-	<dependency>
-		<groupId>eu.andret</groupId>
-		<artifactId>ats-arguments</artifactId>
-		<version>0.1.3</version>
-	</dependency>
-	<!-- other dependencies -->
+    <dependency>
+        <groupId>eu.andret</groupId>
+        <artifactId>ats-arguments</artifactId>
+        <version>0.1.3</version>
+    </dependency>
+    <!-- other dependencies -->
 </dependencies>
 ```
 
@@ -81,30 +81,30 @@ build.dependsOn(shadowJar)
 ```xml
 
 <build>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-shade-plugin</artifactId>
-			<version>3.2.1</version>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-					<configuration>
-						<relocations>
-							<relocation>
-								<pattern>eu.andret.arguments</pattern>
-								<shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
-							</relocation>
-						</relocations>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-	</plugins>
-	<!-- ... -->
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <relocations>
+                            <relocation>
+                                <pattern>eu.andret.arguments</pattern>
+                                <shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
+                            </relocation>
+                        </relocations>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    <!-- ... -->
 </build>
 ```
 
@@ -120,7 +120,7 @@ constructor. This class also needs to be annotated with `@BaseCommand`.
 
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-	public TestCommand(CommandSender sender, TestPlugin plugin) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
 	}
 }
@@ -133,7 +133,7 @@ of this class:
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
+		final AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this);
 		// other initial setup logic
 	}
 }
@@ -149,7 +149,7 @@ Now, to use this library in proper way, simply write any non-static method in yo
 
 @BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
-	public TestCommand(CommandSender sender, TestPlugin plugin) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
 	}
 
@@ -168,7 +168,7 @@ It's also possible to pass additional arguments that will be used as AnnotatedCo
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
+		final AnnotatedCommand<TestPlugin> annotatedCommand = CommandManager.registerCommand(TestCommand.class, this, getServer().getWorld("world"));
 		// other initial setup logic
 	}
 }
@@ -177,7 +177,7 @@ public class TestPlugin extends JavaPlugin {
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	private final World world;
 
-	public TestCommand(CommandSender sender, TestPlugin plugin, World world) {
+	public TestCommand(final CommandSender sender, final TestPlugin plugin, final World world) {
 		super(sender, plugin);
 		this.world = world;
 	}
@@ -213,9 +213,12 @@ first, look at rules that apply:
   into method ones. In order to use other types, there is a possibility to configure mappers.
     - Type Mapper will instruct how to parse text into certain class independently
     - Argument Mapper will be used only with explicit `@Mapper` annotation.
-    - When using `@Mapper` and parsing failed, you can access the raw value using `@Fallback`
+    - When using `@Mapper` and parsing fails, you can access the raw value using `@Fallback`
       annotation.
 - Method cannot have an array parameter, but only a VarArg is possible, rules as the point above.
+- If any `@Argument` method throws an exception, it can be caught using `@ExceptionFallback` method.
+    - Multiple methods can catch the same exception, their execution order will be random.
+    - The method can accept the exception as an argument or can accept no arguments.
 - There can be multiple methods with the same name, api will treat missing arguments as obsolete.
 - Library automatically uses tab completion for method names.
     - You can configure more precise completers for methods parameters with `@Completer` annotation.
@@ -271,9 +274,15 @@ API provides a few quite useful annotations.
 
 - `@Completer` - Annotation that connects argument with configured argument completer.
 
-| setting | type     | values     | description                                          |
-|---------|----------|------------|------------------------------------------------------|
-| value   | `String` | any string | The completer id to find exact registered completer. |
+| setting | type     | values     | description                                              |
+|---------|----------|------------|----------------------------------------------------------|
+| value   | `String` | any string | The completer id to find the exact registered completer. |
+
+- `@ExceptionFallback` - Annotation that is able to catch thrown exception from `@Argument` method.
+
+| setting | type                           | values                                     | description              |
+|---------|--------------------------------|--------------------------------------------|--------------------------|
+| value   | `Class<? extends Throwable>[]` | Array of any exceptions that can be thrown | Exceptions to be caught. |
 
 - `@Ignore` - Annotation for ignoring completions from argument or type completer for a certain argument.
 

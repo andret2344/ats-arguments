@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -50,9 +50,7 @@ public class LocalTabCompleterTest {
 		final List<String> result = tabCompleter.onTabComplete(sender, command, "", new String[]{"testMethod"});
 
 		// then
-		assertThat(result).isNotNull()
-				.hasSize(38)
-				.containsExactlyElementsOf(providerMethodNames);
+		assertThat(result).containsExactlyElementsOf(providerMethodNames);
 	}
 
 	@Test

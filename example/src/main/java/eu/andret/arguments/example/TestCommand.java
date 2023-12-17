@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
@@ -10,6 +10,7 @@ import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
+import eu.andret.arguments.api.annotation.ExceptionFallback;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
@@ -26,7 +27,7 @@ import java.util.Objects;
 import java.util.OptionalDouble;
 
 @SuppressWarnings("CheckStyle")
-@BaseCommand(value = "test")
+@BaseCommand("test")
 public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 	public TestCommand(final CommandSender sender, final TestPlugin plugin) {
 		super(sender, plugin);
@@ -48,10 +49,6 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument
 	public String player(@Mapper("playerMapper") @Completer("playerCompleter") final Player player) {
-		if (player == null) {
-			// "/test player Andret2344", sender gets: "Who do you mean?"
-			return "Who do you mean?";
-		}
 		// "/test player Andret2344", sender gets: "Hello Andret2344, your UUID is: 9070bdef-2c40-4cc9-8309-3fed2c648844"
 		return "Hello " + player.getName() + ", your UUID is: " + player.getUniqueId();
 	}
@@ -158,12 +155,27 @@ public class TestCommand extends AnnotatedCommandExecutor<TestPlugin> {
 
 	@Argument(executorType = ExecutorType.PLAYER)
 	public Player getMe() {
-		return ((Player) sender);
+		return (Player) sender;
 	}
 
 	@ArgumentResponse("world")
 	@Argument(executorType = ExecutorType.PLAYER)
 	public World getMyWorld() {
 		return ((Player) sender).getWorld();
+	}
+
+	@Argument
+	public void throwException() {
+		throw new IllegalArgumentException("The custom throw");
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String exceptionFallback() {
+		return "an exception";
+	}
+
+	@ExceptionFallback(IllegalArgumentException.class)
+	public String exceptionFallback(final IllegalArgumentException exception) {
+		return exception.getMessage();
 	}
 }

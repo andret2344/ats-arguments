@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -16,6 +16,7 @@ import java.util.Collection;
  * @author Andret
  * @since Nov 07, 2020
  */
+@FunctionalInterface
 public interface IMethodToCompletionMapper extends IMapper {
 	/**
 	 * The method that maps method and typed arguments {@link Collection} of suggestions.

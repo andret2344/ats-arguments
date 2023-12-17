@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -18,6 +18,7 @@ import java.util.Optional;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface ICommandToMethodMapper extends IMapper {
 	/**
 	 * @param methods Methods annotated with {@link Argument}.

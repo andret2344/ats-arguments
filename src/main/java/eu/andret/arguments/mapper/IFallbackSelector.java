@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.mapper;
@@ -20,6 +20,7 @@ import java.util.List;
  * @author Andret
  * @since Sep 02, 2021
  */
+@FunctionalInterface
 public interface IFallbackSelector extends IMapper {
 	/**
 	 * Invokes fallback method on basis of annotation value.

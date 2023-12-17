@@ -1,412 +1,414 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+  ~ Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
   -->
 
 <!DOCTYPE module PUBLIC
-		"-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-		"https://checkstyle.org/dtds/configuration_1_3.dtd">
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <!-- http://checkstyle.sf.net -->
 
 <module name="Checker">
-	<module name="TreeWalker">
+    <module name="TreeWalker">
 
-		<!-- Annotations config -->
-		<!-- https://checkstyle.sourceforge.io/config_annotation.html -->
-		<module name="AnnotationLocation">
-			<property name="allowSamelineMultipleAnnotations" value="true"/>
-			<property name="allowSamelineSingleParameterlessAnnotation" value="true"/>
-			<property name="allowSamelineParameterizedAnnotation" value="true"/>
-		</module>
+        <!-- Annotations config -->
+        <!-- https://checkstyle.sourceforge.io/config_annotation.html -->
+        <module name="AnnotationLocation">
+            <property name="allowSamelineMultipleAnnotations" value="true"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="true"/>
+            <property name="allowSamelineParameterizedAnnotation" value="true"/>
+        </module>
 
-		<module name="AnnotationUseStyle"/>
+        <module name="AnnotationUseStyle"/>
 
-		<module name="MissingDeprecated"/>
+        <module name="MissingDeprecated"/>
 
-		<module name="MissingOverride"/>
+        <module name="MissingOverride"/>
 
-		<module name="SuppressWarningsHolder"/>
+        <module name="SuppressWarningsHolder"/>
 
-		<!-- End Annotation -->
+        <!-- End Annotation -->
 
-		<!-- Blocks checks -->
-		<!-- https://checkstyle.sourceforge.io/config_blocks.html -->
+        <!-- Blocks checks -->
+        <!-- https://checkstyle.sourceforge.io/config_blocks.html -->
 
-		<module name="AvoidNestedBlocks"/>
+        <module name="AvoidNestedBlocks"/>
 
-		<module name="EmptyBlock">
-			<property name="option" value="text"/>
-		</module>
+        <module name="EmptyBlock">
+            <property name="option" value="text"/>
+        </module>
 
-		<module name="EmptyCatchBlock">
-			<property name="exceptionVariableName" value="expected|ignore"/>
-		</module>
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignore"/>
+        </module>
 
-		<module name="LeftCurly">
-			<property name="ignoreEnums" value="false"/>
-		</module>
+        <module name="LeftCurly">
+            <property name="ignoreEnums" value="false"/>
+        </module>
 
-		<module name="NeedBraces"/>
+        <module name="NeedBraces"/>
 
-		<module name="RightCurly"/>
+        <module name="RightCurly"/>
 
-		<!-- End Blocks -->
+        <!-- End Blocks -->
 
-		<!-- Class Design checks -->
-		<!-- https://checkstyle.sourceforge.io/config_design.html -->
+        <!-- Class Design checks -->
+        <!-- https://checkstyle.sourceforge.io/config_design.html -->
 
-		<module name="FinalClass"/>
+        <module name="FinalClass"/>
 
-		<module name="HideUtilityClassConstructor"/>
+        <module name="HideUtilityClassConstructor"/>
 
-		<module name="InterfaceIsType"/>
+        <module name="InterfaceIsType"/>
 
-		<module name="MutableException"/>
+        <module name="MutableException"/>
 
-		<module name="OneTopLevelClass"/>
+        <module name="OneTopLevelClass"/>
 
-		<!-- End Class Design -->
+        <!-- End Class Design -->
 
-		<!-- Coding checks -->
-		<!-- https://checkstyle.sourceforge.io/config_coding.html -->
+        <!-- Coding checks -->
+        <!-- https://checkstyle.sourceforge.io/config_coding.html -->
 
-		<module name="AvoidDoubleBraceInitialization"/>
+        <module name="AvoidDoubleBraceInitialization"/>
 
-		<module name="AvoidNoArgumentSuperConstructorCall"/>
+        <module name="AvoidNoArgumentSuperConstructorCall"/>
 
-		<module name="CovariantEquals"/>
+        <module name="CovariantEquals"/>
 
-		<module name="DeclarationOrder"/>
+        <module name="DeclarationOrder"/>
 
-		<module name="DefaultComesLast">
-			<property name="skipIfLastAndSharedWithCase" value="true"/>
-		</module>
+        <module name="DefaultComesLast">
+            <property name="skipIfLastAndSharedWithCase" value="true"/>
+        </module>
 
-		<module name="EmptyStatement"/>
+        <module name="EmptyStatement"/>
 
-		<module name="EqualsAvoidNull"/>
+        <module name="EqualsAvoidNull"/>
 
-		<module name="EqualsHashCode"/>
+        <module name="EqualsHashCode"/>
 
-		<module name="HiddenField">
-			<property name="ignoreConstructorParameter" value="true"/>
-			<property name="ignoreSetter" value="true"/>
-			<property name="setterCanReturnItsClass" value="true"/>
-		</module>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+            <property name="setterCanReturnItsClass" value="true"/>
+        </module>
 
-		<module name="IllegalCatch"/>
+        <module name="IllegalCatch"/>
 
-		<module name="IllegalThrows"/>
+        <module name="IllegalThrows"/>
 
-		<module name="IllegalToken"/>
+        <module name="IllegalToken"/>
 
-		<module name="IllegalType"/>
+        <module name="IllegalType"/>
 
-		<module name="MagicNumber">
-			<property name="ignoreHashCodeMethod" value="true"/>
-			<property name="ignoreAnnotation" value="true"/>
-			<property name="ignoreFieldDeclaration" value="true"/>
-		</module>
+        <module name="MagicNumber">
+            <property name="ignoreHashCodeMethod" value="true"/>
+            <property name="ignoreAnnotation" value="true"/>
+            <property name="ignoreFieldDeclaration" value="true"/>
+        </module>
 
-		<module name="MissingSwitchDefault"/>
+        <module name="MissingSwitchDefault"/>
 
-		<module name="MultipleVariableDeclarations"/>
+        <module name="MultipleVariableDeclarations"/>
 
-		<module name="NestedTryDepth"/>
+        <module name="NestedTryDepth"/>
 
-		<module name="NoArrayTrailingComma"/>
+        <module name="NoArrayTrailingComma"/>
 
-		<module name="NoEnumTrailingComma"/>
+        <module name="NoEnumTrailingComma"/>
 
-		<module name="NoFinalizer"/>
+        <module name="NoFinalizer"/>
 
-		<module name="OneStatementPerLine">
-			<property name="treatTryResourcesAsStatement" value="true"/>
-		</module>
+        <module name="OneStatementPerLine">
+            <property name="treatTryResourcesAsStatement" value="true"/>
+        </module>
 
-		<module name="PackageDeclaration"/>
+        <module name="PackageDeclaration"/>
 
-		<module name="ParameterAssignment"/>
+        <module name="ParameterAssignment"/>
 
-		<module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanExpression"/>
 
-		<module name="SimplifyBooleanReturn"/>
+        <module name="SimplifyBooleanReturn"/>
 
-		<module name="StringLiteralEquality"/>
+        <module name="StringLiteralEquality"/>
 
-		<module name="UnnecessaryParentheses"/>
+        <module name="UnnecessaryParentheses"/>
 
-		<module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
+        <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
 
-		<module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
+        <module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
 
-		<module name="UnnecessarySemicolonInEnumeration"/>
+        <module name="UnnecessarySemicolonInEnumeration"/>
 
-		<module name="UnnecessarySemicolonInTryWithResources"/>
+        <module name="UnnecessarySemicolonInTryWithResources"/>
 
-		<!-- End Coding -->
+        <!-- End Coding -->
 
-		<!-- Header checks -->
-		<!-- https://checkstyle.sourceforge.io/config_header.html -->
+        <!-- Header checks -->
+        <!-- https://checkstyle.sourceforge.io/config_header.html -->
 
-		<!-- End Header -->
+        <!-- End Header -->
 
-		<!-- Imports checks -->
-		<!-- https://checkstyle.sourceforge.io/config_imports.html-->
+        <!-- Imports checks -->
+        <!-- https://checkstyle.sourceforge.io/config_imports.html-->
 
-		<module name="AvoidStarImport"/>
+        <module name="AvoidStarImport"/>
 
-		<module name="RedundantImport"/>
+        <module name="RedundantImport"/>
 
-		<module name="UnusedImports"/>
+        <module name="UnusedImports"/>
 
-		<!-- End Imports -->
+        <!-- End Imports -->
 
-		<!-- Javadoc Comments checks -->
-		<!-- https://checkstyle.sourceforge.io/config_javadoc.html -->
+        <!-- Javadoc Comments checks -->
+        <!-- https://checkstyle.sourceforge.io/config_javadoc.html -->
 
-		<module name="AtclauseOrder">
-			<property
-					name="tagOrder"
-					value="@deprecated, @exception, @param, @author, @return, @see, @serial, @serialData, @serialField, @since, @throws, @version"
-			/>
-		</module>
+        <module name="AtclauseOrder">
+            <property
+                    name="tagOrder"
+                    value="@deprecated, @exception, @param, @author, @return, @see, @serial, @serialData, @serialField, @since, @throws, @version"
+            />
+        </module>
 
-		<module name="InvalidJavadocPosition"/>
+        <module name="InvalidJavadocPosition"/>
 
-		<module name="JavadocBlockTagLocation"/>
+        <module name="JavadocBlockTagLocation"/>
 
-		<module name="JavadocContentLocationCheck"/>
+        <module name="JavadocContentLocationCheck"/>
 
-		<module name="JavadocMethod">
-			<property name="allowedAnnotations" value="Test, ParametrizedTest, "/>
-			<property name="accessModifiers" value="public, protected"/>
-			<property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
-		</module>
+        <module name="JavadocMethod">
+            <property name="allowedAnnotations" value="Test, ParametrizedTest, "/>
+            <property name="accessModifiers" value="public, protected"/>
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
+        </module>
 
-		<module name="JavadocMissingWhitespaceAfterAsterisk"/>
+        <module name="JavadocMissingWhitespaceAfterAsterisk"/>
 
-		<module name="JavadocParagraph"/>
+        <module name="JavadocParagraph"/>
 
-		<module name="JavadocStyle">
-			<property name="scope" value="public"/>
-		</module>
+        <module name="JavadocStyle">
+            <property name="scope" value="public"/>
+        </module>
 
-		<module name="MissingJavadocMethod">
-			<property name="allowedAnnotations" value="Override, Deprecated"/>
-		</module>
+        <module name="MissingJavadocMethod">
+            <property name="allowedAnnotations" value="Override, Deprecated"/>
+        </module>
 
-		<module name="MissingJavadocType">
-			<property name="skipAnnotations" value="Override. Generated"/>
-		</module>
+        <module name="MissingJavadocType">
+            <property name="skipAnnotations" value="Override. Generated"/>
+        </module>
 
-		<!--<module name="RequireEmptyLineBeforeBlockTagGroup"/>-->
+        <!--<module name="RequireEmptyLineBeforeBlockTagGroup"/>-->
 
-		<!-- End Javadoc Comments -->
+        <!-- End Javadoc Comments -->
 
-		<!-- Metrics checks -->
-		<!-- https://checkstyle.sourceforge.io/config_metrics.html -->
+        <!-- Metrics checks -->
+        <!-- https://checkstyle.sourceforge.io/config_metrics.html -->
 
-		<!-- End Metrics -->
+        <!-- End Metrics -->
 
-		<!-- Miscellaneous checks -->
-		<!-- https://checkstyle.sourceforge.io/config_misc.html -->
+        <!-- Miscellaneous checks -->
+        <!-- https://checkstyle.sourceforge.io/config_misc.html -->
 
-		<module name="ArrayTypeStyle"/>
+        <module name="ArrayTypeStyle"/>
 
-		<module name="CommentsIndentation"/>
+        <module name="CommentsIndentation"/>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="LITERAL_SWITCH"/>
-			<property name="maximumDepth" value="2"/>
-			<property name="limitedTokens" value="LITERAL_DEFAULT"/>
-			<property name="minimumNumber" value="1"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="LITERAL_SWITCH"/>
+            <property name="maximumDepth" value="2"/>
+            <property name="limitedTokens" value="LITERAL_DEFAULT"/>
+            <property name="minimumNumber" value="1"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="FOR_CONDITION"/>
-			<property name="limitedTokens" value="EXPR"/>
-			<property name="minimumNumber" value="1"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="FOR_CONDITION"/>
+            <property name="limitedTokens" value="EXPR"/>
+            <property name="minimumNumber" value="1"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="EQUAL,NOT_EQUAL"/>
-			<property name="limitedTokens" value="LITERAL_THIS,LITERAL_NULL"/>
-			<property name="maximumNumber" value="1"/>
-			<property name="maximumDepth" value="1"/>
-			<property name="sumTokenCounts" value="true"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="EQUAL,NOT_EQUAL"/>
+            <property name="limitedTokens" value="LITERAL_THIS,LITERAL_NULL"/>
+            <property name="maximumNumber" value="1"/>
+            <property name="maximumDepth" value="1"/>
+            <property name="sumTokenCounts" value="true"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="EQUAL,NOT_EQUAL"/>
-			<property name="limitedTokens" value="STRING_LITERAL"/>
-			<property name="maximumNumber" value="0"/>
-			<property name="maximumDepth" value="1"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="EQUAL,NOT_EQUAL"/>
+            <property name="limitedTokens" value="STRING_LITERAL"/>
+            <property name="maximumNumber" value="0"/>
+            <property name="maximumDepth" value="1"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="LITERAL_ASSERT"/>
-			<property name="limitedTokens"
-					  value="ASSIGN,DEC,INC,POST_DEC, POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN, BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN, METHOD_CALL"/>
-			<property name="maximumNumber" value="0"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="LITERAL_ASSERT"/>
+            <property name="limitedTokens"
+                      value="ASSIGN,DEC,INC,POST_DEC, POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN, BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN, METHOD_CALL"/>
+            <property name="maximumNumber" value="0"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="LITERAL_SWITCH"/>
-			<property name="limitedTokens" value="LITERAL_SWITCH"/>
-			<property name="maximumNumber" value="0"/>
-			<property name="minimumDepth" value="1"/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="LITERAL_SWITCH"/>
+            <property name="limitedTokens" value="LITERAL_SWITCH"/>
+            <property name="maximumNumber" value="0"/>
+            <property name="minimumDepth" value="1"/>
+        </module>
 
-		<module name="DescendantToken">
-			<property name="tokens" value="EMPTY_STAT"/>
-			<property name="limitedTokens" value="EMPTY_STAT"/>
-			<property name="maximumNumber" value="0"/>
-			<property name="maximumDepth" value="0"/>
-			<property name="maximumMessage" value="Empty statement is not allowed."/>
-		</module>
+        <module name="DescendantToken">
+            <property name="tokens" value="EMPTY_STAT"/>
+            <property name="limitedTokens" value="EMPTY_STAT"/>
+            <property name="maximumNumber" value="0"/>
+            <property name="maximumDepth" value="0"/>
+            <property name="maximumMessage" value="Empty statement is not allowed."/>
+        </module>
 
-		<module name="NoCodeInFile"/>
+        <module name="NoCodeInFile"/>
 
-		<module name="OuterTypeFilename"/>
+        <module name="OuterTypeFilename"/>
 
-		<module name="UpperEll"/>
+        <module name="UpperEll"/>
 
-		<!-- End Miscellaneous -->
+        <!-- End Miscellaneous -->
 
-		<!-- Modifiers checks -->
-		<!-- https://checkstyle.sourceforge.io/config_modifier.html -->
+        <!-- Modifiers checks -->
+        <!-- https://checkstyle.sourceforge.io/config_modifier.html -->
 
-		<module name="ModifierOrder"/>
+        <module name="ModifierOrder"/>
 
-		<module name="RedundantModifier"/>
+        <module name="RedundantModifier"/>
 
-		<!-- End Modifiers -->
+        <!-- End Modifiers -->
 
-		<!-- Naming Conventions checks -->
-		<!-- https://checkstyle.sourceforge.io/config_naming.html -->
+        <!-- Naming Conventions checks -->
+        <!-- https://checkstyle.sourceforge.io/config_naming.html -->
 
-		<module name="AbstractClassName">
-			<property name="ignoreName" value="true"/>
-		</module>
+        <module name="AbstractClassName">
+            <property name="ignoreName" value="true"/>
+        </module>
 
-		<module name="ClassTypeParameterName">
-			<property name="format" value="^[A-Z]{1,3}$"/>
-		</module>
+        <module name="ClassTypeParameterName">
+            <property name="format" value="^[A-Z]{1,3}$"/>
+        </module>
 
-		<module name="ConstantName"/>
+        <module name="ConstantName"/>
 
-		<module name="IllegalIdentifierName"/>
+        <module name="IllegalIdentifierName"/>
 
-		<module name="InterfaceTypeParameterName">
-			<property name="format" value="^[A-Z]{1,3}$"/>
-		</module>
+        <module name="InterfaceTypeParameterName">
+            <property name="format" value="^[A-Z]{1,3}$"/>
+        </module>
 
-		<module name="LambdaParameterName"/>
+        <module name="LambdaParameterName"/>
 
-		<module name="LocalFinalVariableName"/>
+        <module name="LocalFinalVariableName"/>
 
-		<module name="LocalVariableName"/>
+        <module name="LocalVariableName"/>
 
-		<module name="MemberName"/>
+        <module name="MemberName"/>
 
-		<module name="MethodName"/>
+        <module name="MethodName"/>
 
-		<module name="MethodTypeParameterName">
-			<property name="format" value="^[A-Z]{1,3}$"/>
-		</module>
+        <module name="MethodTypeParameterName">
+            <property name="format" value="^[A-Z]{1,3}$"/>
+        </module>
 
-		<module name="PackageName">
-			<property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
-		</module>
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+        </module>
 
-		<module name="ParameterName"/>
+        <module name="ParameterName"/>
 
-		<module name="StaticVariableName"/>
+        <module name="StaticVariableName"/>
 
-		<module name="TypeName"/>
+        <module name="TypeName"/>
 
-		<!-- End Naming Conventions -->
+        <!-- End Naming Conventions -->
 
-		<!-- Regexp checks -->
-		<!-- https://checkstyle.sourceforge.io/config_regexp.html -->
+        <!-- Regexp checks -->
+        <!-- https://checkstyle.sourceforge.io/config_regexp.html -->
 
-		<!-- End Regexp -->
+        <!-- End Regexp -->
 
-		<!-- Size Violations checks -->
-		<!-- https://checkstyle.sourceforge.io/config_sizes.html -->
-		<module name="AnonInnerLength">
-			<property name="max" value="100"/>
-		</module>
+        <!-- Size Violations checks -->
+        <!-- https://checkstyle.sourceforge.io/config_sizes.html -->
+        <module name="AnonInnerLength">
+            <property name="max" value="100"/>
+        </module>
 
-		<module name="LambdaBodyLength">
-			<property name="max" value="20"/>
-		</module>
+        <module name="LambdaBodyLength">
+            <property name="max" value="20"/>
+        </module>
 
-		<module name="MethodLength">
-			<property name="max" value="30"/>
-		</module>
+        <module name="MethodLength">
+            <property name="max" value="30"/>
+        </module>
 
-		<module name="OuterTypeNumber"/>
+        <module name="OuterTypeNumber"/>
 
-		<module name="ParameterNumber">
-			<property name="max" value="10"/>
-			<property name="ignoreOverriddenMethods" value="true"/>
-		</module>
+        <module name="ParameterNumber">
+            <property name="max" value="10"/>
+            <property name="ignoreOverriddenMethods" value="true"/>
+        </module>
 
-		<!-- End Size Violations -->
+        <!-- End Size Violations -->
 
-		<!-- Checks for whitespace                               -->
-		<!-- See http://checkstyle.sf.net/config_whitespace.html -->
-		<module name="EmptyForInitializerPad"/>
+        <!-- Checks for whitespace                               -->
+        <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <module name="EmptyForInitializerPad"/>
 
-		<module name="EmptyForIteratorPad"/>
+        <module name="EmptyForIteratorPad"/>
 
-		<module name="EmptyLineSeparator">
-			<property name="allowMultipleEmptyLines" value="false"/>
-			<property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
-			<property name="allowNoEmptyLineBetweenFields" value="true"/>
-		</module>
+        <module name="EmptyLineSeparator">
+            <property name="allowMultipleEmptyLines" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+        </module>
 
-		<module name="GenericWhitespace"/>
+        <module name="GenericWhitespace"/>
 
-		<module name="NoWhitespaceAfter">
-			<property name="tokens" value="UNARY_MINUS, UNARY_PLUS, INC, DEC"/>
-			<property name="allowLineBreaks" value="false"/>
-		</module>
+        <module name="NoWhitespaceAfter">
+            <property name="tokens" value="UNARY_MINUS, UNARY_PLUS, INC, DEC"/>
+            <property name="allowLineBreaks" value="false"/>
+        </module>
 
-		<module name="NoWhitespaceBefore">
-			<property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, DOT, METHOD_REF"/>
-			<property name="allowLineBreaks" value="true"/>
-		</module>
+        <module name="NoWhitespaceBefore">
+            <property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, DOT, METHOD_REF"/>
+            <property name="allowLineBreaks" value="true"/>
+        </module>
 
-		<module name="SeparatorWrap">
-			<property name="tokens" value="DOT"/>
-			<property name="option" value="nl"/>
-		</module>
+        <module name="SeparatorWrap">
+            <property name="tokens" value="DOT"/>
+            <property name="option" value="nl"/>
+        </module>
 
-		<module name="SingleSpaceSeparator">
-			<property name="validateComments" value="true"/>
-		</module>
+        <module name="SingleSpaceSeparator">
+            <property name="validateComments" value="true"/>
+        </module>
 
-		<module name="TypecastParenPad"/>
+        <module name="TypecastParenPad"/>
 
-		<module name="WhitespaceAfter"/>
+        <module name="WhitespaceAfter"/>
 
-		<module name="WhitespaceAround">
-			<property name="allowEmptyTypes" value="true"/>
-			<property name="ignoreEnhancedForColon" value="false"/>
-		</module>
+        <module name="WhitespaceAround">
+            <property name="allowEmptyTypes" value="true"/>
+            <property name="ignoreEnhancedForColon" value="false"/>
+        </module>
 
-		<module name="SuppressionXpathSingleFilter">
-			<property name="checks" value="MutableException"/>
-			<property name="query" value="//*[MODIFIERS//*[@text = 'Value']]/descendant-or-self::node()"/>
-		</module>
-	</module>
+        <module name="SuppressionXpathSingleFilter">
+            <property name="checks" value="MutableException"/>
+            <property name="query" value="//*[MODIFIERS//*[@text = 'Value']]/descendant-or-self::node()"/>
+        </module>
+    </module>
 
-	<module name="NewlineAtEndOfFile"/>
+    <module name="NewlineAtEndOfFile"/>
 
-	<module name="FileLength">
-		<property name="max" value="500"/>
-	</module>
+    <module name="FileLength">
+        <property name="max" value="500"/>
+    </module>
+
+    <module name="SuppressWarningsFilter"/>
 </module>

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.entity;
@@ -13,7 +13,6 @@ import java.util.function.Function;
  * compilation.
  *
  * @param <T> The returned from function type;
- *
  * @author Andret
  * @since Nov 25, 2020
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.entity;
@@ -173,7 +173,6 @@ public class MappingConfig {
 	 * Gets the argument mapper.
 	 *
 	 * @param key The identification.
-	 *
 	 * @return The found mapping set if found, {@code null} otherwise.
 	 */
 	@Nullable
@@ -185,7 +184,6 @@ public class MappingConfig {
 	 * Gets the type mapper.
 	 *
 	 * @param clazz The identifying class.
-	 *
 	 * @return The found mapping set if found, {@code null} otherwise.
 	 */
 	@Nullable
@@ -197,7 +195,6 @@ public class MappingConfig {
 	 * Gets the argument response mapper.
 	 *
 	 * @param id The identifier.
-	 *
 	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	@Nullable
@@ -209,7 +206,6 @@ public class MappingConfig {
 	 * Gets the type response mapper.
 	 *
 	 * @param clazz The identifying class.
-	 *
 	 * @return The mapper if found, {@code null} otherwise.
 	 */
 	@Nullable

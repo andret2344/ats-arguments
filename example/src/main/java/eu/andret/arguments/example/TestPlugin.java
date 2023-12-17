@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments.example;
@@ -14,21 +14,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("CheckStyle")
 public class TestPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		final AnnotatedCommand<TestPlugin> testCommand = CommandManager.registerCommand(TestCommand.class, this);
+		testCommand.getOptions().setAutoTranslateColors(true);
 		testCommand.setOnInsufficientPermissionsListener(sender -> sender.sendMessage("You don't have permissions"));
-		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("I don't know what you want from me"));
+		testCommand.setOnUnknownSubCommandExecutionListener(sender -> sender.sendMessage("&cI don't know what you want from me"));
 		testCommand.getMappingConfig().addTypeMapper(World.class, Bukkit::getWorld);
 		testCommand.getCompletingConfig().addTypeCompleter(World.class, strings -> Bukkit.getWorlds()
 				.stream()
 				.map(World::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
-				.collect(Collectors.toList()));
+				.toList());
 		testCommand.getMappingConfig().addEnumMapper(SomeEnum.class);
 		testCommand.getCompletingConfig().addEnumCompleter(SomeEnum.class);
 		testCommand.getMappingConfig().addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
@@ -37,8 +37,7 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(HumanEntity::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
-				.collect(Collectors.toList()));
-		testCommand.getOptions().setAutoTranslateColors(true);
+				.toList());
 		testCommand.setOnMainCommandExecutionListener(sender -> sender.sendMessage("Poseidon bless you!"));
 		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender());
 		if (executor != null) {

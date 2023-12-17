@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -17,7 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * CommandManager#registerCommand(Class, JavaPlugin, Object...)}
  *
  * @param <T> The {@link JavaPlugin} that will be administrating commands.
- *
  * @author Andret
  * @since May 18, 2019
  */

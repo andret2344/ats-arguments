@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2022. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -59,9 +59,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 
 	/**
 	 * @param sender The sender that is assigned to the desired CommandExecutor.
-	 *
 	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
-	 * 		command.
+	 * command.
 	 */
 	@Nullable
 	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {

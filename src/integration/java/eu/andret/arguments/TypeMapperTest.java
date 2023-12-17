@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -12,14 +12,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class TypeMapperTest {
+	private static final String UNKNOWN = "unknown";
+	public static final String INTEGRATION_TEST = "IntegrationTest";
+
 	@Test
 	void customTypeMapperCorrectCall() {
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -34,15 +36,14 @@ public class TypeMapperTest {
 		annotatedCommand.addTypeMapper(World.class, ignored -> world);
 		final String[] args = {"testWithWorld", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("The world: testWorldName");
-		verify(sender, times(0)).sendMessage("unknown");
+		verify(sender).sendMessage("The world: testWorldName");
+		verify(sender, never()).sendMessage(UNKNOWN);
 	}
 
 	@Test
@@ -58,14 +59,13 @@ public class TypeMapperTest {
 
 		final String[] args = {"testWithPlayer", "test"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("unknown");
+		verify(sender).sendMessage(UNKNOWN);
 		verifyNoMoreInteractions(sender);
 	}
 
@@ -82,14 +82,13 @@ public class TypeMapperTest {
 
 		final String[] args = {"testWithInt", "1"};
 
-		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage("unknown"));
+		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
-		verify(sender, times(1)).sendMessage("An int: 1");
-		verify(sender, times(0)).sendMessage("unknown");
+		verify(sender).sendMessage("An int: 1");
+		verify(sender, never()).sendMessage(UNKNOWN);
 	}
 }

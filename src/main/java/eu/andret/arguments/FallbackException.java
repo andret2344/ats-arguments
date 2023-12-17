@@ -1,5 +1,5 @@
 /*
- * Copyright Andret (c) 2018-2021. Copying and modifying allowed only keeping git link reference.
+ * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
  */
 
 package eu.andret.arguments;
@@ -26,10 +26,10 @@ public class FallbackException extends RuntimeException {
 	/**
 	 * Constructor for the exception.
 	 *
-	 * @param message The exception message.
-	 * @param mapper The {@link Mapper} that couldn't produce value.
+	 * @param message     The exception message.
+	 * @param mapper      The {@link Mapper} that couldn't produce value.
 	 * @param targetClass The target class.
-	 * @param value The implicit string.
+	 * @param value       The implicit string.
 	 */
 	public FallbackException(@Nullable final String message, @Nullable final Mapper mapper,
 							 @NotNull final Class<?> targetClass, @NotNull final String value) {
