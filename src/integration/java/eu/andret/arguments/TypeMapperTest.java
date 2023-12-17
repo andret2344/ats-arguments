@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -21,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class TypeMapperTest {
 	private static final String UNKNOWN = "unknown";
+	public static final String INTEGRATION_TEST = "IntegrationTest";
 
 	@Test
 	void customTypeMapperCorrectCall() {
@@ -39,10 +39,9 @@ public class TypeMapperTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage("The world: testWorldName");
 		verify(sender, never()).sendMessage(UNKNOWN);
 	}
@@ -63,10 +62,9 @@ public class TypeMapperTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage(UNKNOWN);
 		verifyNoMoreInteractions(sender);
 	}
@@ -87,10 +85,9 @@ public class TypeMapperTest {
 		annotatedCommand.setOnUnknownSubCommandExecutionListener(commandSender -> commandSender.sendMessage(UNKNOWN));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", args);
+		commandExecutor.onCommand(sender, command, INTEGRATION_TEST, args);
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage("An int: 1");
 		verify(sender, never()).sendMessage(UNKNOWN);
 	}

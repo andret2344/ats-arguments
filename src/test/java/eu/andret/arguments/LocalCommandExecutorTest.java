@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class LocalCommandExecutorTest {
+	@FunctionalInterface
 	private interface CommandSenderConsumer extends Consumer<CommandSender> {
 	}
 

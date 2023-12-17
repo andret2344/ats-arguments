@@ -25,10 +25,10 @@ repositories {
 ```xml
 
 <repositories>
-	<repository>
-		<url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
-	</repository>
-	<!-- other repositories -->
+    <repository>
+        <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
+    </repository>
+    <!-- other repositories -->
 </repositories>
 ```
 
@@ -48,12 +48,12 @@ dependencies {
 ```xml
 
 <dependencies>
-	<dependency>
-		<groupId>eu.andret</groupId>
-		<artifactId>ats-arguments</artifactId>
-		<version>0.1.3</version>
-	</dependency>
-	<!-- other dependencies -->
+    <dependency>
+        <groupId>eu.andret</groupId>
+        <artifactId>ats-arguments</artifactId>
+        <version>0.1.3</version>
+    </dependency>
+    <!-- other dependencies -->
 </dependencies>
 ```
 
@@ -81,30 +81,30 @@ build.dependsOn(shadowJar)
 ```xml
 
 <build>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-shade-plugin</artifactId>
-			<version>3.2.1</version>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-					<configuration>
-						<relocations>
-							<relocation>
-								<pattern>eu.andret.arguments</pattern>
-								<shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
-							</relocation>
-						</relocations>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-	</plugins>
-	<!-- ... -->
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <relocations>
+                            <relocation>
+                                <pattern>eu.andret.arguments</pattern>
+                                <shadedPattern>eu.andret.YOUR_PLUGIN_NAME.arguments</shadedPattern>
+                            </relocation>
+                        </relocations>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    <!-- ... -->
 </build>
 ```
 

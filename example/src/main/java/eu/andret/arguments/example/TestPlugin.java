@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("CheckStyle")
 public class TestPlugin extends JavaPlugin {
@@ -29,7 +28,7 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(World::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
-				.collect(Collectors.toList()));
+				.toList());
 		testCommand.addEnumMapper(SomeEnum.class);
 		testCommand.addEnumCompleter(SomeEnum.class);
 		testCommand.addArgumentMapper("playerMapper", Player.class, Bukkit::getPlayer);
@@ -38,7 +37,7 @@ public class TestPlugin extends JavaPlugin {
 				.stream()
 				.map(HumanEntity::getName)
 				.filter(name -> name.contains(strings.get(strings.size() - 1)))
-				.collect(Collectors.toList()));
+				.toList());
 		testCommand.getOptions().setAutoTranslateColors(true);
 		final TestCommand executor = (TestCommand) testCommand.getCommandExecutor(getServer().getConsoleSender(), TestCommand.class);
 		if (executor != null) {

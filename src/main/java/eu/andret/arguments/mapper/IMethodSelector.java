@@ -16,13 +16,16 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface IMethodSelector extends IMapper {
 	/**
 	 * Invokes one of methods inside method and correctly puts all arguments.
 	 *
 	 * @param method The {@link Method} containing method to be called.
-	 * @param args   The real command arguments array.
+	 * @param args The real command arguments array.
+	 *
 	 * @return The result contains created objects from Strings.
+	 *
 	 * @throws FallbackException if fallback condition matches.
 	 */
 	@NotNull

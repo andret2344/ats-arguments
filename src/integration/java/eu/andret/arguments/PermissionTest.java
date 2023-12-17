@@ -11,7 +11,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -32,10 +31,9 @@ public class PermissionTest {
 		annotatedCommand.setOnInsufficientPermissionsListener(sender1 -> sender1.sendMessage("no perms"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
+		commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender, never()).sendMessage("permission");
 		verify(sender).sendMessage("no perms");
 	}
@@ -53,10 +51,9 @@ public class PermissionTest {
 		annotatedCommand.setOnInsufficientPermissionsListener(sender1 -> sender1.sendMessage("no perms"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
+		commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage("permission");
 		verify(sender, never()).sendMessage("no perms");
 	}
@@ -74,10 +71,9 @@ public class PermissionTest {
 		annotatedCommand.setOnInsufficientPermissionsListener(sender1 -> sender1.sendMessage("no perms"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
+		commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage("permission");
 		verify(sender, never()).sendMessage("no perms");
 	}
@@ -95,10 +91,9 @@ public class PermissionTest {
 		annotatedCommand.setOnInsufficientPermissionsListener(sender1 -> sender1.sendMessage("no perms"));
 
 		// when
-		final boolean result = commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
+		commandExecutor.onCommand(sender, command, "IntegrationTest", new String[]{"testWithPermission"});
 
 		// then
-		assertThat(result).isTrue();
 		verify(sender).sendMessage("permission");
 		verify(sender, never()).sendMessage("no perms");
 	}

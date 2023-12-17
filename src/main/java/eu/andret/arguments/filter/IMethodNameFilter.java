@@ -15,13 +15,15 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface IMethodNameFilter extends IMapper {
 	/**
 	 * The method that maps method to right command argument.
 	 *
-	 * @param method  The {@link Method} that will be mapped.
+	 * @param method The {@link Method} that will be mapped.
 	 * @param name The argument to check..
 	 * @param options The command options.
+	 *
 	 * @return {@code true} if method's name matches argument at correct position, {@code false} otherwise.
 	 */
 	boolean filterMethodName(Method method, String name, AnnotatedCommand.Options options);

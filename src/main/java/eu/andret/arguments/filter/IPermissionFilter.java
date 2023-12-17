@@ -15,12 +15,14 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface IPermissionFilter extends IMapper {
 	/**
 	 * Maps the argument permissions.
 	 *
 	 * @param method The {@link Method} to be analyzed.
 	 * @param sender The {@link CommandSender} who performed the command.
+	 *
 	 * @return {@code true} if sender has permission to execute the command or is op, {@code false} otherwise.
 	 */
 	boolean filterPermission(Method method, CommandSender sender);

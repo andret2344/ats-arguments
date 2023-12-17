@@ -16,12 +16,14 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
+@FunctionalInterface
 public interface IExecutorTypeFilter extends IMapper {
 	/**
 	 * @param method The method that will be analyzed.
 	 * @param sender The real command sender who performed command.
+	 *
 	 * @return {@code true} if command executor matches with the one provided in {@link Argument#executorType()}, {@code
-	 * false} otherwise.
+	 * 		false} otherwise.
 	 */
 	boolean filterExecutorType(Method method, CommandSender sender);
 }
