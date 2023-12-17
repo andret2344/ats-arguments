@@ -61,12 +61,12 @@ public class CommandToMethodMappingSetTest {
 		final Method method = executor.getDeclaredMethod("testMethod");
 		final CommandSender sender = mock(CommandSender.class);
 		final AnnotatedCommand.Options options = new AnnotatedCommand.Options();
-		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String[].class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
+		lenient().when(methodNameMapper.filterMethodName(eq(method), any(String.class), any(AnnotatedCommand.Options.class))).thenReturn(methodNameMapperResult);
 		lenient().when(executorTypeMapper.filterExecutorType(eq(method), any(CommandSender.class))).thenReturn(executorTypeMapperResult);
 		lenient().when(argumentsMapper.filterArguments(eq(method), any(String[].class))).thenReturn(argumentsMapperResult);
 
 		// when
-		final Optional<Method> result = mapper.mapCommandToMethod(new Method[]{method}, new String[]{}, sender, options);
+		final Optional<Method> result = mapper.mapCommandToMethod(null, new String[]{}, sender, options);
 
 		// then
 		if (methodNameMapperResult && executorTypeMapperResult && argumentsMapperResult) {

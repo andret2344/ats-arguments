@@ -480,11 +480,11 @@ public class AnnotatedCommandTest {
 		final PluginCommand command = mock(PluginCommand.class);
 		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
 		when(command.getExecutor()).thenReturn(executor);
-		when(executor.getCommandExecutor(sender)).thenReturn(testMethodsProvider);
+		when(executor.getCommandExecutor(sender, TestMethodsProvider.class)).thenReturn(testMethodsProvider);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 
 		// when
-		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = annotatedCommand.getCommandExecutor(sender);
+		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = annotatedCommand.getCommandExecutor(sender, TestMethodsProvider.class);
 
 		// then
 		assertThat(commandExecutor).isSameAs(testMethodsProvider);

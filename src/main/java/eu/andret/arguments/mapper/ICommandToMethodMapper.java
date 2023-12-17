@@ -5,9 +5,11 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommand;
+import eu.andret.arguments.CommandTree;
 import eu.andret.arguments.IMapper;
-import eu.andret.arguments.api.annotation.Argument;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -21,12 +23,15 @@ import java.util.Optional;
 @FunctionalInterface
 public interface ICommandToMethodMapper extends IMapper {
 	/**
-	 * @param methods Methods annotated with {@link Argument}.
+	 * @param commandTree The {@link CommandTree} instance.
 	 * @param command The arguments array that followed up base command.
 	 * @param sender The {@link CommandSender} of the command.
 	 * @param options The command options.
 	 *
 	 * @return The Optional wrapping matching method that will be called, or {@link Optional#empty()} if none found.
 	 */
-	Optional<Method> mapCommandToMethod(Method[] methods, String[] command, CommandSender sender, AnnotatedCommand.Options options);
+	Optional<Method> mapCommandToMethod(@NotNull CommandTree<? extends JavaPlugin> commandTree,
+										@NotNull String[] command,
+										@NotNull CommandSender sender,
+										@NotNull AnnotatedCommand.Options options);
 }

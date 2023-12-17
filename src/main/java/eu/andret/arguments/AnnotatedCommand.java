@@ -5,15 +5,16 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.annotation.SubCommand;
 import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Value;
-import lombok.experimental.NonFinal;
+import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,14 +38,13 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Jun 02, 2019
  */
-@Value
-@NonFinal
 @AllArgsConstructor
 public class AnnotatedCommand<E extends JavaPlugin> {
 	@NotNull
-	PluginCommand command;
+	private final PluginCommand command;
+	@Getter
 	@NotNull
-	Options options;
+	private final Options options;
 
 	/**
 	 * Single argument constructor.
@@ -81,8 +81,9 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * command.
 	 */
 	@Nullable
-	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return getLocalCommandExecutor().getCommandExecutor(sender);
+	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender,
+														  @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return getLocalCommandExecutor().getCommandExecutor(sender, clazz);
 	}
 
 	/**
@@ -154,8 +155,10 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @param <T>               The argument type that can be usd as the @{@link Argument} method's parameter
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public <T> void addArgumentMapper(@NotNull final String id, @NotNull final Class<T> clazz,
-									  @NotNull final Function<String, T> mapper, @NotNull final Predicate<Object> fallbackCondition) {
+	public <T> void addArgumentMapper(@NotNull final String id,
+									  @NotNull final Class<T> clazz,
+									  @NotNull final Function<String, T> mapper,
+									  @NotNull final Predicate<Object> fallbackCondition) {
 		if (!getLocalCommandExecutor().getMappingConfig().addArgumentMapper(id, new MappingSet<>(clazz, mapper, fallbackCondition))) {
 			throw new IllegalArgumentException(String.format("Mapper with id \"%s\" is already registered!", id));
 		}
@@ -281,7 +284,8 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	 * @param function The {@link Function} that will produce list of matching values on basis of the sender.
 	 * @throws IllegalArgumentException if tried to register duplicated id.
 	 */
-	public void addArgumentCompleter(@NotNull final String id, @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
+	public void addArgumentCompleter(@NotNull final String id,
+									 @NotNull final BiFunction<List<String>, CommandSender, Collection<String>> function) {
 		if (!getLocalTabCompleter().addArgumentCompleter(id, function)) {
 			throw new IllegalArgumentException(String.format("Completer with id \"%s\" is already registered!", id));
 		}
@@ -354,5 +358,25 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		if (!getLocalCommandExecutor().getMappingConfig().addArgumentResponseMapper(id, new ResponseMappingSet<>(clazz, function))) {
 			throw new IllegalArgumentException(String.format("Response mapper with id \"%s\" is already registered!", id));
 		}
+	}
+
+	/**
+	 * Adds and registers a subcommand class.
+	 *
+	 * @param commandClass A subcommand class that is annotated with the {@link SubCommand} annotation. The class
+	 * 		cannot be annotated with the {@link BaseCommand} annotation.
+	 * @param parameters Parameters to pass to constructor.
+	 */
+	public void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+							  @NotNull final Object... parameters) {
+		final SubCommand subCommandAnnotation = commandClass.getAnnotation(SubCommand.class);
+		if (subCommandAnnotation == null) {
+			throw new UnsupportedOperationException("SubCommand class not annotated with @" + SubCommand.class.getName());
+		}
+		final BaseCommand baseCommandAnnotation = commandClass.getAnnotation(BaseCommand.class);
+		if (baseCommandAnnotation != null) {
+			throw new UnsupportedOperationException("SubCommand class cannot be annotated with @" + BaseCommand.class.getName());
+		}
+		getLocalCommandExecutor().addSubCommand(commandClass, parameters);
 	}
 }

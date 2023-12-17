@@ -70,7 +70,7 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
 				.filter(method -> !Modifier.isStatic(method.getModifiers()))
-				.filter(method -> methodNameMapper.filterMethodName(method, args, annotatedCommand.getOptions()))
+				.filter(method -> methodNameMapper.filterMethodName(method, args[0], annotatedCommand.getOptions()))
 				.map(method -> methodToCompletionMapper.mapCommandToCompletion(method, args, sender))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList());

@@ -4,7 +4,7 @@
 
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.AnnotatedCommandExecutor;
+import eu.andret.arguments.CommandTree;
 import eu.andret.arguments.IMapper;
 import eu.andret.arguments.api.annotation.Mapper;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,12 +27,12 @@ public interface IFallbackSelector extends IMapper {
 	 *
 	 * @param mapper The {@link Mapper} annotation of failed mapping.
 	 * @param targetClass The {@link Class} that's instance was to be created.
-	 * @param executorClass The class reference, where the method was written.
+	 * @param node The node to search for fallbacks in its value class or any ancestor.
 	 * @param <E> The {@link JavaPlugin} subclass.
 	 *
 	 * @return The result of method's invocation providing sender and executorClass instance.
 	 */
 	@NotNull <E extends JavaPlugin> List<Method> selectFallback(@Nullable Mapper mapper,
 																@NotNull Class<?> targetClass,
-																@NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass);
+																@NotNull CommandTree<E>.Node node);
 }

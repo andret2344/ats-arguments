@@ -5,6 +5,8 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
+import eu.andret.arguments.api.annotation.BaseCommand;
+import eu.andret.arguments.api.annotation.SubCommand;
 import eu.andret.arguments.decorator.ChatColorCommandSenderDecorator;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
@@ -39,11 +41,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -60,7 +65,7 @@ import java.util.stream.Collectors;
 @Getter(AccessLevel.NONE)
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	JavaPlugin plugin;
-	Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
+	Map<CommandSender, Map<Class<AnnotatedCommandExecutor<E>>, AnnotatedCommandExecutor<E>>> executors = new HashMap<>();
 	AnnotatedCommand<E> annotatedCommand;
 	@Getter
 	MappingConfig mappingConfig = new MappingConfig();
@@ -73,24 +78,22 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	IInstanceCreator instanceCreator = new InstanceCreator();
 	IMethodInvoker methodInvoker = new MethodInvoker(mappingConfig);
 	IExceptionHandler exceptionHandler = new ExceptionHandler(methodInvoker);
-	Class<? extends AnnotatedCommandExecutor<E>> commandClass;
+	@NotNull
+	CommandTree<E> commandTree;
 	@NonFinal
 	Consumer<CommandSender> onUnknownSubCommandExecutionListener;
 	@NonFinal
 	Consumer<CommandSender> onInsufficientPermissionsListener;
 	@NonFinal
 	Consumer<CommandSender> onMainCommandExecutionListener;
-	@Getter(AccessLevel.PACKAGE)
-	Object[] parameters;
 
 	LocalCommandExecutor(@NotNull final AnnotatedCommand<E> annotatedCommand,
 						 @NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
 						 @NotNull final E plugin,
 						 @NotNull final Object... parameters) {
 		this.annotatedCommand = annotatedCommand;
-		this.commandClass = commandClass;
 		this.plugin = plugin;
-		this.parameters = parameters;
+		commandTree = new CommandTree<>(commandClass, parameters);
 	}
 
 	@Override
@@ -99,16 +102,10 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		final CommandSender commandSender = createCommandSender(sender);
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
-					.ifPresentOrElse(listener -> listener.accept(commandSender), () ->
-							Arrays.stream(commandClass.getDeclaredMethods())
-									.filter(method -> !Modifier.isStatic(method.getModifiers()))
-									.filter(method -> method.isAnnotationPresent(Argument.class))
-									.filter(method -> displayTypeMapper.mapDisplayType(method, commandSender))
-									.forEach(method -> commandSender.sendMessage(methodToDescriptionMapper
-											.mapMethodToDescription(method, command.getName()))));
+					.ifPresentOrElse(listener -> listener.accept(commandSender), () -> createDescriptions(commandSender));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, commandSender, annotatedCommand.getOptions())
+					.mapCommandToMethod(commandTree, args, commandSender, annotatedCommand.getOptions())
 					.ifPresentOrElse(method -> invokeMethod(method, commandSender, args), () -> noneMethodFound(commandSender));
 		}
 		return true;
@@ -145,7 +142,8 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		Optional.ofNullable(onUnknownSubCommandExecutionListener).ifPresent(listener -> listener.accept(sender));
 	}
 
-	private void invokeMethod(@NotNull final Method method, @NotNull final CommandSender sender,
+	private void invokeMethod(@NotNull final Method method,
+							  @NotNull final CommandSender sender,
 							  @NotNull final String[] args) {
 		if (permissionFilter.filterPermission(method, sender)) {
 			Optional.of(selectMethod(method, args))
@@ -164,35 +162,121 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 			final Object[] data = methodSelector.recalculateArguments(method, command);
 			return new ExecutionCall(List.of(method), data);
 		} catch (final FallbackException ex) {
-			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), commandClass);
-			return new ExecutionCall(methods, new Object[]{ex.getValue()});
+			final Class<? extends AnnotatedCommandExecutor<E>> declaringClass = getAnnotatedCommandExecutorClass(method);
+			final CommandTree<E>.Node node = commandTree.search(declaringClass);
+			final Object[] data = {ex.getValue()};
+			if (node == null) {
+				return new ExecutionCall(Collections.emptyList(), data);
+			}
+			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), node);
+			return new ExecutionCall(methods, data);
 		}
 	}
 
 	@NotNull
+	@SuppressWarnings("unchecked")
+	private Class<AnnotatedCommandExecutor<E>> getAnnotatedCommandExecutorClass(final @NotNull Method method) {
+		return (Class<AnnotatedCommandExecutor<E>>) method.getDeclaringClass();
+	}
+
+	@NotNull
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
-		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
-		return executionCall.getMethods()
-				.stream()
-				.map(method -> exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods()))
+		return executionCall.getMethods().stream()
+				.map(method -> {
+					final Class<AnnotatedCommandExecutor<E>> declaringClass = getAnnotatedCommandExecutorClass(method);
+					final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender, declaringClass);
+					return exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), declaringClass.getDeclaredMethods());
+				})
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 
 	@NotNull
-	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender) {
+	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender,
+																	@NotNull final Class<AnnotatedCommandExecutor<E>> clazz) {
 		if (executors.containsKey(sender)) {
-			return executors.get(sender);
+			final Map<Class<AnnotatedCommandExecutor<E>>, AnnotatedCommandExecutor<E>> executorMap = executors.get(sender);
+			if (executorMap.containsKey(clazz)) {
+				return executorMap.get(clazz);
+			}
 		}
-		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
-		executors.put(sender, commandExecutor);
+		final CommandTree<E>.Node node = commandTree.search(clazz);
+		if (node == null) {
+			throw new NoSuchElementException("Cannot find node associated with " + clazz.getName());
+		}
+		final AnnotatedCommandExecutor<E> commandExecutor
+				= instanceCreator.createInstance(sender, plugin, clazz, node.getParameters());
+		if (!executors.containsKey(sender)) {
+			executors.put(sender, new HashMap<>());
+		}
+		executors.get(sender).put(clazz, commandExecutor);
 		return commandExecutor;
 	}
 
 	@Nullable
-	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return executors.get(sender);
+	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender,
+												   @NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		return executors.getOrDefault(sender, new HashMap<>()).get(clazz);
+	}
+
+	@SuppressWarnings("unchecked")
+	void addSubCommand(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> commandClass,
+					   @NotNull final Object... parameters) {
+		final SubCommand annotation = commandClass.getAnnotation(SubCommand.class);
+		final Class<? extends AnnotatedCommandExecutor<E>> parent
+				= (Class<? extends AnnotatedCommandExecutor<E>>) annotation.parent();
+		final CommandTree<E>.Node found = commandTree.search(parent);
+		if (found == null) {
+			throw new IllegalArgumentException("Parent class is not registered!");
+		}
+		final boolean dupedValue = found.getChildren().stream()
+				.map(CommandTree.Node.class::cast)
+				.anyMatch(o -> getValue(o.getClazz()).equals(getValue(parent)));
+		if (dupedValue) {
+			throw new IllegalArgumentException("SubCommand with this value is already registered!");
+		}
+		found.add(commandClass, parameters);
+	}
+
+	private void createDescriptions(@NotNull final CommandSender sender) {
+		final List<String> result = new ArrayList<>();
+		commandTree.runConsumer(node -> {
+			final StringBuilder text = new StringBuilder();
+			CommandTree<E>.Node walking = node;
+			while (walking != null) {
+				text.insert(0, " " + getValue(walking.getClazz()));
+				walking = walking.getParent();
+			}
+			result.addAll(getStringStream(node, sender, text.substring(1)));
+		});
+		result.stream().sorted().forEach(sender::sendMessage);
+	}
+
+	@NotNull
+	private String getValue(@NotNull final Class<? extends AnnotatedCommandExecutor<E>> clazz) {
+		final SubCommand subCommand = clazz.getDeclaredAnnotation(SubCommand.class);
+		if (subCommand != null) {
+			return subCommand.value();
+		}
+		final BaseCommand baseCommand = clazz.getDeclaredAnnotation(BaseCommand.class);
+		if (baseCommand != null) {
+			return baseCommand.value();
+		}
+		final String message = String.format("The class %s is not annotated with @%s or with @%s!",
+				clazz, BaseCommand.class.getName(), SubCommand.class.getName());
+		throw new IllegalArgumentException(message);
+	}
+
+	@NotNull
+	private List<String> getStringStream(@NotNull final CommandTree<E>.Node node, @NotNull final CommandSender sender,
+										 @NotNull final String text) {
+		return Arrays.stream(node.getClazz().getDeclaredMethods())
+				.filter(method -> !Modifier.isStatic(method.getModifiers()))
+				.filter(method -> method.isAnnotationPresent(Argument.class))
+				.filter(method -> displayTypeMapper.filterDisplayType(method, sender))
+				.map(method -> methodToDescriptionMapper.mapMethodToDescription(method, text))
+				.collect(Collectors.toList());
 	}
 
 	@NotNull

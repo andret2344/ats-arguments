@@ -5,6 +5,7 @@
 package eu.andret.arguments.filter;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
@@ -24,5 +25,5 @@ public interface IDisplayTypeFilter {
 	 *
 	 * @return {@code true} if argument should be visible in held, {@code false} otherwise.
 	 */
-	boolean mapDisplayType(Method method, CommandSender sender);
+	boolean filterDisplayType(@NotNull Method method, @NotNull CommandSender sender);
 }
