@@ -1,0 +1,214 @@
+# GitHub Actions Workflow for building and testing the library in the following steps:
+# - Run the 'assemble' task.
+# - Run unit tests, integration tests and checkstyle.
+# - Create a draft release.
+#
+# The workflow is triggered on push and pull_request events.
+#
+# GitHub Actions reference: https://help.github.com/en/actions
+
+name: Build
+on:
+  # Trigger the workflow on pushes to only the 'main' branch (this avoids duplicate checks being run e.g., for dependabot pull requests)
+  push:
+    branches: [ main ]
+  # Trigger the workflow on any pull request
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # Compile the library
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # Build the library
+      - name: Build
+        run: ./gradlew assemble
+
+      # Store the built jars as an artifact for downloading
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ats-arguments
+          path: ./build/libs/*.jar
+
+  # Run unit tests along with the coverage verification
+  unitTests:
+    name: Unit tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Run unit tests
+      - name: Run Unit Tests
+        run: ./gradlew test
+
+      # Collect Tests Result of failed tests
+      - name: Collect Tests Result
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-tests-result
+          path: ${{ github.workspace }}/build/reports/tests
+
+  # Run integration tests
+  integrationTests:
+    name: Integration tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Run integration tests
+      - name: Run Integration Tests
+        run: ./gradlew integrationTest
+
+      # Collect Tests Result of failed tests
+      - name: Collect Tests Result
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-tests-result
+          path: ${{ github.workspace }}/build/reports/tests
+
+  # Check the code style
+  checkstyle:
+    name: Checkstyle
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Run checkstyle
+      - name: Run Checkstyle
+        run: ./gradlew checkstyleMain
+
+      # Collect Checkstyle Result
+      - name: Collect Checkstyle Result
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: checkstyle-result
+          path: ${{ github.workspace }}/build/reports/checkstyle
+
+  # Prepare a draft release for GitHub Releases page for the manual verification
+  # If accepted and published, the release workflow would be triggered
+  releaseDraft:
+    name: Release draft
+    if: github.event_name != 'pull_request'
+    needs: [ build, unitTests, integrationTests, checkstyle ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Remove old release drafts by using the curl request for the available releases with a draft flag
+      - name: Remove Old Release Drafts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api repos/{owner}/{repo}/releases \
+            --jq '.[] | select(.draft == true) | .id' \
+            | xargs -I '{}' gh api -X DELETE repos/{owner}/{repo}/releases/{}
+
+      # Create a new release draft which is not publicly visible and requires manual acceptance
+      - name: Create Release Draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(./gradlew properties --property version --quiet --console=plain | tail -n 1 | cut -f2- -d ' ')
+          RELEASE_NOTE="./build/tmp/release_note.txt"
+          ./gradlew getChangelog --unreleased --no-header --quiet --console=plain --output-file=$RELEASE_NOTE
+
+          gh release create "v$VERSION" \
+            --draft \
+            --target "$GITHUB_SHA" \
+            --title "v$VERSION" \
+            --notes-file $RELEASE_NOTE

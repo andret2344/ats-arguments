@@ -1,0 +1,146 @@
+# GitHub Actions Workflow created for handling the release process based on the draft release prepared with the Build workflow.
+# The library is published to GitHub Packages with the built-in GITHUB_TOKEN, so no secrets have to be provided.
+# Deploying the javadoc requires GitHub Pages to be enabled with GitHub Actions as the source.
+
+name: Release
+on:
+  release:
+    types: [ prereleased, released ]
+
+jobs:
+
+  # Prepare the release and attach the built jars to it
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      pull-requests: write
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Update the Unreleased section with the current release note
+      - name: Patch Changelog
+        if: ${{ github.event.release.body != '' }}
+        env:
+          CHANGELOG: ${{ github.event.release.body }}
+        run: |
+          RELEASE_NOTE="./build/tmp/release_note.txt"
+          mkdir -p "$(dirname "$RELEASE_NOTE")"
+          echo "$CHANGELOG" > $RELEASE_NOTE
+
+          ./gradlew patchChangelog --release-note-file=$RELEASE_NOTE
+
+      # Run all the checks before anything is released
+      - name: Run Checks
+        run: ./gradlew check
+
+      # Build the jar along with the sources and javadoc jars
+      - name: Build Jars
+        run: ./gradlew :jar :sourceJar :packageJavadoc
+
+      # Publish the library to GitHub Packages
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew :publish
+
+      # Upload the jars as release assets
+      - name: Upload Release Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.event.release.tag_name }} ./build/libs/*.jar
+
+      # Create a pull request with the changelog patched above
+      - name: Create Pull Request
+        if: ${{ github.event.release.body != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          BRANCH="changelog-update-$VERSION"
+          LABEL="release changelog"
+
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+
+          git checkout -b $BRANCH
+          git commit -am "Changelog update - $VERSION"
+          git push --set-upstream origin $BRANCH
+
+          gh label create "$LABEL" \
+            --description "Pull requests with release changelog update" \
+            --force \
+            || true
+
+          gh pr create \
+            --title "Changelog update - \`$VERSION\`" \
+            --body "Current pull request contains patched \`CHANGELOG.md\` file for the \`$VERSION\` version." \
+            --label "$LABEL" \
+            --head $BRANCH
+
+  # Build the javadoc and deploy it to GitHub Pages
+  javadoc:
+    name: Deploy Javadoc
+    needs: [ release ]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+
+      # Check out the current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      # Set up the Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # Generate the javadoc
+      - name: Generate Javadoc
+        run: ./gradlew :javadoc
+
+      # Store the javadoc as the Pages artifact
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./build/docs/javadoc
+
+      # Deploy the javadoc to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

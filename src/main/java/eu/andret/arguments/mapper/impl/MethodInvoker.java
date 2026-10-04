@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
@@ -10,7 +6,6 @@ import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IResponseMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.Value;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,12 +22,8 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Nov 25, 2021
  */
-@Value
 @AllArgsConstructor
-public class MethodInvoker implements IMethodInvoker {
-	@NotNull
-	IResponseMapper responseMapper;
-
+public record MethodInvoker(@NotNull IResponseMapper responseMapper) implements IMethodInvoker {
 	/**
 	 * A constructor.
 	 *

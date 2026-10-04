@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments.filter.impl;
 
 import eu.andret.arguments.Util;
@@ -75,7 +71,7 @@ public class ArgumentsFilter implements IArgumentsFilter {
 			return Optional.of(mapper)
 					.map(Mapper::value)
 					.map(mappingConfig::getArgumentMapper)
-					.map(MappingSet::getClazz)
+					.map(MappingSet::clazz)
 					.map(aClass -> aClass.isAssignableFrom(parameterClass))
 					.orElse(false);
 		}

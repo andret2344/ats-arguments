@@ -5,6 +5,7 @@ plugins {
 	`maven-publish`
 	checkstyle
 	id("org.barfuin.gradle.jacocolog") version "3.1.0"
+	id("org.jetbrains.changelog") version "2.5.0"
 }
 
 sourceSets {
@@ -153,9 +154,21 @@ tasks {
 		from(named("javadoc"))
 	}
 
-	jar {
+	withType<Jar> {
 		archiveBaseName.set("${project.properties["artifact"]}")
+		// Shading copies META-INF into the consumer's jar, which keeps the NOTICE attribution there;
+		// the suffix stops other libraries' LICENSE/NOTICE files from replacing ours
+		metaInf {
+			from("LICENSE", "NOTICE")
+			rename { "$it-${project.properties["artifact"]}" }
+		}
 	}
+}
+
+changelog {
+	groups.empty()
+	// SemVer plus the four-part patch versions (e.g. 0.1.1.2) used by older releases
+	headerParserRegex.set("""^((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:\.(0|[1-9]\d*))?(?:-[0-9A-Za-z.-]+)?)$""".toRegex())
 }
 
 publishing {
@@ -167,19 +180,24 @@ publishing {
 			groupId = project.properties["group"] as String
 			version = project.properties["version"] as String
 			artifactId = project.properties["artifact"] as String
+			pom {
+				licenses {
+					license {
+						name.set("Apache License, Version 2.0")
+						url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+					}
+				}
+			}
 		}
 	}
 	repositories {
 		maven {
-			name = "GitLab"
+			name = "GitHubPackages"
 
-			url = uri("https://gitlab.com/api/v4/projects/12063927/packages/maven")
-			credentials(HttpHeaderCredentials::class) {
-				name = "Job-Token"
-				value = System.getenv("CI_JOB_TOKEN")
-			}
-			authentication {
-				create<HttpHeaderAuthentication>("header")
+			url = uri("https://maven.pkg.github.com/andret2344/ats-arguments")
+			credentials {
+				username = System.getenv("GITHUB_ACTOR")
+				password = System.getenv("GITHUB_TOKEN")
 			}
 		}
 	}

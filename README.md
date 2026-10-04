@@ -1,21 +1,58 @@
 # atsArguments
 
+Javadoc of the latest release: https://andret2344.github.io/ats-arguments/
+
 ## License
 
-Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
+Licensed under the [Apache License 2.0](LICENSE). If you redistribute this library or anything built with it,
+including a plugin with the library shaded in, you have to keep the contents of the [NOTICE](NOTICE) file, which
+links back to this repository.
 
 ## Dependency setup
 
 To set up the library in your project, you have to do following steps:
 
-- Add `https://gitlab.com/api/v4/projects/12063927/packages/maven` as a repository
+- Create a GitHub [personal access token (classic)](https://github.com/settings/tokens/new?scopes=read:packages)
+  with the `read:packages` scope. GitHub Packages requires it even for downloading public packages.
+
+- Store the token outside your project, so it never gets committed.
+
+`~/.gradle/gradle.properties`:
+
+```properties
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_TOKEN
+```
+
+`~/.m2/settings.xml`:
+
+```xml
+
+<settings>
+    <servers>
+        <server>
+            <id>github</id>
+            <username>YOUR_GITHUB_USERNAME</username>
+            <password>YOUR_TOKEN</password>
+        </server>
+    </servers>
+</settings>
+```
+
+- Add `https://maven.pkg.github.com/andret2344/ats-arguments` as a repository
 
 `build.gradle`:
 
 ```groovy
 repositories {
 	mavenCentral()
-	maven { url 'https://gitlab.com/api/v4/projects/12063927/packages/maven' }
+	maven {
+		url 'https://maven.pkg.github.com/andret2344/ats-arguments'
+		credentials {
+			username = findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR')
+			password = findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')
+		}
+	}
 	// other repositories
 }
 ```
@@ -26,7 +63,8 @@ repositories {
 
 <repositories>
     <repository>
-        <url>https://gitlab.com/api/v4/projects/12063927/packages/maven</url>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/andret2344/ats-arguments</url>
     </repository>
     <!-- other repositories -->
 </repositories>
@@ -63,14 +101,13 @@ dependencies {
 
 ```groovy
 plugins {
-	id 'com.github.johnrengelman.shadow' version '5.2.0'
+	id 'com.gradleup.shadow' version '9.6.1'
 }
 
 //...
 
 shadowJar {
 	relocate 'eu.andret.arguments', 'YOUR_PLUGIN_PACKAGE.arguments'
-	configurations = [project.configurations.implementation]
 }
 
 build.dependsOn(shadowJar)
@@ -85,7 +122,7 @@ build.dependsOn(shadowJar)
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
-            <version>3.2.1</version>
+            <version>3.6.2</version>
             <executions>
                 <execution>
                     <phase>package</phase>
@@ -404,4 +441,4 @@ that allows the simple configuration.
 
 Full example can be found here:
 
-[Full example](https://gitlab.com/andret-tools-system/ats-arguments/-/tree/master/example/src/main/java/eu/andret/arguments/example)
+[Full example](https://github.com/andret2344/ats-arguments/tree/main/example/src/main/java/eu/andret/arguments/example)

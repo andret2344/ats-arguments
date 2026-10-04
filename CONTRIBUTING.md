@@ -5,12 +5,12 @@ valuable.
 
 ## Basics
 
-Bugs and feature requests are in our [issue board](https://gitlab.com/andret-tools-system/ats-arguments/issues).
+Bugs and feature requests are in our [issue board](https://github.com/andret2344/ats-arguments/issues).
 
 ## Testing
 
 CI executes tests Automatic due
-to [GitLab CI](https://gitlab.com/andret-tools-system/ats-arguments/-/blob/master/.gitlab-ci.yml). The current
+to [GitHub Actions](https://github.com/andret2344/ats-arguments/actions). The current
 configuration checks everything that can be checked.
 
 To test code when developing, just build `example` subproject and use it as classical Bukkit/Spigot plugin.
@@ -28,7 +28,7 @@ By the time of week, you'll get feedback (or merge).
 ## Bug reporting
 
 If you face any bugs when using the library, submit it
-on [issue board](https://gitlab.com/andret-tools-system/ats-arguments/issues).
+on [issue board](https://github.com/andret2344/ats-arguments/issues).
 
 ### Bug report template
 
@@ -46,7 +46,7 @@ Instead of this, <what happens?>
 ## Enhancement request
 
 The way of requesting it is analogical to reporting bugs. Create an issue
-on [issue board](https://gitlab.com/andret-tools-system/ats-arguments/issues).
+on [issue board](https://github.com/andret2344/ats-arguments/issues).
 
 ## Code convention
 

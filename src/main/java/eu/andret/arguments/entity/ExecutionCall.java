@@ -1,10 +1,4 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments.entity;
-
-import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -15,8 +9,5 @@ import java.util.List;
  * @author Andret
  * @since Sep 04, 2021
  */
-@Value
-public class ExecutionCall {
-	List<Method> methods;
-	Object[] data;
+public record ExecutionCall(List<Method> methods, Object[] data) {
 }

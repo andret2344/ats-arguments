@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments;
 
 import eu.andret.arguments.entity.MappingConfig;
@@ -127,7 +123,7 @@ public class AnnotatedCommandTest {
 		// then
 		final MappingSet<?> result = executor.getMappingConfig().getArgumentMapper("test");
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(int.class);
+		assertThat(result.clazz()).isSameAs(int.class);
 	}
 
 	@Test
@@ -149,7 +145,7 @@ public class AnnotatedCommandTest {
 				.hasMessage("Mapper with id \"test\" is already registered!");
 		final MappingSet<?> result = executor.getMappingConfig().getArgumentMapper("test");
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(double.class);
+		assertThat(result.clazz()).isSameAs(double.class);
 	}
 
 	@Test
@@ -167,7 +163,7 @@ public class AnnotatedCommandTest {
 		// then
 		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(boolean.class);
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(boolean.class);
+		assertThat(result.clazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -189,7 +185,7 @@ public class AnnotatedCommandTest {
 				.hasMessage("Mapper with class boolean is already registered!");
 		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(boolean.class);
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(boolean.class);
+		assertThat(result.clazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -207,9 +203,9 @@ public class AnnotatedCommandTest {
 		// then
 		final MappingSet<?> mappingSet = executor.getMappingConfig().getTypeMapper(TestEnum.class);
 		assertThat(mappingSet).isNotNull();
-		assertThat(mappingSet.getClazz()).isSameAs(TestEnum.class);
-		assertThat(mappingSet.getFunction().apply("TEST_ONE")).isSameAs(TestEnum.TEST_ONE);
-		assertThat(mappingSet.getFunction().apply("UNKNOWN")).isNull();
+		assertThat(mappingSet.clazz()).isSameAs(TestEnum.class);
+		assertThat(mappingSet.function().apply("TEST_ONE")).isSameAs(TestEnum.TEST_ONE);
+		assertThat(mappingSet.function().apply("UNKNOWN")).isNull();
 	}
 
 	@Test
@@ -231,7 +227,7 @@ public class AnnotatedCommandTest {
 				.hasMessage("Mapper with enum eu.andret.arguments.provider.TestEnum is already registered!");
 		final MappingSet<?> result = executor.getMappingConfig().getTypeMapper(TestEnum.class);
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(TestEnum.class);
+		assertThat(result.clazz()).isSameAs(TestEnum.class);
 	}
 
 	@Test
@@ -406,7 +402,7 @@ public class AnnotatedCommandTest {
 		// then
 		final ResponseMappingSet<?> result = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(boolean.class);
+		assertThat(result.clazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -428,7 +424,7 @@ public class AnnotatedCommandTest {
 				.hasMessage("Response mapper with class boolean is already registered!");
 		final ResponseMappingSet<?> result = executor.getMappingConfig().getTypeResponseMapper(boolean.class);
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(boolean.class);
+		assertThat(result.clazz()).isSameAs(boolean.class);
 	}
 
 	@Test
@@ -446,7 +442,7 @@ public class AnnotatedCommandTest {
 		// then
 		final ResponseMappingSet<?> result = executor.getMappingConfig().getArgumentResponseMapper("test");
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(int.class);
+		assertThat(result.clazz()).isSameAs(int.class);
 	}
 
 	@Test
@@ -468,7 +464,7 @@ public class AnnotatedCommandTest {
 				.hasMessage("Response mapper with id \"test\" is already registered!");
 		final ResponseMappingSet<?> result = executor.getMappingConfig().getArgumentResponseMapper("test");
 		assertThat(result).isNotNull();
-		assertThat(result.getClazz()).isSameAs(double.class);
+		assertThat(result.clazz()).isSameAs(double.class);
 	}
 
 	@Test

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
@@ -172,9 +168,9 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@NotNull
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
 		final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
-		return executionCall.getMethods()
+		return executionCall.methods()
 				.stream()
-				.map(method -> exceptionHandler.handleException(method, commandExecutor, executionCall.getData(), commandClass.getDeclaredMethods()))
+				.map(method -> exceptionHandler.handleException(method, commandExecutor, executionCall.data(), commandClass.getDeclaredMethods()))
 				.flatMap(Collection::stream)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());

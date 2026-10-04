@@ -1,14 +1,9 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.api.annotation.ArgumentResponse;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.mapper.IResponseMapper;
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,11 +24,7 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Nov 25, 2021
  */
-@Value
-public class ResponseMapper implements IResponseMapper {
-	@NotNull
-	MappingConfig mappingConfig;
-
+public record ResponseMapper(@NotNull MappingConfig mappingConfig) implements IResponseMapper {
 	@NotNull
 	@Override
 	public List<String> mapResponse(@NotNull final Method method, @NotNull final Object result) {
@@ -47,7 +38,7 @@ public class ResponseMapper implements IResponseMapper {
 	private Function<Object, String> getMappingFunction(@NotNull final Method method) {
 		return (Function<Object, String>) Optional.of(method)
 				.map(this::getResponseMapper)
-				.map(ResponseMappingSet::getFunction)
+				.map(ResponseMappingSet::function)
 				.orElse(String::valueOf);
 	}
 

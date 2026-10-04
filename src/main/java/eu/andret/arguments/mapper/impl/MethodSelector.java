@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Andret Tools System. Copying and modifying allowed only keeping git link reference.
- */
-
 package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.FallbackException;
@@ -85,7 +81,7 @@ public class MethodSelector implements IMethodSelector {
 		final Optional<MappingSet<T>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
 				.map(mappingConfig::getArgumentMapper)
-				.filter(set -> set.getClazz().equals(clazz))
+				.filter(set -> set.clazz().equals(clazz))
 				.map(set -> (MappingSet<T>) set);
 		if (mappingSet.isPresent()) {
 			return mappingSet;
@@ -98,8 +94,8 @@ public class MethodSelector implements IMethodSelector {
 	@NotNull
 	private <T> T convert(@Nullable final Mapper mapper, @NotNull final MappingSet<T> mappingSet,
 						  @NotNull final Class<T> targetClass, @NotNull final String value) {
-		final Object result = mappingSet.getFunction().apply(value);
-		if (mappingSet.getFallbackCondition().test(result)) {
+		final Object result = mappingSet.function().apply(value);
+		if (mappingSet.fallbackCondition().test(result)) {
 			throw new FallbackException("Fallback condition failed", mapper, targetClass, value);
 		}
 		return targetClass.cast(result);
