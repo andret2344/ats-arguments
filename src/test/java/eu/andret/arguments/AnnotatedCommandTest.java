@@ -4,11 +4,9 @@ import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.entity.ResponseMappingSet;
 import eu.andret.arguments.provider.TestEnum;
-import eu.andret.arguments.provider.TestMethodsProvider;
 import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -465,24 +463,5 @@ public class AnnotatedCommandTest {
 		final ResponseMappingSet<?> result = executor.getMappingConfig().getArgumentResponseMapper("test");
 		assertThat(result).isNotNull();
 		assertThat(result.clazz()).isSameAs(double.class);
-	}
-
-	@Test
-	void getCommandExecutorTest() {
-		// given
-		final CommandSender sender = mock(CommandSender.class);
-		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		final TestMethodsProvider testMethodsProvider = new TestMethodsProvider(sender, javaPlugin);
-		final PluginCommand command = mock(PluginCommand.class);
-		final TestCommandExecutor executor = mock(TestCommandExecutor.class);
-		when(command.getExecutor()).thenReturn(executor);
-		when(executor.getCommandExecutor(sender)).thenReturn(testMethodsProvider);
-		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-
-		// when
-		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = annotatedCommand.getCommandExecutor(sender);
-
-		// then
-		assertThat(commandExecutor).isSameAs(testMethodsProvider);
 	}
 }

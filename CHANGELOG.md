@@ -20,13 +20,17 @@
   `Function<CommandSender, Collection<String>>`.
 - Mappers registered without a fallback condition now fall back when they return `null`. Before, they never fell back.
 - Enum mappers match names case-insensitively, and unknown names trigger the fallback instead of throwing an exception.
-- With `autoTranslateColors` enabled, color codes are translated in every message sent to the sender, including
-  messages sent from inside command methods. Help messages are translated only when the option is enabled.
+- With `autoTranslateColors` enabled, color codes in the help messages are translated too. Messages sent directly
+  through the `CommandSender`, from command methods or from listeners, are still not translated.
+- A new command class instance is created for every command execution. Before, one instance was kept per sender for
+  the whole server uptime, so its fields carried state between executions and every sender that ever ran the command,
+  including players who had left, stayed in memory.
 - An exception thrown by the command class constructor reaches Bukkit wrapped in `IllegalStateException` instead of
   as a raw `InvocationTargetException`.
 
 ### Removed
 
+- `AnnotatedCommand.getCommandExecutor(CommandSender)`. No command class instance outlives a single execution.
 - `FallbackConstants`. Pass a predicate such as `Objects::isNull` instead.
 - The Lombok-generated `equals`, `hashCode` and `toString` of `AnnotatedCommand`, `AnnotatedCommand.Options`,
   `AnnotatedCommandExecutor` (and so of every command class) and `FallbackException`. They now use identity, so two

@@ -67,31 +67,34 @@ listeners, `Options`) to those two objects, which it reaches via `command.getExe
 
 Execution pipeline in `LocalCommandExecutor.onCommand`:
 
-1. Sender may be wrapped in `ChatColorCommandSenderDecorator` (`Options.autoTranslateColors`).
-2. No args: the main-command listener runs, or a help list is built from `@Argument` methods (`DisplayTypeFilter`,
+1. No args: the main-command listener runs, or a help list is built from `@Argument` methods (`DisplayTypeFilter`,
    `MethodToDescriptionMapper`).
-3. `CommandToMethodMapper` picks the **first** declared method passing `MethodNameFilter` (name/aliases at
+2. `CommandToMethodMapper` picks the **first** declared method passing `MethodNameFilter` (name/aliases at
    `@Argument.position`, case sensitivity from `Options`), `ExecutorTypeFilter` and `ArgumentsFilter` (argument
    count and type compatibility, varargs). Order comes from `getDeclaredMethods()`, so overload ambiguity is resolved
    by the JVM's method order, not by specificity.
-4. `PermissionFilter` checks `@Argument.permission` (the console and operators always pass), otherwise the
+3. `PermissionFilter` checks `@Argument.permission` (the console and operators always pass), otherwise the
    insufficient-permissions listener fires.
-5. `MethodSelector` converts the string args to parameter values: explicit `@Mapper("id")` argument mapper, else a
+4. `MethodSelector` converts the string args to parameter values: explicit `@Mapper("id")` argument mapper, else a
    registered type mapper, else `Util.convert` for primitives/String, and returns the `ExecutionCall` (methods plus
    arguments). A mapper result matching its fallback condition throws `FallbackException` inside `MethodSelector`,
    which catches it and returns the `@ArgumentFallback` / `@TypeFallback` methods (single `String` parameter, ordered
    by `FallbackPriority`) chosen by its `FallbackSelector`, with the failed string as the argument.
-6. `InstanceCreator` builds the command class instance. Its single constructor must start with
-   `(CommandSender, JavaPlugin, ...)`; extra args come from `registerCommand`. Instances are **cached per sender** in
-   `LocalCommandExecutor.executors`, so fields on the command class are per-sender state.
-7. `ExceptionHandler` invokes through `MethodInvoker`. An exception thrown by the method (an
+5. `InstanceCreator` builds the command class instance. Its single constructor must start with
+   `(CommandSender, JavaPlugin, ...)`; extra args come from `registerCommand`. A **new instance is created for every
+   execution**, so fields on the command class keep no state between commands.
+6. `ExceptionHandler` invokes through `MethodInvoker`. An exception thrown by the method (an
    `InvocationTargetException` from reflection) is routed to `@ExceptionFallback` methods matching the cause's exact
    class (taking no args or the exception); with no match, the cause is rethrown wrapped in `RuntimeException`. Other
    reflective failures, including an exception thrown by the command class constructor or by a fallback method, leave
    `onCommand` wrapped in `IllegalStateException`.
-8. `ResponseMapper` turns the return value into messages: arrays and collections are split into elements, each element
+7. `ResponseMapper` turns the return value into messages: arrays and collections are split into elements, each element
    is mapped by `@ArgumentResponse("id")` or a type response mapper (falling back to `String.valueOf`), then split on
    line breaks. `null`/`void` sends nothing.
+
+The sender passed to filters, the command class and the listeners is always the original one. With
+`Options.autoTranslateColors`, `LocalCommandExecutor` translates `&` color codes only in the messages it sends itself:
+the method results and the help list.
 
 The mapper registries live in `entity/MappingConfig`, one instance per command created by `LocalCommandExecutor`:
 argument mappers by id, type mappers by class, and argument and type response mappers. Completers are not in it; they

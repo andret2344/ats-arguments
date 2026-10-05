@@ -1,7 +1,6 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
-import eu.andret.arguments.decorator.ChatColorCommandSenderDecorator;
 import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.filter.IDisplayTypeFilter;
@@ -21,21 +20,19 @@ import eu.andret.arguments.mapper.impl.InstanceCreator;
 import eu.andret.arguments.mapper.impl.MethodInvoker;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.mapper.impl.MethodToDescriptionMapper;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -48,7 +45,6 @@ import java.util.function.Consumer;
  */
 class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	private final JavaPlugin plugin;
-	private final Map<CommandSender, AnnotatedCommandExecutor<E>> executors = new HashMap<>();
 	private final AnnotatedCommand<E> annotatedCommand;
 	private final MappingConfig mappingConfig = new MappingConfig();
 	private final ICommandToMethodMapper commandToMethodMapper = new CommandToMethodMapper(mappingConfig);
@@ -78,20 +74,19 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@Override
 	public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command,
 			@NotNull final String label, @NotNull final String @NotNull [] args) {
-		final CommandSender commandSender = createCommandSender(sender);
 		if (args.length == 0) {
 			Optional.ofNullable(onMainCommandExecutionListener)
-					.ifPresentOrElse(listener -> listener.accept(commandSender), () ->
+					.ifPresentOrElse(listener -> listener.accept(sender), () ->
 							Arrays.stream(commandClass.getDeclaredMethods())
 									.filter(method -> !Modifier.isStatic(method.getModifiers()))
 									.filter(method -> method.isAnnotationPresent(Argument.class))
-									.filter(method -> displayTypeMapper.mapDisplayType(method, commandSender))
-									.forEach(method -> commandSender.sendMessage(methodToDescriptionMapper
+									.filter(method -> displayTypeMapper.mapDisplayType(method, sender))
+									.forEach(method -> sendMessage(sender, methodToDescriptionMapper
 											.mapMethodToDescription(method, command.getName()))));
 		} else {
 			commandToMethodMapper
-					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, commandSender, annotatedCommand.getOptions())
-					.ifPresentOrElse(method -> invokeMethod(method, commandSender, args), () -> noneMethodFound(commandSender));
+					.mapCommandToMethod(commandClass.getDeclaredMethods(), args, sender, annotatedCommand.getOptions())
+					.ifPresentOrElse(method -> invokeMethod(method, sender, args), () -> noneMethodFound(sender));
 		}
 		return true;
 	}
@@ -134,7 +129,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 					.map(executionCall -> invokeMethods(executionCall, sender))
 					.stream()
 					.flatMap(Collection::stream)
-					.forEach(sender::sendMessage);
+					.forEach(message -> sendMessage(sender, message));
 		} else if (onInsufficientPermissionsListener != null) {
 			onInsufficientPermissionsListener.accept(sender);
 		}
@@ -143,7 +138,7 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 	@NotNull
 	private List<String> invokeMethods(@NotNull final ExecutionCall executionCall, @NotNull final CommandSender sender) {
 		try {
-			final AnnotatedCommandExecutor<E> commandExecutor = getAnnotatedCommandExecutor(sender);
+			final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
 			final List<String> result = new ArrayList<>();
 			for (final Method method : executionCall.methods()) {
 				result.addAll(exceptionHandler.handleException(method, commandExecutor, executionCall.data(), commandClass.getDeclaredMethods()));
@@ -156,17 +151,6 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		}
 	}
 
-	@NotNull
-	private AnnotatedCommandExecutor<E> getAnnotatedCommandExecutor(@NotNull final CommandSender sender)
-			throws ReflectiveOperationException {
-		if (executors.containsKey(sender)) {
-			return executors.get(sender);
-		}
-		final AnnotatedCommandExecutor<E> commandExecutor = instanceCreator.createInstance(sender, plugin, commandClass, parameters);
-		executors.put(sender, commandExecutor);
-		return commandExecutor;
-	}
-
 	/**
 	 * Gets the config of the mappers.
 	 *
@@ -177,16 +161,11 @@ class LocalCommandExecutor<E extends JavaPlugin> implements CommandExecutor {
 		return mappingConfig;
 	}
 
-	@Nullable
-	AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return executors.get(sender);
-	}
-
-	@NotNull
-	private CommandSender createCommandSender(@NotNull final CommandSender base) {
+	private void sendMessage(@NotNull final CommandSender sender, @NotNull final String message) {
 		if (annotatedCommand.getOptions().isAutoTranslateColors()) {
-			return new ChatColorCommandSenderDecorator(base);
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+		} else {
+			sender.sendMessage(message);
 		}
-		return base;
 	}
 }

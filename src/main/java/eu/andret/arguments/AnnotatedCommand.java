@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,16 +63,19 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 		/**
 		 * Tells whether the color codes are translated.
 		 *
-		 * @return Whether the {@code &} color codes in the messages are translated.
+		 * @return Whether the {@code &} color codes are translated in the messages the library sends: the values
+		 * 		returned from the command methods and the help list.
 		 */
 		public boolean isAutoTranslateColors() {
 			return autoTranslateColors;
 		}
 
 		/**
-		 * Sets whether the color codes are translated.
+		 * Sets whether the color codes are translated. Messages sent directly through the {@link CommandSender}, from
+		 * the command methods or from the listeners, are never translated.
 		 *
-		 * @param autoTranslateColors Whether the {@code &} color codes in the messages are translated.
+		 * @param autoTranslateColors Whether the {@code &} color codes are translated in the messages the library
+		 * 		sends: the values returned from the command methods and the help list.
 		 */
 		public void setAutoTranslateColors(final boolean autoTranslateColors) {
 			this.autoTranslateColors = autoTranslateColors;
@@ -127,19 +129,6 @@ public class AnnotatedCommand<E extends JavaPlugin> {
 	@SuppressWarnings("unchecked")
 	private LocalTabCompleter<E> getLocalTabCompleter() {
 		return (LocalTabCompleter<E>) command.getTabCompleter();
-	}
-
-	/**
-	 * Gets the command executor of the sender.
-	 *
-	 * @param sender The sender that is assigned to the desired CommandExecutor.
-	 *
-	 * @return The command executor assigned to provided sender. Can return null, if provided sender never executed
-	 * 		command.
-	 */
-	@Nullable
-	public AnnotatedCommandExecutor<E> getCommandExecutor(@NotNull final CommandSender sender) {
-		return getLocalCommandExecutor().getCommandExecutor(sender);
 	}
 
 	/**

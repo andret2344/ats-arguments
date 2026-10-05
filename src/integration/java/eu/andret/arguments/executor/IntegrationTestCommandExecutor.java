@@ -4,6 +4,7 @@ import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.BaseCommand;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.api.entity.ExecutorType;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -64,5 +65,10 @@ public class IntegrationTestCommandExecutor extends AnnotatedCommandExecutor<Jav
 	@Argument
 	public String testWithPlayerMapper(@Mapper("player") final Player player) {
 		return "The mapped player: " + player.getName();
+	}
+
+	@Argument(executorType = ExecutorType.PLAYER)
+	public String testPlayerOnly() {
+		return "&aThe player: " + sender.getName();
 	}
 }

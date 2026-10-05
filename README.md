@@ -434,7 +434,8 @@ There is also possibility to access `AnnotatedCommand.Options` object via `annot
 that allows the simple configuration.
 
 - `options.setAutoTranslateColors(boolean)` - whether plugin should automatically translate colors from `'&'` matching
-  chat color.
+  chat color in the messages returned from the command methods and in the help list. Messages sent directly through
+  the `CommandSender` are not translated.
 - `options.setCaseSensitive(boolean)` - whether arguments should be case-sensitive or case-insensitive.
 
 ## Full example

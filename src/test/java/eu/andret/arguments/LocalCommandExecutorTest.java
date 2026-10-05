@@ -10,10 +10,12 @@ import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
 import org.assertj.core.api.ThrowableAssert;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
@@ -79,7 +81,28 @@ public class LocalCommandExecutorTest {
 		executor.onCommand(sender, command, "test", new String[0]);
 
 		// then
-		verify(onMainCommandExecutionListener).accept(any(CommandSender.class));
+		verify(onMainCommandExecutionListener).accept(sender);
+	}
+
+	@Test
+	void noCommandArgumentsWithColorsTranslated() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final IMethodToDescriptionMapper methodToDescriptionMapper = mock(IMethodToDescriptionMapper.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
+		injectMapper(executor, methodToDescriptionMapper, "methodToDescriptionMapper");
+		when(methodToDescriptionMapper.mapMethodToDescription(any(Method.class), anyString())).thenReturn("&a/test testString");
+		when(command.getName()).thenReturn("test");
+		annotatedCommand.getOptions().setAutoTranslateColors(true);
+
+		// when
+		executor.onCommand(sender, command, "test", new String[0]);
+
+		// then
+		verify(sender, times(38)).sendMessage(ChatColor.GREEN + "/test testString");
 	}
 
 	@Test
@@ -241,22 +264,6 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void getNullCommandExecutor() {
-		// given
-		final JavaPlugin plugin = mock(JavaPlugin.class);
-		final PluginCommand command = mock(PluginCommand.class);
-		final CommandSender sender = mock(CommandSender.class);
-		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
-		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
-
-		// when
-		final AnnotatedCommandExecutor<JavaPlugin> commandExecutor = executor.getCommandExecutor(sender);
-
-		// then
-		assertThat(commandExecutor).isNull();
-	}
-
-	@Test
 	void getMappingConfig() {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
@@ -348,6 +355,53 @@ public class LocalCommandExecutorTest {
 		// then
 		verify(sender, times(2)).sendMessage("result");
 		verify(sender, times(2)).sendMessage("value");
+		verify(instanceCreator, times(2)).createInstance(sender, plugin, testMethodsProviderClass);
+	}
+
+	@DataProvider
+	static Object[][] colorTranslationData() {
+		return new Object[][]{
+				{true, ChatColor.GREEN + "result"},
+				{false, "&aresult"}
+		};
+	}
+
+	@Test(dataProvider = "colorTranslationData")
+	void invokeMethodWithColors(final boolean autoTranslateColors, final String expectedMessage) throws ReflectiveOperationException {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
+		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
+		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
+		final IMethodSelector methodSelector = mock(IMethodSelector.class);
+		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
+		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
+		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
+		injectMapper(executor, permissionFilter, "permissionFilter");
+		injectMapper(executor, methodSelector, "methodSelector");
+		injectMapper(executor, instanceCreator, "instanceCreator");
+		injectMapper(executor, exceptionHandler, "exceptionHandler");
+		annotatedCommand.getOptions().setAutoTranslateColors(autoTranslateColors);
+
+		// and
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
+		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
+		when(methodSelector.selectMethod(any(), any(), any())).thenReturn(new ExecutionCall(List.of(method), new Object[0]));
+		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
+		when(exceptionHandler.handleException(eq(method), eq(provider), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
+				.thenReturn(List.of("&aresult"));
+
+		// when
+		executor.onCommand(sender, command, "test", new String[]{"testMethod"});
+
+		// then
+		verify(sender).sendMessage(expectedMessage);
 	}
 
 	@Test
