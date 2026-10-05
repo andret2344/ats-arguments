@@ -1,22 +1,22 @@
 package eu.andret.arguments.mapper.impl;
 
+import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.Util;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IMethodSelector;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,12 +25,20 @@ import java.util.Optional;
  * @author Andret
  * @since Sep 03, 2021
  */
-@Value
-@AllArgsConstructor
-@Getter(AccessLevel.NONE)
-public class MethodSelector implements IMethodSelector {
-	IFallbackSelector fallbackSelector;
-	MappingConfig mappingConfig;
+public final class MethodSelector implements IMethodSelector {
+	private final IFallbackSelector fallbackSelector;
+	private final MappingConfig mappingConfig;
+
+	/**
+	 * Constructor that sets all fields.
+	 *
+	 * @param fallbackSelector The fallback selector.
+	 * @param mappingConfig The config.
+	 */
+	public MethodSelector(@NotNull final IFallbackSelector fallbackSelector, @NotNull final MappingConfig mappingConfig) {
+		this.fallbackSelector = fallbackSelector;
+		this.mappingConfig = mappingConfig;
+	}
 
 	/**
 	 * Smallest acceptable constructor.
@@ -43,7 +51,19 @@ public class MethodSelector implements IMethodSelector {
 
 	@Override
 	@NotNull
-	public Object[] recalculateArguments(@NotNull final Method method, @NotNull final String... args) {
+	public <E extends JavaPlugin> ExecutionCall selectMethod(@NotNull final Method method,
+			@NotNull final String[] args,
+			@NotNull final Class<? extends AnnotatedCommandExecutor<E>> executorClass) {
+		try {
+			return new ExecutionCall(List.of(method), recalculateArguments(method, args));
+		} catch (final FallbackException ex) {
+			final List<Method> methods = fallbackSelector.selectFallback(ex.getMapper(), ex.getTargetClass(), executorClass);
+			return new ExecutionCall(methods, new Object[]{ex.getValue()});
+		}
+	}
+
+	@NotNull
+	private Object[] recalculateArguments(@NotNull final Method method, @NotNull final String[] args) {
 		final Argument argument = method.getAnnotation(Argument.class);
 		final Object[] data = new Object[method.getParameterCount()];
 		int skip = 0;
@@ -77,7 +97,7 @@ public class MethodSelector implements IMethodSelector {
 	@NotNull
 	@SuppressWarnings("unchecked")
 	private <T> Optional<MappingSet<T>> getMappingSet(@Nullable final Mapper mapper,
-													  @NotNull final Class<T> clazz) {
+			@NotNull final Class<T> clazz) {
 		final Optional<MappingSet<T>> mappingSet = Optional.ofNullable(mapper)
 				.map(Mapper::value)
 				.map(mappingConfig::getArgumentMapper)
@@ -93,7 +113,7 @@ public class MethodSelector implements IMethodSelector {
 
 	@NotNull
 	private <T> T convert(@Nullable final Mapper mapper, @NotNull final MappingSet<T> mappingSet,
-						  @NotNull final Class<T> targetClass, @NotNull final String value) {
+			@NotNull final Class<T> targetClass, @NotNull final String value) {
 		final Object result = mappingSet.function().apply(value);
 		if (mappingSet.fallbackCondition().test(result)) {
 			throw new FallbackException("Fallback condition failed", mapper, targetClass, value);

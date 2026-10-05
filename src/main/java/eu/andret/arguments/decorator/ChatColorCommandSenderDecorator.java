@@ -1,6 +1,5 @@
 package eu.andret.arguments.decorator;
 
-import lombok.Generated;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -18,7 +17,6 @@ import java.util.UUID;
 /**
  * Decorating class for {@link CommandSender} class to apply coloring to text messages.
  */
-@Generated
 public class ChatColorCommandSenderDecorator implements CommandSender {
 	private final CommandSender wrappedSender;
 

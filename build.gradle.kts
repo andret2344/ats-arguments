@@ -4,8 +4,22 @@ plugins {
 	jacoco
 	`maven-publish`
 	checkstyle
-	id("org.barfuin.gradle.jacocolog") version "3.1.0"
-	id("org.jetbrains.changelog") version "2.5.0"
+	alias(libs.plugins.jacocolog)
+	alias(libs.plugins.changelog)
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
+	}
+}
+
+jacoco {
+	toolVersion = libs.versions.jacoco.get()
+}
+
+checkstyle {
+	toolVersion = libs.versions.checkstyle.get()
 }
 
 sourceSets {
@@ -17,7 +31,13 @@ sourceSets {
 	}
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 configurations {
+	// Tests run against the same server API that the library compiles against
+	testImplementation {
+		extendsFrom(configurations.compileOnly.get())
+	}
 	named("integrationImplementation") {
 		extendsFrom(configurations.getByName("testImplementation"))
 	}
@@ -32,49 +52,38 @@ repositories {
 }
 
 dependencies {
-	compileOnly(
-			group = "org.spigotmc",
-			name = "spigot-api",
-			version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
-	)
-	compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.30")
-	implementation(group = "org.jetbrains", name = "annotations", version = "24.1.0")
-	annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.30")
+	compileOnly(libs.spigot.api)
+	implementation(libs.jetbrains.annotations)
 
-	testCompileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.30")
-	testImplementation(group = "org.assertj", name = "assertj-core", version = "3.24.2")
-	testImplementation(group = "org.mockito", name = "mockito-core", version = "5.8.0")
-	testImplementation(group = "org.mockito", name = "mockito-inline", version = "5.2.0")
-	testImplementation(group = "org.mockito", name = "mockito-testng", version = "0.5.2")
-	testImplementation(
-			group = "org.spigotmc",
-			name = "spigot-api",
-			version = "${project.properties["spigotVersion"]}-R0.1-SNAPSHOT"
-	)
-	testImplementation(group = "org.testng", name = "testng", version = "7.8.0")
-	testAnnotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.30")
+	testImplementation(libs.assertj.core)
+	testImplementation(libs.mockito.core)
+	mockitoAgent(libs.mockito.core) {
+		isTransitive = false
+	}
+	testImplementation(libs.mockito.testng)
+	testImplementation(libs.testng)
 }
 
 tasks {
 	compileJava {
 		options.compilerArgs.addAll(
-				listOf(
-						"-parameters",
-						"-g",
-						"-Xlint:deprecation",
-						"-Xlint:unchecked"
-				)
+			listOf(
+				"-parameters",
+				"-g",
+				"-Xlint:deprecation",
+				"-Xlint:unchecked"
+			)
 		)
 	}
 
 	compileTestJava {
 		options.compilerArgs.addAll(
-				listOf(
-						"-parameters",
-						"-g",
-						"-Xlint:deprecation",
-						"-Xlint:unchecked"
-				)
+			listOf(
+				"-parameters",
+				"-g",
+				"-Xlint:deprecation",
+				"-Xlint:unchecked"
+			)
 		)
 	}
 
@@ -90,7 +99,7 @@ tasks {
 		exclude("**")
 	}
 
-	create<Test>("integrationTest") {
+	register<Test>("integrationTest") {
 		description = "Runs the integration tests."
 		group = "verification"
 		testClassesDirs = sourceSets["integration"].output.classesDirs
@@ -103,12 +112,17 @@ tasks {
 		dependsOn("integrationTest")
 	}
 
+	// Mockito self-attaching its agent at runtime will stop working in a future JDK
+	withType<Test> {
+		jvmArgumentProviders.add(CommandLineArgumentProvider { listOf("-javaagent:${mockitoAgent.singleFile}") })
+	}
+
 	test {
 		jacoco {
 			exclude("**/Material")
 		}
 		useTestNG()
-		finalizedBy(jacocoTestCoverageVerification, jacocoAggregatedReport)
+		finalizedBy(jacocoTestCoverageVerification, jacocoLogTestCoverage)
 	}
 
 	jacocoTestReport {
@@ -140,7 +154,7 @@ tasks {
 			memberLevel = JavadocMemberLevel.PROTECTED
 			author(true)
 
-			links("https://docs.oracle.com/en/java/javase/11/docs/api/")
+			links("https://docs.oracle.com/en/java/javase/${libs.versions.java.get()}/docs/api/")
 		}
 	}
 
@@ -155,12 +169,12 @@ tasks {
 	}
 
 	withType<Jar> {
-		archiveBaseName.set("${project.properties["artifact"]}")
+		archiveBaseName.set(providers.gradleProperty("artifact"))
 		// Shading copies META-INF into the consumer's jar, which keeps the NOTICE attribution there;
 		// the suffix stops other libraries' LICENSE/NOTICE files from replacing ours
 		metaInf {
 			from("LICENSE", "NOTICE")
-			rename { "$it-${project.properties["artifact"]}" }
+			rename { "$it-${providers.gradleProperty("artifact").get()}" }
 		}
 	}
 }
@@ -177,9 +191,9 @@ publishing {
 			artifact(tasks.jar)
 			artifact(tasks.named("sourceJar"))
 			artifact(tasks.named("packageJavadoc"))
-			groupId = project.properties["group"] as String
-			version = project.properties["version"] as String
-			artifactId = project.properties["artifact"] as String
+			groupId = providers.gradleProperty("group").get()
+			version = providers.gradleProperty("version").get()
+			artifactId = providers.gradleProperty("artifact").get()
 			pom {
 				licenses {
 					license {

@@ -4,17 +4,13 @@ import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.mapper.IMethodInvoker;
 import eu.andret.arguments.mapper.IResponseMapper;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The method invoker implementation.
@@ -22,7 +18,6 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Nov 25, 2021
  */
-@AllArgsConstructor
 public record MethodInvoker(@NotNull IResponseMapper responseMapper) implements IMethodInvoker {
 	/**
 	 * A constructor.
@@ -36,21 +31,14 @@ public record MethodInvoker(@NotNull IResponseMapper responseMapper) implements 
 	@NotNull
 	@Override
 	public <E extends JavaPlugin> List<String> invokeMethod(@NotNull final Method method,
-															@NotNull final AnnotatedCommandExecutor<E> executor,
-															@NotNull final Object[] data) {
-		return Optional.ofNullable(invoke(method, executor, data))
+			@NotNull final AnnotatedCommandExecutor<E> executor,
+			@NotNull final Object[] data)
+			throws ReflectiveOperationException {
+		return Optional.ofNullable(method.invoke(executor, data))
 				.map(result -> responseMapper.mapResponse(method, result))
 				.stream()
 				.flatMap(Collection::stream)
 				.flatMap(String::lines)
-				.collect(Collectors.toList());
-	}
-
-	@Nullable
-	@SneakyThrows
-	private <E extends JavaPlugin> Object invoke(@NotNull final Method method,
-												 @NotNull final AnnotatedCommandExecutor<E> executor,
-												 @NotNull final Object[] data) {
-		return method.invoke(executor, data);
+				.toList();
 	}
 }

@@ -18,8 +18,9 @@ calls of those methods, including argument parsing, permissions and tab completi
 
 ## Build and test
 
-Gradle 8.5 (Kotlin DSL), Java 17. Gradle 8.5 does not start on JDK 25, so point `JAVA_HOME` at a JDK 17 (CI uses Zulu
-17). No toolchain is configured, so the bytecode level follows whichever JDK runs Gradle.
+Gradle 9.8 (Kotlin DSL), Java 25 through a toolchain set in both build scripts from `libs.versions.java`, so the
+bytecode is Java 25 whichever JDK runs Gradle. Gradle has to find a JDK 25 locally (CI uses Zulu 25); no toolchain
+download is configured.
 
 ```shell
 ./gradlew assemble            # build library and the example plugin
@@ -30,22 +31,31 @@ Gradle 8.5 (Kotlin DSL), Java 17. Gradle 8.5 does not start on JDK 25, so point 
 ./gradlew test --tests eu.andret.arguments.UtilTest -x jacocoTestCoverageVerification   # single test class
 ```
 
-- Tests use **TestNG** + Mockito + AssertJ, written as `// given` / `// when` / `// then`.
-- `test` is finalized by `jacocoTestCoverageVerification` with a **100% instruction coverage** minimum. Any new main
-  code without full unit-test coverage fails the build. A filtered run fails that check too, hence the `-x` above.
+- Tests use **TestNG** + Mockito + AssertJ, written as `// given` / `// when` / `// then`. Every `Test` task loads
+  Mockito as a `-javaagent` (the `mockitoAgent` configuration) instead of letting it self-attach.
+- `test` is finalized by `jacocoTestCoverageVerification` with a **100% instruction coverage** minimum, and by
+  `jacocoLogTestCoverage`, which prints the coverage summary. Any new main code without full unit-test coverage fails
+  the build. A filtered run fails that check too, hence the `-x` above.
 - Integration tests drive the real pipeline through `LocalCommandExecutor.onCommand(...)` with mocked
   `CommandSender`/`PluginCommand` and fixture command classes in `src/integration/.../executor`.
-- Checkstyle (`config/checkstyle/checkstyle.xml`) requires javadoc on public types and methods, forbids catching
-  generic `Exception` (`IllegalCatch`, suppressed locally where intended) and star imports. Test and integration
-  sources are excluded.
+- Checkstyle (`config/checkstyle/checkstyle.xml`, tool version from the catalog) requires javadoc with a summary
+  sentence (`SummaryJavadoc`) on public types and methods, forbids catching generic `Exception` (`IllegalCatch`) and
+  star imports. Test and integration sources are excluded.
+- Javadoc must always match the code. Whenever a change makes a javadoc wrong (a parameter's type or role, a return
+  value, a thrown exception, what a method or class does), fix that javadoc in the same change. The same applies to
+  an outdated javadoc you notice in code you touch, even if your change did not cause it.
 - Source files carry no copyright header; do not add one. The project is Apache 2.0, and attribution lives only in
   `NOTICE` (copyright andret2344 plus a link to the repository). Every jar task copies them into `META-INF` as
   `LICENSE-ats-arguments` and `NOTICE-ats-arguments` (suffixed so other shaded libraries cannot overwrite them), so
   they end up in consumers' shaded jars. The POM declares the license.
 - All text files use LF line endings, enforced by `.gitattributes` (`* text=auto eol=lf`), except `*.bat`, which
   stays CRLF because `cmd.exe` misparses LF batch files.
-- Lombok is used heavily (`@Value`, `@NonFinal`, `@UtilityClass`, `@SneakyThrows`); `lombok.config` marks generated
-  code so jacoco ignores it.
+- All versions live in the version catalog `gradle/libs.versions.toml`: Java, libraries, Gradle plugins
+  (`alias(libs.plugins.*)`) and the jacoco and checkstyle tool versions, including the Spigot API version used by
+  the library and the example plugin.
+- No Lombok: constructors, getters and setters are written by hand, and so they count toward the 100% coverage.
+  Classes have no `equals`/`hashCode`/`toString` unless something needs them. Reflective calls declare
+  `ReflectiveOperationException` on the `I*` interfaces instead of hiding it.
 
 ## Architecture
 
@@ -64,24 +74,31 @@ Execution pipeline in `LocalCommandExecutor.onCommand`:
    `@Argument.position`, case sensitivity from `Options`), `ExecutorTypeFilter` and `ArgumentsFilter` (argument
    count and type compatibility, varargs). Order comes from `getDeclaredMethods()`, so overload ambiguity is resolved
    by the JVM's method order, not by specificity.
-4. `PermissionFilter` checks `@Argument.permission`, otherwise the insufficient-permissions listener fires.
+4. `PermissionFilter` checks `@Argument.permission` (the console and operators always pass), otherwise the
+   insufficient-permissions listener fires.
 5. `MethodSelector` converts the string args to parameter values: explicit `@Mapper("id")` argument mapper, else a
-   registered type mapper, else `Util.convert` for primitives/String. A mapper result matching its fallback condition
-   throws `FallbackException`, which switches execution to `@ArgumentFallback` / `@TypeFallback` methods (single
-   `String` parameter, ordered by `FallbackPriority`) chosen by `FallbackSelector`.
+   registered type mapper, else `Util.convert` for primitives/String, and returns the `ExecutionCall` (methods plus
+   arguments). A mapper result matching its fallback condition throws `FallbackException` inside `MethodSelector`,
+   which catches it and returns the `@ArgumentFallback` / `@TypeFallback` methods (single `String` parameter, ordered
+   by `FallbackPriority`) chosen by its `FallbackSelector`, with the failed string as the argument.
 6. `InstanceCreator` builds the command class instance. Its single constructor must start with
    `(CommandSender, JavaPlugin, ...)`; extra args come from `registerCommand`. Instances are **cached per sender** in
    `LocalCommandExecutor.executors`, so fields on the command class are per-sender state.
-7. `ExceptionHandler` invokes through `MethodInvoker`; an exception thrown by the method is routed to
-   `@ExceptionFallback` methods matching its exact class (taking no args or the exception), otherwise rethrown.
+7. `ExceptionHandler` invokes through `MethodInvoker`. An exception thrown by the method (an
+   `InvocationTargetException` from reflection) is routed to `@ExceptionFallback` methods matching the cause's exact
+   class (taking no args or the exception); with no match, the cause is rethrown wrapped in `RuntimeException`. Other
+   reflective failures, including an exception thrown by the command class constructor or by a fallback method, leave
+   `onCommand` wrapped in `IllegalStateException`.
 8. `ResponseMapper` turns the return value into messages: arrays and collections are split into elements, each element
    is mapped by `@ArgumentResponse("id")` or a type response mapper (falling back to `String.valueOf`), then split on
    line breaks. `null`/`void` sends nothing.
 
-All mapper/completer registries live in `entity/MappingConfig` (argument mappers by id, type mappers by class, response
-mappers). Collaborators are behind `I*` interfaces in `filter/` and `mapper/`, with implementations in `impl/`, and are
-constructed directly as fields of `LocalCommandExecutor`. The interfaces exist for mocking in unit tests, not for
-user extension.
+The mapper registries live in `entity/MappingConfig`, one instance per command created by `LocalCommandExecutor`:
+argument mappers by id, type mappers by class, and argument and type response mappers. Completers are not in it; they
+are two maps in `LocalTabCompleter` (argument completers by id, type completers by class), shared with
+`MethodToCompletionMapper`. Collaborators are behind `I*` interfaces in `filter/` and `mapper/`, with implementations
+in `impl/`, and are constructed directly as fields of `LocalCommandExecutor` and `LocalTabCompleter`. The interfaces
+exist for mocking in unit tests, not for user extension.
 
 `LocalTabCompleter`: the first arg completes method names and aliases; later args go through
 `MethodToCompletionMapper`, using `@Completer("id")` argument completers or type completers, with `@Ignore` disabling

@@ -5,8 +5,6 @@ import eu.andret.arguments.api.annotation.ArgumentFallback;
 import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.api.annotation.TypeFallback;
 import eu.andret.arguments.mapper.IFallbackSelector;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * An implementation of {@link IFallbackSelector}.
@@ -22,8 +19,6 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Sep 02, 2021
  */
-@Value
-@NonFinal
 public class FallbackSelector implements IFallbackSelector {
 	private static final Class<?>[] VALID_PARAMETERS_ARRAY = {String.class};
 
@@ -44,12 +39,10 @@ public class FallbackSelector implements IFallbackSelector {
 			@NotNull final String argument, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
 		return Arrays.stream(executor.getDeclaredMethods())
 				.filter(method -> method.isAnnotationPresent(ArgumentFallback.class))
-				.filter(method -> Arrays.asList(method.getAnnotation(ArgumentFallback.class).value())
-						.contains(argument))
+				.filter(method -> Arrays.asList(method.getAnnotation(ArgumentFallback.class).value()).contains(argument))
 				.filter(method -> Arrays.equals(method.getParameterTypes(), VALID_PARAMETERS_ARRAY))
-				.sorted((o1, o2) -> o2.getAnnotation(ArgumentFallback.class).priority().getSlot()
-						- o1.getAnnotation(ArgumentFallback.class).priority().getSlot())
-				.collect(Collectors.toList());
+				.sorted((o1, o2) -> Integer.compare(o2.getAnnotation(ArgumentFallback.class).priority().getSlot(), o1.getAnnotation(ArgumentFallback.class).priority().getSlot()))
+				.toList();
 	}
 
 	@NotNull
@@ -57,11 +50,9 @@ public class FallbackSelector implements IFallbackSelector {
 			@NotNull final Class<?> type, @NotNull final Class<? extends AnnotatedCommandExecutor<E>> executor) {
 		return Arrays.stream(executor.getDeclaredMethods())
 				.filter(method -> method.isAnnotationPresent(TypeFallback.class))
-				.filter(method -> Arrays.asList(method.getAnnotation(TypeFallback.class).value())
-						.contains(type))
+				.filter(method -> Arrays.asList(method.getAnnotation(TypeFallback.class).value()).contains(type))
 				.filter(method -> Arrays.equals(method.getParameterTypes(), VALID_PARAMETERS_ARRAY))
-				.sorted((o1, o2) -> o2.getAnnotation(TypeFallback.class).priority().getSlot()
-						- o1.getAnnotation(TypeFallback.class).priority().getSlot())
-				.collect(Collectors.toList());
+				.sorted((o1, o2) -> Integer.compare(o2.getAnnotation(TypeFallback.class).priority().getSlot(), o1.getAnnotation(TypeFallback.class).priority().getSlot()))
+				.toList();
 	}
 }

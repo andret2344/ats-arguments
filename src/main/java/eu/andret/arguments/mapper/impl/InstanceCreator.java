@@ -2,9 +2,6 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.mapper.IInstanceCreator;
-import lombok.SneakyThrows;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -18,19 +15,16 @@ import java.util.Optional;
  * @author Andret
  * @since Sep 03, 2021
  */
-@Value
-@NonFinal
 public class InstanceCreator implements IInstanceCreator {
 	@Override
 	@NotNull
-	@SneakyThrows
 	public <E extends JavaPlugin, A extends AnnotatedCommandExecutor<E>> A createInstance(
 			@NotNull final CommandSender sender,
 			@NotNull final JavaPlugin plugin,
 			@NotNull final Class<A> executor,
-			@NotNull final Object... parameters) {
-		final Constructor<A> constructor = findConstructor(executor, plugin)
-				.orElseThrow(() -> new IllegalStateException("AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
+			@NotNull final Object... parameters) throws ReflectiveOperationException {
+		final Constructor<A> constructor = findConstructor(executor, plugin).orElseThrow(() -> new IllegalStateException(
+				"AnnotatedCommandExecutor subclass needs a constructor with at least 2 parameters: CommandSender and JavaPlugin as first two of them"));
 		final Object[] arguments = new Object[parameters.length + 2];
 		arguments[0] = sender;
 		arguments[1] = plugin;

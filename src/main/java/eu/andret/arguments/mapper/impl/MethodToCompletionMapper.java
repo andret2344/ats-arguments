@@ -3,9 +3,6 @@ package eu.andret.arguments.mapper.impl;
 import eu.andret.arguments.api.annotation.Completer;
 import eu.andret.arguments.api.annotation.Ignore;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +21,22 @@ import java.util.function.BiFunction;
  * @author Andret
  * @since Nov 07, 2020
  */
-@Value
-@Getter(AccessLevel.NONE)
-public class MethodToCompletionMapper implements IMethodToCompletionMapper {
-	Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap;
-	Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap;
+public final class MethodToCompletionMapper implements IMethodToCompletionMapper {
+	private final Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap;
+	private final Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap;
+
+	/**
+	 * A constructor.
+	 *
+	 * @param typeCompleterMap The completers by type.
+	 * @param argumentCompleterMap The completers by id.
+	 */
+	public MethodToCompletionMapper(
+			final Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap,
+			final Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap) {
+		this.typeCompleterMap = typeCompleterMap;
+		this.argumentCompleterMap = argumentCompleterMap;
+	}
 
 	@Override
 	public Collection<String> mapCommandToCompletion(final Method method, final String[] args, final CommandSender sender) {
@@ -48,7 +56,7 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 	@NotNull
 	private BiFunction<List<String>, CommandSender, Collection<String>> extractSuggestions(final Parameter parameter) {
 		if (parameter.isAnnotationPresent(Ignore.class)) {
-			return (sender, collection) -> Collections.emptyList();
+			return (_, _) -> Collections.emptyList();
 		}
 		if (!parameter.isAnnotationPresent(Completer.class)) {
 			return getTypeSuggestion(parameter);
@@ -64,6 +72,6 @@ public class MethodToCompletionMapper implements IMethodToCompletionMapper {
 		if (typeCompleterMap.containsKey(parameter.getType())) {
 			return typeCompleterMap.get(parameter.getType());
 		}
-		return (sender, collection) -> Collections.emptyList();
+		return (_, _) -> Collections.emptyList();
 	}
 }

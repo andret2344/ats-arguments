@@ -1,22 +1,27 @@
 plugins {
 	idea
 	java
-	id("com.github.johnrengelman.shadow") version "8.1.1"
-	id("kr.entree.spigradle") version "2.4.3"
+	alias(libs.plugins.shadow)
+	alias(libs.plugins.spigradle)
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
+	}
 }
 
 repositories {
 	mavenCentral()
 	mavenLocal()
+	spigotRepos {
+		spigotmc()
+	}
 }
 
 dependencies {
-	implementation(rootProject)
-	compileOnly(
-			group = "org.spigotmc",
-			name = "spigot-api",
-			version = "${rootProject.properties["spigotVersion"]}-R0.1-SNAPSHOT"
-	)
+	implementation(project(":"))
+	compileOnly(libs.spigot.api)
 }
 
 tasks {
@@ -36,14 +41,14 @@ tasks {
 
 	spigot {
 		authors = listOf("Andret")
-		apiVersion = "1.20"
+		apiVersion = "26.1"
 
 		commands {
-			create("test") {
+			register("test") {
 				description = "The main command."
 				usage = "/<command>"
 			}
-			create("parameters") {
+			register("parameters") {
 				description = "Parameters command"
 				usage = "/<command>"
 			}

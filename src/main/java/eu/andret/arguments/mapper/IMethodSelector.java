@@ -1,7 +1,9 @@
 package eu.andret.arguments.mapper;
 
-import eu.andret.arguments.FallbackException;
+import eu.andret.arguments.AnnotatedCommandExecutor;
 import eu.andret.arguments.IMapper;
+import eu.andret.arguments.entity.ExecutionCall;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -15,15 +17,17 @@ import java.lang.reflect.Method;
 @FunctionalInterface
 public interface IMethodSelector extends IMapper {
 	/**
-	 * Invokes one of methods inside method and correctly puts all arguments.
+	 * Selects what to call for the command: the method with its arguments converted from the strings, or the fallback
+	 * methods with the failed value when a mapper's fallback condition matches.
 	 *
-	 * @param method The {@link Method} containing method to be called.
+	 * @param method The {@link Method} matched to the command.
 	 * @param args The real command arguments array.
+	 * @param executorClass The class to search for the fallback methods in.
+	 * @param <E> The {@link JavaPlugin} subclass.
 	 *
-	 * @return The result contains created objects from Strings.
-	 *
-	 * @throws FallbackException if fallback condition matches.
+	 * @return The methods to call and the arguments to call them with.
 	 */
-	@NotNull
-	Object[] recalculateArguments(@NotNull Method method, @NotNull String... args);
+	@NotNull <E extends JavaPlugin> ExecutionCall selectMethod(@NotNull Method method,
+			@NotNull String[] args,
+			@NotNull Class<? extends AnnotatedCommandExecutor<E>> executorClass);
 }

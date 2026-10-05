@@ -3,7 +3,6 @@ package eu.andret.arguments.filter.impl;
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.filter.IMethodNameFilter;
-import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -18,8 +17,7 @@ import java.util.stream.Stream;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-public class MethodNameFilter implements IMethodNameFilter {
+public final class MethodNameFilter implements IMethodNameFilter {
 	@Override
 	public boolean filterMethodName(final Method method, final String[] command, final AnnotatedCommand.Options options) {
 		return Optional.of(method)
@@ -32,7 +30,7 @@ public class MethodNameFilter implements IMethodNameFilter {
 	}
 
 	private boolean nameMatches(final Argument argument, final Method method, final String[] command,
-								final AnnotatedCommand.Options options) {
+			final AnnotatedCommand.Options options) {
 		final String name = command[argument.position()];
 		final Predicate<String> predicate = options.isCaseSensitive() ? name::equals : name::equalsIgnoreCase;
 		return getAllNamesStream(argument, method).anyMatch(predicate);

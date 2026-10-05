@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 @FunctionalInterface
 public interface IArgumentsFilter extends IMapper {
 	/**
+	 * Checks whether the command arguments match the method parameters.
+	 *
 	 * @param method The {@link Method} that will be analyzed.
 	 * @param command The array of {@link String} with arguments passed with command.
 	 *

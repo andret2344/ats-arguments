@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface IInstanceCreator extends IMapper {
 	/**
+	 * Creates the instance of the command class.
+	 *
 	 * @param sender The sender who executed the command.
 	 * @param plugin The {@link JavaPlugin}.
 	 * @param executorClass The class containing {@link Argument} methods.
@@ -24,10 +26,12 @@ public interface IInstanceCreator extends IMapper {
 	 * @param <A> The {@link AnnotatedCommandExecutor} class.
 	 *
 	 * @return List with results from called methods.
+	 * @throws ReflectiveOperationException if the constructor cannot be invoked or it threw an exception, which is
+	 * 		then wrapped in {@link java.lang.reflect.InvocationTargetException}.
 	 */
 	@NotNull <E extends JavaPlugin, A extends AnnotatedCommandExecutor<E>> A createInstance(
 			@NotNull CommandSender sender,
 			@NotNull JavaPlugin plugin,
 			@NotNull Class<A> executorClass,
-			@NotNull Object... parameters);
+			@NotNull Object... parameters) throws ReflectiveOperationException;
 }

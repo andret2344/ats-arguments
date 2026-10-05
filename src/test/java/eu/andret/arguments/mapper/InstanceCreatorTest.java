@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 
 public class InstanceCreatorTest {
 	@Test
-	void createInstanceCorrectly() {
+	void createInstanceCorrectly() throws ReflectiveOperationException {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
@@ -35,7 +35,7 @@ public class InstanceCreatorTest {
 	}
 
 	@Test
-	void createInstanceWithManyArguments() {
+	void createInstanceWithManyArguments() throws ReflectiveOperationException {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);

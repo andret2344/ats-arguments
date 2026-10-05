@@ -3,7 +3,6 @@ package eu.andret.arguments.filter.impl;
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.api.entity.ExecutorType;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
-import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -16,8 +15,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-public class ExecutorTypeFilter implements IExecutorTypeFilter {
+public final class ExecutorTypeFilter implements IExecutorTypeFilter {
 	@Override
 	public boolean filterExecutorType(final Method method, final CommandSender sender) {
 		final ExecutorType executorType = method.getAnnotation(Argument.class).executorType();

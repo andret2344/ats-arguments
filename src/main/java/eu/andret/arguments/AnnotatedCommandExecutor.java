@@ -1,8 +1,6 @@
 package eu.andret.arguments;
 
 import eu.andret.arguments.api.annotation.Argument;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,18 +11,46 @@ import org.bukkit.plugin.java.JavaPlugin;
  * CommandManager#registerCommand(Class, JavaPlugin, Object...)}
  *
  * @param <T> The {@link JavaPlugin} that will be administrating commands.
+ *
  * @author Andret
  * @since May 18, 2019
  */
-@Value
-@NonFinal
 public abstract class AnnotatedCommandExecutor<T extends JavaPlugin> {
 	/**
 	 * The Sender that performed the command.
 	 */
-	protected CommandSender sender;
+	protected final CommandSender sender;
 	/**
 	 * The Plugin that uses this executor.
 	 */
-	protected T plugin;
+	protected final T plugin;
+
+	/**
+	 * A constructor.
+	 *
+	 * @param sender The Sender that performed the command.
+	 * @param plugin The Plugin that uses this executor.
+	 */
+	protected AnnotatedCommandExecutor(final CommandSender sender, final T plugin) {
+		this.sender = sender;
+		this.plugin = plugin;
+	}
+
+	/**
+	 * Gets the sender that performed the command.
+	 *
+	 * @return The Sender that performed the command.
+	 */
+	public CommandSender getSender() {
+		return sender;
+	}
+
+	/**
+	 * Gets the plugin that uses this executor.
+	 *
+	 * @return The Plugin that uses this executor.
+	 */
+	public T getPlugin() {
+		return plugin;
+	}
 }

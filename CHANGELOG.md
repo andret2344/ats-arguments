@@ -13,7 +13,8 @@
   in, have to keep the `NOTICE` file, which every jar now carries as `META-INF/NOTICE-ats-arguments`.
 - The library is published to GitHub Packages instead of the GitLab package registry. See the README for the
   repository and token setup.
-- Requires Java 17 (was 11) and is built against Spigot API 1.20.4 (was 1.18.1).
+- Requires Java 25 (was 11) and is built against Spigot API 26.3 (was 1.18.1). Servers running on a Java older than 25,
+  which covers most 1.20 and 1.21 servers, cannot load it.
 - Completers get the already typed arguments as `List<String>` first and the `CommandSender` second. The
   single-argument variants take `Function<List<String>, Collection<String>>` instead of
   `Function<CommandSender, Collection<String>>`.
@@ -21,10 +22,15 @@
 - Enum mappers match names case-insensitively, and unknown names trigger the fallback instead of throwing an exception.
 - With `autoTranslateColors` enabled, color codes are translated in every message sent to the sender, including
   messages sent from inside command methods. Help messages are translated only when the option is enabled.
+- An exception thrown by the command class constructor reaches Bukkit wrapped in `IllegalStateException` instead of
+  as a raw `InvocationTargetException`.
 
 ### Removed
 
 - `FallbackConstants`. Pass a predicate such as `Objects::isNull` instead.
+- The Lombok-generated `equals`, `hashCode` and `toString` of `AnnotatedCommand`, `AnnotatedCommand.Options`,
+  `AnnotatedCommandExecutor` (and so of every command class) and `FallbackException`. They now use identity, so two
+  command class instances with the same sender and plugin are no longer equal.
 
 ## 0.1.3
 

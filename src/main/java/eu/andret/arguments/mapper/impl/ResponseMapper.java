@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The response mapper implementation.
@@ -30,7 +29,7 @@ public record ResponseMapper(@NotNull MappingConfig mappingConfig) implements IR
 	public List<String> mapResponse(@NotNull final Method method, @NotNull final Object result) {
 		return createResponseList(result).stream()
 				.map(getMappingFunction(method))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@NotNull
@@ -66,14 +65,15 @@ public record ResponseMapper(@NotNull MappingConfig mappingConfig) implements IR
 					.map(Object[].class::cast)
 					.stream()
 					.flatMap(Arrays::stream)
-					.collect(Collectors.toList());
+					.toList();
 		}
 		if (Collection.class.isAssignableFrom(result.getClass())) {
 			return Optional.of(result)
 					.map(object -> (Collection<?>) object)
 					.stream()
 					.flatMap(Collection::stream)
-					.collect(Collectors.toList());
+					.map(Object.class::cast)
+					.toList();
 		}
 		return Collections.singletonList(result);
 	}

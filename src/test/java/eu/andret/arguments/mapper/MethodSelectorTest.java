@@ -1,13 +1,12 @@
 package eu.andret.arguments.mapper;
 
 import eu.andret.arguments.AnnotatedCommandExecutor;
-import eu.andret.arguments.FallbackException;
 import eu.andret.arguments.api.annotation.Mapper;
+import eu.andret.arguments.entity.ExecutionCall;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.mapper.impl.MethodSelector;
 import eu.andret.arguments.provider.TestMethodsProvider;
-import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,7 +18,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,16 +31,17 @@ public class MethodSelectorTest {
 		final Method method = commandClass.getDeclaredMethod("testMethod");
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "testMethod");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"testMethod"}, commandClass);
 
 		// then
-		assertThat(result).isEmpty();
+		assertThat(result.methods()).containsExactly(method);
+		assertThat(result.data()).isEmpty();
 	}
 
 	@Test
 	void invokeFallbackMethodWith() throws ReflectiveOperationException {
 		// given
-		final Function<String, World> getWorld = s -> null;
+		final Function<String, World> getWorld = _ -> null;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
@@ -55,10 +54,11 @@ public class MethodSelectorTest {
 		when(fallbackSelector.selectFallback(mapper, World.class, provider)).thenReturn(methods);
 
 		// when
-		final ThrowableAssert.ThrowingCallable callable = () -> selector.recalculateArguments(methodWorld, "testMethod", "test");
+		final ExecutionCall result = selector.selectMethod(methodWorld, new String[]{"testMethod", "test"}, provider);
 
 		// then
-		assertThatThrownBy(callable).isInstanceOf(FallbackException.class);
+		assertThat(result.methods()).isEqualTo(methods);
+		assertThat(result.data()).containsExactly("test");
 	}
 
 	@Test
@@ -70,10 +70,10 @@ public class MethodSelectorTest {
 		final Method method = commandClass.getDeclaredMethod("testMethodWithArgument", String.class);
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"testMethodWithArgument", "test"}, commandClass);
 
 		// then
-		assertThat(result).containsExactly("test");
+		assertThat(result.data()).containsExactly("test");
 	}
 
 	@Test
@@ -82,16 +82,16 @@ public class MethodSelectorTest {
 		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final MappingConfig mappingConfig = new MappingConfig();
 		final Location location = mock(Location.class);
-		mappingConfig.addTypeMapper(Location.class, new MappingSet<>(Location.class, s -> location, Objects::isNull));
+		mappingConfig.addTypeMapper(Location.class, new MappingSet<>(Location.class, _ -> location, Objects::isNull));
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
 		final Method method = commandClass.getDeclaredMethod("testMethodWithMappedArgument", Location.class);
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "testMethodWithArgument", "test");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"testMethodWithArgument", "test"}, commandClass);
 
 		// then
-		assertThat(result).containsExactly(location);
+		assertThat(result.data()).containsExactly(location);
 	}
 
 	@Test
@@ -103,10 +103,10 @@ public class MethodSelectorTest {
 		final Method method = commandClass.getDeclaredMethod("testMethodSecondWithCorrectPosition", String.class, String.class);
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "test", "testMethodWithCorrectPosition", "test2");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"test", "testMethodWithCorrectPosition", "test2"}, commandClass);
 
 		// then
-		assertThat(result).containsExactly("test", "test2");
+		assertThat(result.data()).containsExactly("test", "test2");
 	}
 
 	@Test
@@ -118,17 +118,17 @@ public class MethodSelectorTest {
 		final Method method = commandClass.getDeclaredMethod("testMethodWithIntVararg", int[].class);
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "1", "2");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"testMethodWithIntVararg", "1", "2"}, commandClass);
 
 		// then
-		assertThat(result).isEqualTo(new int[][]{{1, 2}});
+		assertThat(result.data()).isEqualTo(new int[][]{{1, 2}});
 	}
 
 	@Test
 	void invokeMethodWithParamArg() throws ReflectiveOperationException {
 		// given
 		final World world = mock(World.class);
-		final Function<String, World> getWorld = s -> world;
+		final Function<String, World> getWorld = _ -> world;
 		final MappingConfig mappingConfig = new MappingConfig();
 		mappingConfig.addArgumentMapper("testWorldMapper", new MappingSet<>(World.class, getWorld, Objects::isNull));
 		final Class<? extends AnnotatedCommandExecutor<JavaPlugin>> commandClass = TestMethodsProvider.class;
@@ -137,9 +137,9 @@ public class MethodSelectorTest {
 		final IMethodSelector selector = new MethodSelector(fallbackSelector, mappingConfig);
 
 		// when
-		final Object[] result = selector.recalculateArguments(method, "testMethodWithIntVararg", "world");
+		final ExecutionCall result = selector.selectMethod(method, new String[]{"testMethodWithIntVararg", "world"}, commandClass);
 
 		// then
-		assertThat(result).containsExactly(world);
+		assertThat(result.data()).containsExactly(world);
 	}
 }

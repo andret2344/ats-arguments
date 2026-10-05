@@ -15,6 +15,8 @@ import java.lang.reflect.Method;
 @FunctionalInterface
 public interface IExecutorTypeFilter extends IMapper {
 	/**
+	 * Checks whether the sender can execute the method.
+	 *
 	 * @param method The method that will be analyzed.
 	 * @param sender The real command sender who performed command.
 	 *

@@ -17,10 +17,10 @@ import static org.mockito.Mockito.mock;
 
 public class MethodInvokerTest {
 	@Test
-	void invokeMethodCorrectly() throws NoSuchMethodException {
+	void invokeMethodCorrectly() throws ReflectiveOperationException {
 		final CommandSender sender = mock(CommandSender.class);
 		final JavaPlugin javaPlugin = mock(JavaPlugin.class);
-		final IResponseMapper responseMapper = (method, result) -> List.of("test", "result");
+		final IResponseMapper responseMapper = (_, _) -> List.of("test", "result");
 		final IMethodInvoker methodInvoker = new MethodInvoker(responseMapper);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, javaPlugin);
 		final Method method = provider.getClass().getDeclaredMethod("testMethodReturningStringList");

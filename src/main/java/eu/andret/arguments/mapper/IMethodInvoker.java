@@ -26,8 +26,10 @@ public interface IMethodInvoker extends IMapper {
 	 *
 	 * @return The list of values returned from method split by end of line or when returned list or array, or used a
 	 * 		return mapper.
+	 *
+	 * @throws ReflectiveOperationException if the method cannot be invoked or it threw an exception, which is then
+	 * 		wrapped in {@link java.lang.reflect.InvocationTargetException}.
 	 */
 	@NotNull <E extends JavaPlugin> List<String> invokeMethod(@NotNull Method method,
-															  @NotNull AnnotatedCommandExecutor<E> executor,
-															  @NotNull Object[] data);
+			@NotNull AnnotatedCommandExecutor<E> executor, @NotNull Object[] data) throws ReflectiveOperationException;
 }

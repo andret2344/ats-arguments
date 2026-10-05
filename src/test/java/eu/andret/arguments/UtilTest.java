@@ -4,6 +4,8 @@ import org.assertj.core.api.ThrowableAssert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,5 +61,20 @@ public class UtilTest {
 
 		// then
 		assertThat(targetClass).isAssignableFrom(realClass);
+	}
+
+	@Test
+	void constructorCall() throws ReflectiveOperationException {
+		// given
+		final Constructor<Util> constructor = Util.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+
+		// when
+		final ThrowableAssert.ThrowingCallable callable = constructor::newInstance;
+
+		// then
+		assertThatThrownBy(callable)
+				.isInstanceOf(InvocationTargetException.class)
+				.hasCauseExactlyInstanceOf(UnsupportedOperationException.class);
 	}
 }

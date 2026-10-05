@@ -1,9 +1,5 @@
 package eu.andret.arguments;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Value;
-import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,20 +15,17 @@ import java.util.regex.Pattern;
  * @author Andret
  * @since Apr 28, 2020
  */
-@UtilityClass
-@Value
-@Getter(AccessLevel.NONE)
-public class Util {
+public final class Util {
 	private static final Pattern PATTERN_INTEGER = Pattern.compile("\\d+");
 	private static final Pattern PATTERN_DOUBLE = Pattern.compile("(\\d*[.,]\\d+)|(\\d+[.,]\\d*)");
 
-	Map<Class<?>, Predicate<String>> realClassPredicates = Map.ofEntries(
+	private static final Map<Class<?>, Predicate<String>> REAL_CLASS_PREDICATES = Map.ofEntries(
 			Map.entry(int.class, value -> PATTERN_INTEGER.matcher(value).matches()),
 			Map.entry(double.class, value -> PATTERN_DOUBLE.matcher(value).matches()),
 			Map.entry(boolean.class, value -> value.equals("false") || value.equals("true"))
 	);
 
-	List<Converter<?>> converters = List.of(
+	private static final List<Converter<?>> CONVERTERS = List.of(
 			new Converter<>(String.class, Class::isArray, Function.identity()),
 			new Converter<>(int.class, clazz -> clazz.isAssignableFrom(int.class), Integer::parseInt),
 			new Converter<>(double.class, clazz -> clazz.isAssignableFrom(double.class), Double::parseDouble),
@@ -41,14 +34,18 @@ public class Util {
 			new Converter<>(boolean.class, clazz -> clazz.isAssignableFrom(boolean.class), Boolean::parseBoolean),
 			new Converter<>(String.class, clazz -> clazz.isAssignableFrom(String.class), Function.identity()));
 
+	private Util() {
+		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+	}
+
 	private record Converter<T>(@NotNull Class<T> source, @NotNull Predicate<Class<T>> predicate,
 								@NotNull Function<String, T> function) {
 	}
 
 	@NotNull
 	@SuppressWarnings("unchecked")
-	private <T> Optional<Converter<T>> getConverter(@NotNull final Class<T> clazz) {
-		return converters.stream()
+	private static <T> Optional<Converter<T>> getConverter(@NotNull final Class<T> clazz) {
+		return CONVERTERS.stream()
 				.map(converter -> (Converter<T>) converter)
 				.filter(entry -> entry.predicate().test(clazz))
 				.findFirst();
@@ -64,7 +61,7 @@ public class Util {
 	 * @return The converted value, or not if no possible assignment found, or is an array.
 	 */
 	@NotNull
-	public <T> T convert(@NotNull final Class<T> clazz, @NotNull final String value) {
+	public static <T> T convert(@NotNull final Class<T> clazz, @NotNull final String value) {
 		return getConverter(clazz)
 				.map(Converter::function)
 				.map(function -> function.apply(value))
@@ -81,8 +78,8 @@ public class Util {
 	 */
 	@NotNull
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Class<?> getRealClass(@NotNull final String value) {
-		return realClassPredicates.entrySet()
+	public static Class<?> getRealClass(@NotNull final String value) {
+		return REAL_CLASS_PREDICATES.entrySet()
 				.stream()
 				.filter(entry -> entry.getValue().test(value))
 				.map(Map.Entry::getKey)

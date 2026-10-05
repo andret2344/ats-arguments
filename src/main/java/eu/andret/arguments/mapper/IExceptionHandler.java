@@ -30,9 +30,13 @@ public interface IExceptionHandler extends IMapper {
 	 * @return Common result from the called method if no exceptions were thrown or the aggregated results from all
 	 *        {@link eu.andret.arguments.api.annotation.ExceptionFallback} methods executed in random order. Rethrow any
 	 * 		thrown exception that haven't been caught.
+	 *
+	 * @throws ReflectiveOperationException if the method cannot be invoked, or an
+	 *        {@link eu.andret.arguments.api.annotation.ExceptionFallback} method threw an exception.
 	 */
 	@NotNull <E extends JavaPlugin> List<String> handleException(@NotNull Method method,
-																 @NotNull AnnotatedCommandExecutor<E> executor,
-																 @NotNull Object[] data,
-																 @NotNull Method[] executorMethods);
+			@NotNull AnnotatedCommandExecutor<E> executor,
+			@NotNull Object[] data,
+			@NotNull Method[] executorMethods)
+			throws ReflectiveOperationException;
 }

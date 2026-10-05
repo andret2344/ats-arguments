@@ -2,7 +2,6 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.AnnotatedCommand;
 import eu.andret.arguments.entity.MappingConfig;
-import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
 import eu.andret.arguments.filter.IExecutorTypeFilter;
 import eu.andret.arguments.filter.IMethodNameFilter;
@@ -10,10 +9,6 @@ import eu.andret.arguments.filter.impl.ArgumentsFilter;
 import eu.andret.arguments.filter.impl.ExecutorTypeFilter;
 import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
 import org.bukkit.command.CommandSender;
 
 import java.lang.reflect.Method;
@@ -26,22 +21,32 @@ import java.util.Optional;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-@AllArgsConstructor
-@Getter(AccessLevel.NONE)
-public class CommandToMethodMapper implements ICommandToMethodMapper {
-	MappingConfig mappingConfig;
-	IMethodNameFilter methodNameFilter;
-	IExecutorTypeFilter executorTypeFilter;
-	IArgumentsFilter argumentsFilter;
+public final class CommandToMethodMapper implements ICommandToMethodMapper {
+	private final IMethodNameFilter methodNameFilter;
+	private final IExecutorTypeFilter executorTypeFilter;
+	private final IArgumentsFilter argumentsFilter;
+
+	/**
+	 * Constructor that sets all fields.
+	 *
+	 * @param methodNameFilter The method name filter.
+	 * @param executorTypeFilter The executor type filter.
+	 * @param argumentsFilter The arguments filter.
+	 */
+	public CommandToMethodMapper(final IMethodNameFilter methodNameFilter, final IExecutorTypeFilter executorTypeFilter,
+			final IArgumentsFilter argumentsFilter) {
+		this.methodNameFilter = methodNameFilter;
+		this.executorTypeFilter = executorTypeFilter;
+		this.argumentsFilter = argumentsFilter;
+	}
 
 	/**
 	 * Constructor that initializes fields.
 	 *
-	 * @param mappingConfig The map of the {@link String}-{@link MappingSet} pair.
+	 * @param mappingConfig The config of the mappers, passed to the arguments filter.
 	 */
 	public CommandToMethodMapper(final MappingConfig mappingConfig) {
-		this(mappingConfig, new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappingConfig));
+		this(new MethodNameFilter(), new ExecutorTypeFilter(), new ArgumentsFilter(mappingConfig));
 	}
 
 	@Override

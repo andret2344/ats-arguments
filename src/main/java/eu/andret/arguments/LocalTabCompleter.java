@@ -5,11 +5,6 @@ import eu.andret.arguments.filter.IMethodNameFilter;
 import eu.andret.arguments.filter.impl.MethodNameFilter;
 import eu.andret.arguments.mapper.IMethodToCompletionMapper;
 import eu.andret.arguments.mapper.impl.MethodToCompletionMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
-import lombok.experimental.NonFinal;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -25,30 +20,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Local tab completer, allowing customization of tab completion
+ * Local tab completer, allowing customization of tab completion.
  *
  * @author Andret
  * @since Jun 02, 2019
  */
-@Value
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
-@NonFinal
-@Getter(AccessLevel.NONE)
 class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
-	AnnotatedCommand<E> annotatedCommand;
-	Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
-	Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
-	Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
-	IMethodNameFilter methodNameMapper = new MethodNameFilter();
-	IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
+	private final AnnotatedCommand<E> annotatedCommand;
+	private final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass;
+	private final Map<Class<?>, BiFunction<List<String>, CommandSender, Collection<String>>> typeCompleterMap = new HashMap<>();
+	private final Map<String, BiFunction<List<String>, CommandSender, Collection<String>>> argumentCompleterMap = new HashMap<>();
+	private final IMethodNameFilter methodNameMapper = new MethodNameFilter();
+	private final IMethodToCompletionMapper methodToCompletionMapper = new MethodToCompletionMapper(typeCompleterMap, argumentCompleterMap);
+
+	LocalTabCompleter(final AnnotatedCommand<E> annotatedCommand,
+			final Class<? extends AnnotatedCommandExecutor<? extends JavaPlugin>> commandClass) {
+		this.annotatedCommand = annotatedCommand;
+		this.commandClass = commandClass;
+	}
 
 	@Override
 	public List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
-									  @NotNull final String label, final String[] args) {
+			@NotNull final String label, final String[] args) {
 		if (args.length == 0) {
 			return Collections.emptyList();
 		}
@@ -61,7 +57,7 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 									.filter(method -> method.getAnnotation(Argument.class) != null)
 									.flatMap(method -> Stream.of(method.getDeclaredAnnotation(Argument.class).aliases())))
 					.filter(text -> text.startsWith(args[0]))
-					.collect(Collectors.toList());
+					.toList();
 		}
 
 		return Arrays.stream(commandClass.getDeclaredMethods())
@@ -69,7 +65,7 @@ class LocalTabCompleter<E extends JavaPlugin> implements TabCompleter {
 				.filter(method -> methodNameMapper.filterMethodName(method, args, annotatedCommand.getOptions()))
 				.map(method -> methodToCompletionMapper.mapCommandToCompletion(method, args, sender))
 				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	boolean addArgumentCompleter(final String id, final BiFunction<List<String>, CommandSender, Collection<String>> function) {

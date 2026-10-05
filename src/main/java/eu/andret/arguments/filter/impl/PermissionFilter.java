@@ -2,7 +2,6 @@ package eu.andret.arguments.filter.impl;
 
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.filter.IPermissionFilter;
-import lombok.Value;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
@@ -14,8 +13,7 @@ import java.lang.reflect.Method;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-public class PermissionFilter implements IPermissionFilter {
+public final class PermissionFilter implements IPermissionFilter {
 	@Override
 	public boolean filterPermission(final Method method, final CommandSender sender) {
 		if (sender instanceof ConsoleCommandSender) {

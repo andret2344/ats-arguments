@@ -184,9 +184,7 @@
 
         <module name="JavadocParagraph"/>
 
-        <module name="JavadocStyle">
-            <property name="scope" value="public"/>
-        </module>
+        <module name="SummaryJavadoc"/>
 
         <module name="MissingJavadocMethod">
             <property name="allowedAnnotations" value="Override, Deprecated"/>

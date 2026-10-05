@@ -1,13 +1,15 @@
 package eu.andret.arguments;
 
+import eu.andret.arguments.entity.ExecutionCall;
+import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.filter.IPermissionFilter;
 import eu.andret.arguments.mapper.ICommandToMethodMapper;
 import eu.andret.arguments.mapper.IExceptionHandler;
-import eu.andret.arguments.mapper.IFallbackSelector;
 import eu.andret.arguments.mapper.IInstanceCreator;
 import eu.andret.arguments.mapper.IMethodSelector;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
 import eu.andret.arguments.provider.TestMethodsProvider;
+import org.assertj.core.api.ThrowableAssert;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -15,12 +17,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -191,14 +195,13 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void correctArgumentsWithPermissionWithListener() throws NoSuchMethodException {
+	void correctArgumentsWithPermissionWithListener() throws ReflectiveOperationException {
 		// given
 		final CommandSender sender = mock(CommandSender.class);
 		final PluginCommand command = mock(PluginCommand.class);
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
-		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
 		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
@@ -211,7 +214,7 @@ public class LocalCommandExecutorTest {
 
 		// and
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
-		when(methodSelector.recalculateArguments(eq(method), any(String[].class))).thenReturn(objects);
+		when(methodSelector.selectMethod(eq(method), any(String[].class), any())).thenReturn(new ExecutionCall(List.of(method), objects));
 		when(commandToMethodMapper.mapCommandToMethod(any(), any(), any(), any())).thenReturn(Optional.of(method));
 		when(instanceCreator.createInstance(sender, plugin, providerClass)).thenReturn(provider);
 		when(command.getName()).thenReturn("test");
@@ -219,7 +222,6 @@ public class LocalCommandExecutorTest {
 				.thenReturn(List.of("result", "value"));
 		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, permissionFilter, "permissionFilter");
-		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, methodSelector, "methodSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
 		injectMapper(executor, exceptionHandler, "exceptionHandler");
@@ -255,7 +257,22 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void invokeFallbackMethod() throws NoSuchMethodException {
+	void getMappingConfig() {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, TestMethodsProvider.class, plugin);
+
+		// when
+		final MappingConfig mappingConfig = executor.getMappingConfig();
+
+		// then
+		assertThat(mappingConfig).isNotNull();
+	}
+
+	@Test
+	void invokeFallbackMethod() throws ReflectiveOperationException {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
@@ -266,25 +283,21 @@ public class LocalCommandExecutorTest {
 		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
 		final IPermissionFilter filter = mock(IPermissionFilter.class);
 		final IMethodSelector methodSelector = mock(IMethodSelector.class);
-		final IFallbackSelector fallbackSelector = mock(IFallbackSelector.class);
 		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
 		final IExceptionHandler exceptionHandler = mock(IExceptionHandler.class);
-		final FallbackException exception = mock(FallbackException.class);
 		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
 		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
 		final TestMethodsProvider provider = new TestMethodsProvider(sender, plugin);
 		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
 		injectMapper(executor, filter, "permissionFilter");
 		injectMapper(executor, methodSelector, "methodSelector");
-		injectMapper(executor, fallbackSelector, "fallbackSelector");
 		injectMapper(executor, instanceCreator, "instanceCreator");
 		injectMapper(executor, exceptionHandler, "exceptionHandler");
 
 		// and
 		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
 		when(filter.filterPermission(method, sender)).thenReturn(true);
-		when(methodSelector.recalculateArguments(any(), any())).thenThrow(exception);
-		when(fallbackSelector.selectFallback(any(), any(), any())).thenReturn(List.of(fallbackMethod));
+		when(methodSelector.selectMethod(any(), any(), any())).thenReturn(new ExecutionCall(List.of(fallbackMethod), new Object[]{"test"}));
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
 		when(exceptionHandler.handleException(eq(fallbackMethod), eq(provider), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
 				.thenReturn(List.of("test", "result"));
@@ -298,7 +311,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void invokeMethodTwice() throws NoSuchMethodException {
+	void invokeMethodTwice() throws ReflectiveOperationException {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
@@ -323,7 +336,7 @@ public class LocalCommandExecutorTest {
 		// and
 		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
-		when(methodSelector.recalculateArguments(any(), any())).thenReturn(args);
+		when(methodSelector.selectMethod(any(), any(), any())).thenReturn(new ExecutionCall(List.of(method), args));
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
 		when(exceptionHandler.handleException(eq(method), eq(provider), any(), eq(TestMethodsProvider.class.getDeclaredMethods())))
 				.thenReturn(List.of("result", "value"));
@@ -338,7 +351,7 @@ public class LocalCommandExecutorTest {
 	}
 
 	@Test
-	void invokeMethodWithException() throws NoSuchMethodException {
+	void invokeMethodWithException() throws ReflectiveOperationException {
 		// given
 		final JavaPlugin plugin = mock(JavaPlugin.class);
 		final CommandSender sender = mock(CommandSender.class);
@@ -363,7 +376,7 @@ public class LocalCommandExecutorTest {
 		// and
 		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
 		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
-		when(methodSelector.recalculateArguments(any(), any())).thenReturn(result);
+		when(methodSelector.selectMethod(any(), any(), any())).thenReturn(new ExecutionCall(List.of(method), result));
 		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenReturn(provider);
 
 		// when
@@ -371,6 +384,41 @@ public class LocalCommandExecutorTest {
 
 		// then
 		verify(exceptionHandler).handleException(method, provider, result, TestMethodsProvider.class.getDeclaredMethods());
+	}
+
+	@Test
+	void invokeMethodWithReflectiveException() throws ReflectiveOperationException {
+		// given
+		final JavaPlugin plugin = mock(JavaPlugin.class);
+		final CommandSender sender = mock(CommandSender.class);
+		final PluginCommand command = mock(PluginCommand.class);
+		final Class<TestMethodsProvider> testMethodsProviderClass = TestMethodsProvider.class;
+		final Method method = testMethodsProviderClass.getDeclaredMethod("testMethod");
+		final ICommandToMethodMapper commandToMethodMapper = mock(ICommandToMethodMapper.class);
+		final IPermissionFilter permissionFilter = mock(IPermissionFilter.class);
+		final IMethodSelector methodSelector = mock(IMethodSelector.class);
+		final IInstanceCreator instanceCreator = mock(IInstanceCreator.class);
+		final AnnotatedCommand<JavaPlugin> annotatedCommand = new AnnotatedCommand<>(command);
+		final LocalCommandExecutor<JavaPlugin> executor = new LocalCommandExecutor<>(annotatedCommand, testMethodsProviderClass, plugin);
+		injectMapper(executor, commandToMethodMapper, "commandToMethodMapper");
+		injectMapper(executor, permissionFilter, "permissionFilter");
+		injectMapper(executor, methodSelector, "methodSelector");
+		injectMapper(executor, instanceCreator, "instanceCreator");
+		final InvocationTargetException exception = new InvocationTargetException(new IllegalArgumentException());
+
+		// and
+		when(commandToMethodMapper.mapCommandToMethod(any(), any(), eq(sender), any())).thenReturn(Optional.of(method));
+		when(permissionFilter.filterPermission(method, sender)).thenReturn(true);
+		when(methodSelector.selectMethod(any(), any(), any())).thenReturn(new ExecutionCall(List.of(method), new Object[0]));
+		when(instanceCreator.createInstance(sender, plugin, testMethodsProviderClass)).thenThrow(exception);
+
+		// when
+		final ThrowableAssert.ThrowingCallable callable = () -> executor.onCommand(sender, command, "test", new String[]{"test"});
+
+		// then
+		assertThatThrownBy(callable)
+				.isInstanceOf(IllegalStateException.class)
+				.hasCause(exception);
 	}
 
 	private void injectMapper(final LocalCommandExecutor<JavaPlugin> executor, final IMapper mapper, final String mapperName) {

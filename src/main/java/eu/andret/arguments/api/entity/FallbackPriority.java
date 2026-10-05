@@ -1,14 +1,10 @@
 package eu.andret.arguments.api.entity;
 
 import eu.andret.arguments.api.annotation.TypeFallback;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Represents {@link TypeFallback} method's priority in execution.
  */
-@Getter
-@AllArgsConstructor
 public enum FallbackPriority {
 	/**
 	 * method call is of very low importance and will be called lastly.
@@ -37,4 +33,17 @@ public enum FallbackPriority {
 	HIGHEST(4);
 
 	private final int slot;
+
+	FallbackPriority(final int slot) {
+		this.slot = slot;
+	}
+
+	/**
+	 * Gets the slot of the priority.
+	 *
+	 * @return The slot, the higher the earlier the method is called.
+	 */
+	public int getSlot() {
+		return slot;
+	}
 }

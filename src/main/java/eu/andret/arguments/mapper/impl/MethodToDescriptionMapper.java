@@ -2,7 +2,6 @@ package eu.andret.arguments.mapper.impl;
 
 import eu.andret.arguments.api.annotation.Argument;
 import eu.andret.arguments.mapper.IMethodToDescriptionMapper;
-import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -15,8 +14,7 @@ import java.util.stream.Collectors;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-public class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
+public final class MethodToDescriptionMapper implements IMethodToDescriptionMapper {
 	@Override
 	public String mapMethodToDescription(final Method method, final String command) {
 		final String description = method.getAnnotation(Argument.class).description();

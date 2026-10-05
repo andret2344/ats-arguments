@@ -17,6 +17,8 @@ import java.util.Optional;
 @FunctionalInterface
 public interface ICommandToMethodMapper extends IMapper {
 	/**
+	 * Finds the method to be called for the command.
+	 *
 	 * @param methods Methods annotated with {@link Argument}.
 	 * @param command The arguments array that followed up base command.
 	 * @param sender The {@link CommandSender} of the command.

@@ -5,9 +5,6 @@ import eu.andret.arguments.api.annotation.Mapper;
 import eu.andret.arguments.entity.MappingConfig;
 import eu.andret.arguments.entity.MappingSet;
 import eu.andret.arguments.filter.IArgumentsFilter;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Value;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -22,10 +19,17 @@ import java.util.stream.Stream;
  * @author Andret
  * @since Apr 17, 2020
  */
-@Value
-@Getter(AccessLevel.NONE)
-public class ArgumentsFilter implements IArgumentsFilter {
-	MappingConfig mappingConfig;
+public final class ArgumentsFilter implements IArgumentsFilter {
+	private final MappingConfig mappingConfig;
+
+	/**
+	 * A constructor.
+	 *
+	 * @param mappingConfig The config.
+	 */
+	public ArgumentsFilter(final MappingConfig mappingConfig) {
+		this.mappingConfig = mappingConfig;
+	}
 
 	@Override
 	public boolean filterArguments(final Method method, final String[] command) {
@@ -33,12 +37,12 @@ public class ArgumentsFilter implements IArgumentsFilter {
 		if (size == 0 && command.length - 1 + method.getParameterCount() != 0) {
 			return false;
 		}
-		final List<Class<?>> list = Stream.of(command).skip(1).map(Util::getRealClass).collect(Collectors.toList());
+		final List<Class<?>> list = Stream.of(command).skip(1).map(Util::getRealClass).collect(Collectors.toUnmodifiableList());
 		return checkParameters(method, list);
 	}
 
 	private boolean checkParameters(final Method method, final List<Class<?>> classes) {
-		final List<Parameter> parameters = Stream.of(method.getParameters()).collect(Collectors.toList());
+		final List<Parameter> parameters = Stream.of(method.getParameters()).toList();
 		if (classes.size() < parameters.size()) {
 			return false;
 		}
